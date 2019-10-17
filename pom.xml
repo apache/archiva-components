@@ -31,7 +31,7 @@
   <artifactId>archiva-components</artifactId>
   <version>3.0-SNAPSHOT</version>
   <packaging>pom</packaging>
-  <name>Apache Archiva Components</name>
+  <name>Archiva Components :: Parent</name>
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -43,6 +43,10 @@
   </properties>
 
   <description>Parent Pom for various components used in Apache Archiva and Redback.</description>
+
+  <modules>
+    <module>expression-evaluator</module>
+  </modules> 
 
   <scm>
     <connection>scm:git:https://github.com/apache/archiva-components.git</connection>
