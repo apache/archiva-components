@@ -46,6 +46,7 @@
 
   <modules>
     <module>expression-evaluator</module>
+    <module>spring-apacheds</module>
   </modules> 
 
   <scm>
@@ -282,6 +283,8 @@
             <exclude>**/.site-content/**</exclude>
             <exclude>**/.repository/**</exclude>
             <exclude>git-sparse-checkout-pattern</exclude>
+            <exclude>**/target/**</exclude>
+            <exclude>**/*.iml</exclude>
           </excludes>
         </configuration>
         <executions>
