@@ -47,6 +47,7 @@
   <modules>
     <module>expression-evaluator</module>
     <module>spring-apacheds</module>
+    <module>graph</module>
   </modules> 
 
   <scm>
