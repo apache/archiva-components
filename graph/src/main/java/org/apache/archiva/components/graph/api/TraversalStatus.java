@@ -27,11 +27,11 @@ import java.util.List;
  *
  * @param <V>
  */
-public class TraversalStatus<V extends Vertex<V>> {
+public class TraversalStatus<V extends Node<V>> {
 
     private int cycles = 0;
     private List<VisitError<V>> errorList;
-    private List<Vertex<V>> cycleVertices;
+    private List<V> cycleNodes;
 
     public TraversalStatus() {
 
@@ -68,14 +68,14 @@ public class TraversalStatus<V extends Vertex<V>> {
 
     /**
      * Add another cycle to the counter
-     * @param vertex
+     * @param node
      */
-    public void registerCycle(Vertex<V> vertex) {
+    public void registerCycle(V node) {
         cycles++;
-        if (cycleVertices==null) {
-            cycleVertices = new ArrayList<>();
+        if (cycleNodes ==null) {
+            cycleNodes = new ArrayList<>();
         }
-        cycleVertices.add(vertex);
+        cycleNodes.add(node);
     }
 
     /**
@@ -101,7 +101,7 @@ public class TraversalStatus<V extends Vertex<V>> {
      *
      * @return the list of vertices where cycles were detected
      */
-    public List<Vertex<V>> getCycleVertices() {
-        return cycleVertices;
+    public List<V> getCycleNodes() {
+        return cycleNodes;
     }
 }

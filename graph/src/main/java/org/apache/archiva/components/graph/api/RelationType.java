@@ -18,21 +18,16 @@ package org.apache.archiva.components.graph.api;
  * under the License.
  */
 
-public class VisitError<V extends Node<V>> {
+/**
+ * A edge must always have a single relation type.
+ * You can use enums to define the type for a specific domain.
+ *
+ */
+public interface RelationType {
 
-    private final Throwable exception;
-    private final V node;
-
-    public VisitError(V node, Throwable exception) {
-        this.exception = exception;
-        this.node = node;
-    }
-
-    public Throwable getException() {
-        return exception;
-    }
-
-    public V getNode() {
-        return node;
-    }
+    /**
+     * The type name
+     * @return
+     */
+    String name();
 }

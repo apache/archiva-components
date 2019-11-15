@@ -19,8 +19,9 @@ package org.apache.archiva.components.graph.base;
  */
 
 import org.apache.archiva.components.graph.api.Edge;
+import org.apache.archiva.components.graph.api.RelationType;
 
-import java.util.UUID;
+import java.util.List;
 
 /**
  * Simple directed graph implementation that uses UUIDs as unique identifiers for
@@ -28,39 +29,39 @@ import java.util.UUID;
  *
  *
  */
-public class SimpleGraph extends DirectedGraph<SimpleVertex> {
+public class SimpleGraph extends DirectedGraph<SimpleNode> {
+
 
     @Override
-    SimpleVertex createNewVertex() {
-        return new SimpleVertex(this, UUID.randomUUID().toString());
+    SimpleNode createNewNode(String id) {
+        return new SimpleNode(this, id);
     }
 
+
+
     @Override
-    Edge<SimpleVertex> createNewEdge(SimpleVertex sourceVertex, SimpleVertex destinationVertex) {
-        BaseEdge edge = new BaseEdge<>(this, UUID.randomUUID().toString(), sourceVertex, destinationVertex);
-        addEdgeToVertex(sourceVertex, edge);
-        addEdgeToVertex(destinationVertex, edge);
+    Edge<SimpleNode> createNewEdge(RelationType type, String id, SimpleNode sourceVertex, SimpleNode destinationVertex) {
+        BaseEdge edge = new BaseEdge<>(this, id, sourceVertex, destinationVertex);
+        addEdgeToNode(sourceVertex, edge);
+        addEdgeToNode(destinationVertex, edge);
         return edge;
     }
 
-    private void addEdgeToVertex(SimpleVertex vertex, Edge<SimpleVertex> edge) {
+    private void addEdgeToNode(SimpleNode vertex, Edge<SimpleNode> edge) {
         vertex.addEdge(edge);
     }
 
-    @Override
-    public void removeEdge(Edge<SimpleVertex> edge) {
-        edges.remove(edge);
-        edge.getSource().removeEdge(edge);
-        edge.getDestination().removeEdge(edge);
-    }
 
     @Override
-    public void removeVertex(SimpleVertex vertex) {
-        for (Edge<SimpleVertex> edge : vertex.getInEdges()) {
-            removeEdge(edge);
-        }
-        for (Edge<SimpleVertex> edge : vertex.getOutEdges()) {
-            removeEdge(edge);
-        }
+    public List<SimpleNode> findNodes(String query) {
+        return null;
+    }
+
+
+    @Override
+    public void removeEdge(Edge<SimpleNode> edge) {
+        super.removeEdge(edge);
+        edge.getSource().removeEdge(edge);
+        edge.getDestination().removeEdge(edge);
     }
 }

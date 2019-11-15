@@ -18,21 +18,11 @@ package org.apache.archiva.components.graph.api;
  * under the License.
  */
 
-public class VisitError<V extends Node<V>> {
+/**
+ * The category is used to shape the domain by grouping nodes.
+ */
+public interface Category {
 
-    private final Throwable exception;
-    private final V node;
+    String name();
 
-    public VisitError(V node, Throwable exception) {
-        this.exception = exception;
-        this.node = node;
-    }
-
-    public Throwable getException() {
-        return exception;
-    }
-
-    public V getNode() {
-        return node;
-    }
 }

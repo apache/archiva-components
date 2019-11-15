@@ -18,26 +18,33 @@ package org.apache.archiva.components.graph.base;
  * under the License.
  */
 
-import org.apache.archiva.components.graph.api.Edge;
-import org.apache.archiva.components.graph.api.Graph;
-import org.apache.archiva.components.graph.api.Vertex;
+import org.apache.archiva.components.graph.api.*;
 
-public class BaseEdge<V extends Vertex<V>> implements Edge<V>, Comparable<BaseEdge<V>> {
+public class BaseEdge<V extends Node<V>> implements Edge<V>, Comparable<BaseEdge<V>> {
 
     private final String id;
     private String label;
     private double weight = 1.0;
-    private V sourceVertex;
-    private V destinationVertex;
+    private V sourceNode;
+    private V destinationNode;
     private final Graph<V> graph;
+    private final RelationType type;
 
-    public BaseEdge(Graph<V> graph, String id, V sourceVertex, V destinationVertex) {
+    public BaseEdge(Graph<V> graph, String id, V sourceNode, V destinationNode) {
         this.id = id;
         this.graph = graph;
-        this.sourceVertex = sourceVertex;
-        this.destinationVertex = destinationVertex;
+        this.sourceNode = sourceNode;
+        this.destinationNode = destinationNode;
+        this.type = StandardRelationType.DEFAULT;
     }
 
+    public BaseEdge(Graph<V> graph, RelationType type, String id, V sourceNode, V destinationNode) {
+        this.id = id;
+        this.graph = graph;
+        this.sourceNode = sourceNode;
+        this.destinationNode = destinationNode;
+        this.type = type;
+    }
     @Override
     public String getId() {
         return id;
@@ -63,17 +70,22 @@ public class BaseEdge<V extends Vertex<V>> implements Edge<V>, Comparable<BaseEd
 
     @Override
     public V getSource() {
-        return sourceVertex;
+        return sourceNode;
     }
 
     @Override
     public V getDestination() {
-        return destinationVertex;
+        return destinationNode;
     }
 
     @Override
     public double getWeight() {
         return weight;
+    }
+
+    @Override
+    public RelationType getType() {
+        return type;
     }
 
     @Override
@@ -83,7 +95,7 @@ public class BaseEdge<V extends Vertex<V>> implements Edge<V>, Comparable<BaseEd
 
     @Override
     public String toString() {
-        return this.id+"|"+this.label+": "+ sourceVertex.toString() + " -> " + destinationVertex.toString();
+        return this.id+"("+this.label+")("+ sourceNode.getId()+ " -> " + destinationNode.getId()+")";
     }
 
     @Override
@@ -94,4 +106,5 @@ public class BaseEdge<V extends Vertex<V>> implements Edge<V>, Comparable<BaseEd
             return this.id.compareTo(o.getId());
         }
     }
+
 }

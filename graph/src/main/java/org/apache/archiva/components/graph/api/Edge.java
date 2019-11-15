@@ -24,7 +24,7 @@ package org.apache.archiva.components.graph.api;
  *
  * @param <V> The vertex implementation.
  */
-public interface Edge<V extends Vertex<V>> {
+public interface Edge<V extends Node<V>> {
 
     /**
      * Returns the identifier of this edge. The id must be unique for given graph.
@@ -74,7 +74,13 @@ public interface Edge<V extends Vertex<V>> {
      */
     double getWeight();
 
-
+    /**
+     * Returns the RelationType of the edge. If nothing is set, the {@link StandardRelationType#DEFAULT} should
+     * be returned.
+     *
+     * @return the type of the edge
+     */
+    RelationType getType();
 
 
 }

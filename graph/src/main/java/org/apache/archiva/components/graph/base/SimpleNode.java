@@ -18,9 +18,10 @@ package org.apache.archiva.components.graph.base;
  * under the License.
  */
 
+import org.apache.archiva.components.graph.api.Category;
 import org.apache.archiva.components.graph.api.Edge;
 import org.apache.archiva.components.graph.api.Graph;
-import org.apache.archiva.components.graph.api.Vertex;
+import org.apache.archiva.components.graph.api.Node;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,16 +30,17 @@ import java.util.List;
  * Simple vertex implementation. The hash value is based on the id.
  * Comparation is by label, if exists, otherwise by id.
  */
-public class SimpleVertex implements Vertex<SimpleVertex>, Comparable<SimpleVertex>
+public class SimpleNode implements Node<SimpleNode>, Comparable<SimpleNode>
 {
 
     private final String id;
     private String label;
-    private final Graph<SimpleVertex> graph;
-    private List<Edge<SimpleVertex>> outEdges = new ArrayList<>();
-    private List<Edge<SimpleVertex>> inEdges = new ArrayList<>();
+    private final Graph<SimpleNode> graph;
+    private List<Edge<SimpleNode>> outEdges = new ArrayList<>();
+    private List<Edge<SimpleNode>> inEdges = new ArrayList<>();
+    private List<Category> categories;
 
-    SimpleVertex(Graph<SimpleVertex> graph, String id) {
+    SimpleNode(Graph<SimpleNode> graph, String id) {
         this.id = id;
         this.graph = graph;
     }
@@ -59,21 +61,21 @@ public class SimpleVertex implements Vertex<SimpleVertex>, Comparable<SimpleVert
     }
 
     @Override
-    public Graph<SimpleVertex> getGraph() {
+    public Graph<SimpleNode> getGraph() {
         return graph;
     }
 
     @Override
-    public List<Edge<SimpleVertex>> getOutEdges() {
+    public List<Edge<SimpleNode>> getOutEdges() {
         return outEdges;
     }
 
     @Override
-    public List<Edge<SimpleVertex>> getInEdges() {
+    public List<Edge<SimpleNode>> getInEdges() {
         return inEdges;
     }
 
-    protected void addEdge(Edge<SimpleVertex> edge) {
+    protected void addEdge(Edge<SimpleNode> edge) {
         if (edge.getSource() == this) {
             outEdges.add(edge);
         } else if (edge.getDestination() == this) {
@@ -90,10 +92,10 @@ public class SimpleVertex implements Vertex<SimpleVertex>, Comparable<SimpleVert
 
     @Override
     public String toString() {
-        return this.id+"|"+this.label;
+        return this.id+"("+this.label+")";
     }
 
-    public void removeEdge(Edge<SimpleVertex> edge) {
+    public void removeEdge(Edge<SimpleNode> edge) {
         if (edge.getDestination()==this) {
             inEdges.remove(edge);
         } else if (edge.getSource()==this) {
@@ -102,11 +104,34 @@ public class SimpleVertex implements Vertex<SimpleVertex>, Comparable<SimpleVert
     }
 
     @Override
-    public int compareTo(SimpleVertex o) {
+    public int compareTo(SimpleNode o) {
         if (label!=null && o.getLabel()!=null) {
             return this.label.compareTo(o.getLabel());
         } else {
             return this.id.compareTo(o.getId());
         }
+    }
+
+    public void addCategory(Category category) {
+        if (this.categories == null) {
+            this.categories = new ArrayList<>();
+        }
+        if (!this.categories.contains(category)) {
+            this.categories.add(category);
+        }
+    }
+
+    public void removeCategory(Category category) {
+        if (this.categories != null) {
+            this.categories.remove(category);
+        }
+    }
+
+    @Override
+    public List<Category> getCategories() {
+        if (this.categories ==null) {
+            this.categories = new ArrayList<>();
+        }
+        return categories;
     }
 }

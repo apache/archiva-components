@@ -26,14 +26,14 @@ import static org.junit.jupiter.api.Assertions.*;
 class BaseEdgeTest {
 
 
-    private Graph<SimpleVertex> graph = new SimpleGraph();
+    private Graph<SimpleNode> graph = new SimpleGraph();
 
     @Test
     void getId() {
-        SimpleVertex vtx1 = new SimpleVertex(graph, "vtx1");
-        SimpleVertex vtx2 = new SimpleVertex(graph, "vtx2");
+        SimpleNode vtx1 = new SimpleNode(graph, "vtx1");
+        SimpleNode vtx2 = new SimpleNode(graph, "vtx2");
 
-        BaseEdge<SimpleVertex> edge = new BaseEdge<>(graph, "edge01", vtx1, vtx2);
+        BaseEdge<SimpleNode> edge = new BaseEdge<>(graph, "edge01", vtx1, vtx2);
 
         assertNotNull(edge.getId());
         assertEquals("edge01", edge.getId());
@@ -43,10 +43,10 @@ class BaseEdgeTest {
 
     @Test
     void getLabel() {
-        SimpleVertex vtx1 = new SimpleVertex(graph, "vtx1");
-        SimpleVertex vtx2 = new SimpleVertex(graph, "vtx2");
+        SimpleNode vtx1 = new SimpleNode(graph, "vtx1");
+        SimpleNode vtx2 = new SimpleNode(graph, "vtx2");
 
-        BaseEdge<SimpleVertex> edge = new BaseEdge<>(graph, "edge01", vtx1, vtx2);
+        BaseEdge<SimpleNode> edge = new BaseEdge<>(graph, "edge01", vtx1, vtx2);
 
         assertNull(edge.getLabel());
 
@@ -61,10 +61,10 @@ class BaseEdgeTest {
 
     @Test
     void setWeight() {
-        SimpleVertex vtx1 = new SimpleVertex(graph, "vtx1");
-        SimpleVertex vtx2 = new SimpleVertex(graph, "vtx2");
+        SimpleNode vtx1 = new SimpleNode(graph, "vtx1");
+        SimpleNode vtx2 = new SimpleNode(graph, "vtx2");
 
-        BaseEdge<SimpleVertex> edge = new BaseEdge<>(graph, "edge01", vtx1, vtx2);
+        BaseEdge<SimpleNode> edge = new BaseEdge<>(graph, "edge01", vtx1, vtx2);
 
         assertEquals(1.0, edge.getWeight());
 
@@ -77,30 +77,30 @@ class BaseEdgeTest {
 
     @Test
     void getGraph() {
-        SimpleVertex vtx1 = new SimpleVertex(graph, "vtx1");
-        SimpleVertex vtx2 = new SimpleVertex(graph, "vtx2");
+        SimpleNode vtx1 = new SimpleNode(graph, "vtx1");
+        SimpleNode vtx2 = new SimpleNode(graph, "vtx2");
 
-        BaseEdge<SimpleVertex> edge = new BaseEdge<>(graph, "edge01", vtx1, vtx2);
+        BaseEdge<SimpleNode> edge = new BaseEdge<>(graph, "edge01", vtx1, vtx2);
         assertNotNull(edge.getGraph());
         assertTrue(edge.getGraph() == graph);
     }
 
     @Test
     void getInVertex() {
-        SimpleVertex vtx1 = new SimpleVertex(graph, "vtx1");
-        SimpleVertex vtx2 = new SimpleVertex(graph, "vtx2");
+        SimpleNode vtx1 = new SimpleNode(graph, "vtx1");
+        SimpleNode vtx2 = new SimpleNode(graph, "vtx2");
 
-        BaseEdge<SimpleVertex> edge = new BaseEdge<>(graph, "edge01", vtx1, vtx2);
+        BaseEdge<SimpleNode> edge = new BaseEdge<>(graph, "edge01", vtx1, vtx2);
 
         assertEquals(vtx1, edge.getSource());
     }
 
     @Test
     void getOutVertex() {
-        SimpleVertex vtx1 = new SimpleVertex(graph, "vtx1");
-        SimpleVertex vtx2 = new SimpleVertex(graph, "vtx2");
+        SimpleNode vtx1 = new SimpleNode(graph, "vtx1");
+        SimpleNode vtx2 = new SimpleNode(graph, "vtx2");
 
-        BaseEdge<SimpleVertex> edge = new BaseEdge<>(graph, "edge01", vtx1, vtx2);
+        BaseEdge<SimpleNode> edge = new BaseEdge<>(graph, "edge01", vtx1, vtx2);
 
         assertEquals(vtx2, edge.getDestination());
     }

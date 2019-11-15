@@ -26,7 +26,7 @@ import java.util.List;
  *
  * @param <V> The vertex implementation
  */
-public interface Vertex<V extends Vertex<V>> {
+public interface Node<V extends Node<V>> {
 
     /**
      * Returns the identifier of this vertex. The identifier is unique for a given graph.
@@ -66,5 +66,24 @@ public interface Vertex<V extends Vertex<V>> {
      */
     List<Edge<V>> getInEdges();
 
+    /**
+     * Returns the categories of the vertex.
+     *
+     * @return the list of categories of the vertex
+     */
+    List<Category> getCategories();
 
+    /**
+     * Adds a category to the node
+     * @param category the category to add
+     */
+    void addCategory(Category category);
+
+
+    /**
+     * Removes a category from the node.
+     *
+     * @param category the category to remove
+     */
+    void removeCategory(Category category);
 }
