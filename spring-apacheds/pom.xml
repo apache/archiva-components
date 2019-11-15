@@ -32,6 +32,7 @@
 
   <properties>
     <apacheds.version>1.5.1</apacheds.version>
+    <apacheds.shared.version>0.9.7</apacheds.shared.version>
     <site.staging.base>${project.basedir}/..</site.staging.base>
   </properties>
   <scm>
@@ -47,19 +48,14 @@
       <artifactId>apacheds-core</artifactId>
       <version>${apacheds.version}</version>
     </dependency>
-    <dependency>
-      <groupId>org.apache.directory.server</groupId>
-      <artifactId>apacheds-core-shared</artifactId>
-      <version>${apacheds.version}</version>
-    </dependency>
+     <dependency>
+       <groupId>org.apache.directory.server</groupId>
+       <artifactId>apacheds-core-shared</artifactId>
+       <version>${apacheds.version}</version>
+     </dependency>
     <dependency>
       <groupId>org.apache.directory.server</groupId>
       <artifactId>apacheds-server-jndi</artifactId>
-      <version>${apacheds.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.directory.server</groupId>
-      <artifactId>apacheds-bootstrap-partition</artifactId>
       <version>${apacheds.version}</version>
     </dependency>
     <dependency>
@@ -72,6 +68,23 @@
       <artifactId>apacheds-schema-extras</artifactId>
       <version>${apacheds.version}</version>
     </dependency>
+    <dependency>
+      <groupId>org.apache.directory.shared</groupId>
+      <artifactId>shared-ldap</artifactId>
+      <version>${apacheds.shared.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.directory.server</groupId>
+      <artifactId>apacheds-protocol-ldap</artifactId>
+      <version>${apacheds.version}</version>
+    </dependency>
+    <dependency>
+       <groupId>org.apache.directory.server</groupId>
+       <artifactId>apacheds-bootstrap-partition</artifactId>
+       <version>${apacheds.version}</version>
+    </dependency>
+
+
 
     <dependency>
       <groupId>org.slf4j</groupId>
