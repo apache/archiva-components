@@ -22,20 +22,16 @@
   </parent>  
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.apache.archiva.components.registry</groupId>
-  <artifactId>spring-registry</artifactId>
+  <artifactId>archiva-components-spring-registry</artifactId>
   <version>3.0-SNAPSHOT</version>
   <name>Archiva Components :: Spring Registry</name>
   <packaging>pom</packaging>
 
   <properties>
-    <site.staging.base>${project.basedir}/../site</site.staging.base>
+    <site.staging.base>${project.parent.basedir}</site.staging.base>
   </properties>
 
   <url>${webUrl}/${project.artifactId}</url>
-
-  <scm>
-    <url>${scmBrowseUrl}</url>
-  </scm>
 
   <modules>
     <module>spring-registry-api</module>
@@ -46,12 +42,12 @@
     <dependencies>
       <dependency>
         <groupId>org.apache.archiva.components.registry</groupId>
-        <artifactId>spring-registry-api</artifactId>
+        <artifactId>archiva-components-spring-registry-api</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
         <groupId>org.apache.archiva.components.registry</groupId>
-        <artifactId>spring-registry-commons</artifactId>
+        <artifactId>archiva-components-spring-registry-commons</artifactId>
         <version>${project.version}</version>
       </dependency>
 

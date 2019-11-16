@@ -33,12 +33,8 @@
   <properties>
     <apacheds.version>1.5.1</apacheds.version>
     <apacheds.shared.version>0.9.7</apacheds.shared.version>
-    <site.staging.base>${project.basedir}/..</site.staging.base>
+    <site.staging.base>${project.parent.basedir}</site.staging.base>
   </properties>
-  <scm>
-    <url>${scmBrowseUrl}</url>
-  </scm>
-
 
   <url>${webUrl}/${project.artifactId}</url>
 

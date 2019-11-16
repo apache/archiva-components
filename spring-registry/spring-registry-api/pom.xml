@@ -23,21 +23,17 @@
 
   <parent>
     <groupId>org.apache.archiva.components.registry</groupId>
-    <artifactId>spring-registry</artifactId>
+    <artifactId>archiva-components-spring-registry</artifactId>
     <version>3.0-SNAPSHOT</version>
   </parent>
 
   <groupId>org.apache.archiva.components.registry</groupId>
-  <artifactId>spring-registry-api</artifactId>
+  <artifactId>archiva-components-spring-registry-api</artifactId>
   <name>Archiva Components :: Spring Registry Api</name>
 
   <properties>
-    <site.staging.base>${project.parent.basedir}/../site</site.staging.base>
+    <site.staging.base>${project.parent.parent.basedir}</site.staging.base>
   </properties>
   <url>${webUrl}/spring-registry/${project.artifactId}</url>
-
-  <scm>
-    <url>${scmBrowseUrl};f=${project.artifactId}</url>
-  </scm>
 
 </project>

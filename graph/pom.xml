@@ -32,6 +32,9 @@
   <name>Archiva Components :: Graph</name>
   <description>Simple implementation of graph structure and utility class for traversal.</description>
 
+  <properties>
+    <site.staging.base>${project.parent.basedir}</site.staging.base>
+  </properties>
 
   <dependencies>
     <dependency>

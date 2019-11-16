@@ -32,16 +32,11 @@
   <name>Archiva Components :: Expression Evaluator</name>
 
   <properties>
-    <site.staging.base>${project.basedir}/..</site.staging.base>
+    <site.staging.base>${project.parent.basedir}</site.staging.base>
   </properties>
 
 
   <url>${webUrl}/${project.artifactId}</url>
-
-  <scm>
-    <url>${scmBrowseUrl}</url>
-  </scm>
-
 
   <dependencies>
     <dependency>
