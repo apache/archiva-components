@@ -21,63 +21,71 @@ package org.apache.archiva.components.graph.api;
 import java.util.List;
 
 /**
- * The vertex is a node in a graph structure. The vertex may have connections to and from
- * other vertices (edges).
+ * The node is a single entity in a graph structure. The node may have connections to and from
+ * other nodes (represented by edges).
  *
- * @param <V> The vertex implementation
+ * @param <V> The node implementation
  */
-public interface Node<V extends Node<V>> {
+public interface Node<V extends Node<V>>
+{
 
     /**
-     * Returns the identifier of this vertex. The identifier is unique for a given graph.
+     * Returns the identifier of this node. The identifier is unique for a given graph.
+     *
      * @return the identifier
      */
-    String getId();
+    String getId( );
 
     /**
-     * Returns the label of this vertex. The label is a name and must not be unique.
+     * Returns the label of this node. The label is a name and must not be unique.
      * If the label was not set it should return a empty string.
-     * @return the label of the vertex or a empty string
+     *
+     * @return the label of the node or a empty string
      */
-    String getLabel();
+    String getLabel( );
 
     /**
-     * Sets the label of the vertex
+     * Sets the label of the node
+     *
      * @param label sets the label string, must not be <code>null</code>
      * @throws NullPointerException if the given label is <code>null</code>
      */
-    void setLabel(String label) throws NullPointerException;
+    void setLabel( String label ) throws NullPointerException;
 
     /**
-     * Returns the graph where this vertex was created.
+     * Returns the graph where this node was created.
+     *
      * @return the graph instance
      */
-    Graph<V> getGraph();
+    Graph<V> getGraph( );
 
     /**
      * Returns all edges that connect to other nodes
-     * @return the edges where this vertex is the source
-     */
-    List<Edge<V>> getOutEdges();
-
-    /**
-     * Returns all edges that connect other nodes to this vertex
-     * @return the edges where this vertex is the destination
-     */
-    List<Edge<V>> getInEdges();
-
-    /**
-     * Returns the categories of the vertex.
      *
-     * @return the list of categories of the vertex
+     * @return the edges where this node is the source
      */
-    List<Category> getCategories();
+    List<Edge<V>> getOutEdges( );
+
+    /**
+     * Returns all edges that connect other nodes to this node
+     *
+     * @return the edges where this node is the destination
+     */
+    List<Edge<V>> getInEdges( );
+
+    /**
+     * Returns the categories of the node.
+     *
+     * @return the list of categories of the node
+     */
+    List<Category> getCategories( );
 
     /**
      * Adds a category to the node
+     *
      * @param category the category to add
      */
-    void addCategory(Category category);
+    void addCategory( Category category );
 
 
     /**
@@ -85,5 +93,5 @@ public interface Node<V extends Node<V>> {
      *
      * @param category the category to remove
      */
-    void removeCategory(Category category);
+    void removeCategory( Category category );
 }

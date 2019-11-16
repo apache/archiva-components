@@ -27,7 +27,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Simple vertex implementation. The hash value is based on the id.
+ * Simple node implementation. The hash value is based on the id.
  * Comparation is by label, if exists, otherwise by id.
  */
 public class SimpleNode implements Node<SimpleNode>, Comparable<SimpleNode>
@@ -36,101 +36,131 @@ public class SimpleNode implements Node<SimpleNode>, Comparable<SimpleNode>
     private final String id;
     private String label;
     private final Graph<SimpleNode> graph;
-    private List<Edge<SimpleNode>> outEdges = new ArrayList<>();
-    private List<Edge<SimpleNode>> inEdges = new ArrayList<>();
+    private List<Edge<SimpleNode>> outEdges = new ArrayList<>( );
+    private List<Edge<SimpleNode>> inEdges = new ArrayList<>( );
     private List<Category> categories;
 
-    SimpleNode(Graph<SimpleNode> graph, String id) {
+    SimpleNode( Graph<SimpleNode> graph, String id )
+    {
         this.id = id;
         this.graph = graph;
     }
 
     @Override
-    public String getId() {
+    public String getId( )
+    {
         return id;
     }
 
     @Override
-    public String getLabel() {
+    public String getLabel( )
+    {
         return label;
     }
 
     @Override
-    public void setLabel(String label) {
+    public void setLabel( String label )
+    {
         this.label = label;
     }
 
     @Override
-    public Graph<SimpleNode> getGraph() {
+    public Graph<SimpleNode> getGraph( )
+    {
         return graph;
     }
 
     @Override
-    public List<Edge<SimpleNode>> getOutEdges() {
+    public List<Edge<SimpleNode>> getOutEdges( )
+    {
         return outEdges;
     }
 
     @Override
-    public List<Edge<SimpleNode>> getInEdges() {
+    public List<Edge<SimpleNode>> getInEdges( )
+    {
         return inEdges;
     }
 
-    protected void addEdge(Edge<SimpleNode> edge) {
-        if (edge.getSource() == this) {
-            outEdges.add(edge);
-        } else if (edge.getDestination() == this) {
-            inEdges.add(edge);
-        } else {
-            throw new IllegalArgumentException("The given edge does not contain this vertex");
+    protected void addEdge( Edge<SimpleNode> edge )
+    {
+        if ( edge.getSource( ) == this )
+        {
+            outEdges.add( edge );
+        }
+        else if ( edge.getDestination( ) == this )
+        {
+            inEdges.add( edge );
+        }
+        else
+        {
+            throw new IllegalArgumentException( "The given edge does not contain this node" );
         }
     }
 
     @Override
-    public int hashCode() {
-        return this.id.hashCode();
+    public int hashCode( )
+    {
+        return this.id.hashCode( );
     }
 
     @Override
-    public String toString() {
-        return this.id+"("+this.label+")";
+    public String toString( )
+    {
+        return this.id + "(" + this.label + ")";
     }
 
-    public void removeEdge(Edge<SimpleNode> edge) {
-        if (edge.getDestination()==this) {
-            inEdges.remove(edge);
-        } else if (edge.getSource()==this) {
-            outEdges.remove(edge);
+    public void removeEdge( Edge<SimpleNode> edge )
+    {
+        if ( edge.getDestination( ) == this )
+        {
+            inEdges.remove( edge );
         }
-    }
-
-    @Override
-    public int compareTo(SimpleNode o) {
-        if (label!=null && o.getLabel()!=null) {
-            return this.label.compareTo(o.getLabel());
-        } else {
-            return this.id.compareTo(o.getId());
-        }
-    }
-
-    public void addCategory(Category category) {
-        if (this.categories == null) {
-            this.categories = new ArrayList<>();
-        }
-        if (!this.categories.contains(category)) {
-            this.categories.add(category);
-        }
-    }
-
-    public void removeCategory(Category category) {
-        if (this.categories != null) {
-            this.categories.remove(category);
+        else if ( edge.getSource( ) == this )
+        {
+            outEdges.remove( edge );
         }
     }
 
     @Override
-    public List<Category> getCategories() {
-        if (this.categories ==null) {
-            this.categories = new ArrayList<>();
+    public int compareTo( SimpleNode o )
+    {
+        if ( label != null && o.getLabel( ) != null )
+        {
+            return this.label.compareTo( o.getLabel( ) );
+        }
+        else
+        {
+            return this.id.compareTo( o.getId( ) );
+        }
+    }
+
+    public void addCategory( Category category )
+    {
+        if ( this.categories == null )
+        {
+            this.categories = new ArrayList<>( );
+        }
+        if ( !this.categories.contains( category ) )
+        {
+            this.categories.add( category );
+        }
+    }
+
+    public void removeCategory( Category category )
+    {
+        if ( this.categories != null )
+        {
+            this.categories.remove( category );
+        }
+    }
+
+    @Override
+    public List<Category> getCategories( )
+    {
+        if ( this.categories == null )
+        {
+            this.categories = new ArrayList<>( );
         }
         return categories;
     }

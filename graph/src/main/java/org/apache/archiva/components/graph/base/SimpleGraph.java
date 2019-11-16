@@ -25,43 +25,46 @@ import java.util.List;
 
 /**
  * Simple directed graph implementation that uses UUIDs as unique identifiers for
- * each vertex and edge.
- *
- *
+ * each node and edge.
  */
-public class SimpleGraph extends DirectedGraph<SimpleNode> {
+public class SimpleGraph extends DirectedGraph<SimpleNode>
+{
 
 
     @Override
-    SimpleNode createNewNode(String id) {
-        return new SimpleNode(this, id);
+    SimpleNode createNewNode( String id )
+    {
+        return new SimpleNode( this, id );
     }
 
 
-
     @Override
-    Edge<SimpleNode> createNewEdge(RelationType type, String id, SimpleNode sourceVertex, SimpleNode destinationVertex) {
-        BaseEdge edge = new BaseEdge<>(this, id, sourceVertex, destinationVertex);
-        addEdgeToNode(sourceVertex, edge);
-        addEdgeToNode(destinationVertex, edge);
+    Edge<SimpleNode> createNewEdge( RelationType type, String id, SimpleNode sourceNode, SimpleNode destinationNode )
+    {
+        BaseEdge edge = new BaseEdge<>( this, id, sourceNode, destinationNode );
+        addEdgeToNode( sourceNode, edge );
+        addEdgeToNode( destinationNode, edge );
         return edge;
     }
 
-    private void addEdgeToNode(SimpleNode vertex, Edge<SimpleNode> edge) {
-        vertex.addEdge(edge);
+    private void addEdgeToNode( SimpleNode node, Edge<SimpleNode> edge )
+    {
+        node.addEdge( edge );
     }
 
 
     @Override
-    public List<SimpleNode> findNodes(String query) {
+    public List<SimpleNode> findNodes( String query )
+    {
         return null;
     }
 
 
     @Override
-    public void removeEdge(Edge<SimpleNode> edge) {
-        super.removeEdge(edge);
-        edge.getSource().removeEdge(edge);
-        edge.getDestination().removeEdge(edge);
+    public void removeEdge( Edge<SimpleNode> edge )
+    {
+        super.removeEdge( edge );
+        edge.getSource( ).removeEdge( edge );
+        edge.getDestination( ).removeEdge( edge );
     }
 }

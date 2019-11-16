@@ -18,6 +18,7 @@ package org.apache.archiva.components.graph.api;
  * under the License.
  */
 
-public enum StandardRelationType implements RelationType {
-    DEFAULT,DIRECTED;
+public enum StandardRelationType implements RelationType
+{
+    DEFAULT, DIRECTED;
 }

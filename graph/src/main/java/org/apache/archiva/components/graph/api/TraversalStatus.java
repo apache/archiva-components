@@ -27,63 +27,76 @@ import java.util.List;
  *
  * @param <V>
  */
-public class TraversalStatus<V extends Node<V>> {
+public class TraversalStatus<V extends Node<V>>
+{
 
     private int cycles = 0;
     private List<VisitError<V>> errorList;
     private List<V> cycleNodes;
 
-    public TraversalStatus() {
+    public TraversalStatus( )
+    {
 
     }
 
     /**
      * Returns the list of errors
-     * @return a list of errors encountered while executing the consumer function on vertices
+     *
+     * @return a list of errors encountered while executing the consumer function on nodes
      */
-    public List<VisitError<V>> getErrorList() {
+    public List<VisitError<V>> getErrorList( )
+    {
         return errorList;
     }
 
     /**
      * Returns true, if there were errors while running the consumer function.
+     *
      * @return true, if errors occured on the consumer function, otherwise false
      */
-    public boolean hasErrors() {
-        return errorList!=null && errorList.size()>0;
+    public boolean hasErrors( )
+    {
+        return errorList != null && errorList.size( ) > 0;
     }
 
     /**
      * Add the given error to the list.
      *
-     * @param vertex the vertex, where the error occured
-     * @param e the exception
+     * @param node the node, where the error occurred
+     * @param e    the exception
      */
-    public void addError(V vertex, Throwable e) {
-        if (errorList==null) {
-            errorList = new ArrayList<>();
+    public void addError( V node, Throwable e )
+    {
+        if ( errorList == null )
+        {
+            errorList = new ArrayList<>( );
         }
-        errorList.add(new VisitError(vertex, e));
+        errorList.add( new VisitError( node, e ) );
     }
 
     /**
      * Add another cycle to the counter
+     *
      * @param node
      */
-    public void registerCycle(V node) {
+    public void registerCycle( V node )
+    {
         cycles++;
-        if (cycleNodes ==null) {
-            cycleNodes = new ArrayList<>();
+        if ( cycleNodes == null )
+        {
+            cycleNodes = new ArrayList<>( );
         }
-        cycleNodes.add(node);
+        cycleNodes.add( node );
     }
 
     /**
      * Returns true, if the traversal encountered a cycle.
+     *
      * @return true, if cycle was encountered, otherwise false
      */
-    public boolean hasCycles() {
-        return cycles>0;
+    public boolean hasCycles( )
+    {
+        return cycles > 0;
     }
 
     /**
@@ -91,17 +104,19 @@ public class TraversalStatus<V extends Node<V>> {
      *
      * @return
      */
-    public int getCycleCount() {
+    public int getCycleCount( )
+    {
         return cycles;
     }
 
     /**
-     * Returns the vertices, where cycles were detected. The list may contain
+     * Returns the nodes, where cycles were detected. The list may contain
      * duplicated entries, if cycles where detected on different paths.
      *
-     * @return the list of vertices where cycles were detected
+     * @return the list of nodes where cycles were detected
      */
-    public List<V> getCycleNodes() {
+    public List<V> getCycleNodes( )
+    {
         return cycleNodes;
     }
 }

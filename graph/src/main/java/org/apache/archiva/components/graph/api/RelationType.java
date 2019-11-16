@@ -21,13 +21,14 @@ package org.apache.archiva.components.graph.api;
 /**
  * A edge must always have a single relation type.
  * You can use enums to define the type for a specific domain.
- *
  */
-public interface RelationType {
+public interface RelationType
+{
 
     /**
      * The type name
+     *
      * @return
      */
-    String name();
+    String name( );
 }

@@ -24,15 +24,23 @@ import org.apache.archiva.components.graph.api.TraversalStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.LinkedHashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Queue;
+import java.util.Set;
+import java.util.Stack;
 import java.util.function.BiFunction;
 
 /**
  * Utility class for graph traversal.
  */
-public class Traversal {
+public class Traversal
+{
 
-    private static final Logger log = LoggerFactory.getLogger(Traversal.class);
+    private static final Logger log = LoggerFactory.getLogger( Traversal.class );
 
     /**
      * Traverses the graph starting at the start node and using a depth first algorithm.
@@ -42,81 +50,107 @@ public class Traversal {
      * If the directed flag is set to true, only outgoing edges are used for traversal from one one
      * to the other, otherwise, incoming edges are used too.
      *
-     * @param start           the start node
-     * @param consumer        The consumer function. The function must return <code>true</code>, if the traversal should
-     *                        continue, otherwise <code>false</code>
-     * @param flags Sets some flags for traversal behaviour
+     * @param start    the start node
+     * @param consumer The consumer function. The function must return <code>true</code>, if the traversal should
+     *                 continue, otherwise <code>false</code>
+     * @param flags    Sets some flags for traversal behaviour
      * @param <V>
      * @return The traversal status
      */
-    public static <V extends Node<V>> TraversalStatus<V> depthFirst(final V start, final BiFunction<V, TraversalStatus<V>, Boolean> consumer,
-                                                                    final BiFunction<V, TraversalStatus<V>, Boolean> afterChildConsumer,
-                                                                    final TraversalFlags flags) {
-        TraversalStatus<V> status = new TraversalStatus<>();
-        Set<V> visited = new LinkedHashSet<>();
-        Stack<V> stack = new Stack<>();
-        stack.push(start);
-        while (!stack.isEmpty()) {
-            V node = stack.peek();
-            if (!visited.contains(node)) {
+    public static <V extends Node<V>> TraversalStatus<V> depthFirst( final V start, final BiFunction<V, TraversalStatus<V>, Boolean> consumer,
+                                                                     final BiFunction<V, TraversalStatus<V>, Boolean> afterChildConsumer,
+                                                                     final TraversalFlags flags )
+    {
+        TraversalStatus<V> status = new TraversalStatus<>( );
+        Set<V> visited = new LinkedHashSet<>( );
+        Stack<V> stack = new Stack<>( );
+        stack.push( start );
+        while ( !stack.isEmpty( ) )
+        {
+            V node = stack.peek( );
+            if ( !visited.contains( node ) )
+            {
                 Boolean continueTraversal = Boolean.TRUE;
-                try {
-                    continueTraversal = consumer.apply(node, status);
-                } catch (Throwable e) {
-                    log.debug("Error during visit. Node: {}, Message: {}", node, e.getMessage());
-                    status.addError(node, e);
-                    if (!flags.isContinueOnError()) {
+                try
+                {
+                    continueTraversal = consumer.apply( node, status );
+                }
+                catch ( Throwable e )
+                {
+                    log.debug( "Error during visit. Node: {}, Message: {}", node, e.getMessage( ) );
+                    status.addError( node, e );
+                    if ( !flags.isContinueOnError( ) )
+                    {
                         break;
                     }
                 }
-                visited.add(node);
-                log.debug("Visited: " + node);
-                if (!continueTraversal) {
-                    log.debug("Aborting from consumer on node {}", node.getId());
+                visited.add( node );
+                log.debug( "Visited: " + node );
+                if ( !continueTraversal )
+                {
+                    log.debug( "Aborting from consumer on node {}", node.getId( ) );
                     break;
                 }
                 // We traverse using the order of the edges. This is a stack, so the elements that
                 // should be visited first are pushed last on the stack.
-                final List<Edge<V>> outEdges = node.getOutEdges();
-                final int outEdgeMaxIdx = node.getOutEdges().size() - 1;
-                for (int i = outEdgeMaxIdx; i >= 0; i--) {
-                    try {
-                        Edge<V> v = outEdges.get(i);
-                        V dest = v.getDestination();
-                        log.debug("Directed destination: {}", dest.getId());
-                        if (!visited.contains(dest)) {
-                            log.debug("Adding to stack {}", dest.getId());
-                            stack.push(dest);
-                        } else if (stack.contains(dest)) {
-                            log.debug("Cycle detected {}", dest.getId());
-                            status.registerCycle(dest);
+                final List<Edge<V>> outEdges = node.getOutEdges( );
+                final int outEdgeMaxIdx = node.getOutEdges( ).size( ) - 1;
+                for ( int i = outEdgeMaxIdx; i >= 0; i-- )
+                {
+                    try
+                    {
+                        Edge<V> v = outEdges.get( i );
+                        V dest = v.getDestination( );
+                        log.debug( "Directed destination: {}", dest.getId( ) );
+                        if ( !visited.contains( dest ) )
+                        {
+                            log.debug( "Adding to stack {}", dest.getId( ) );
+                            stack.push( dest );
                         }
-                    } catch (IndexOutOfBoundsException e) {
-                        log.warn("Modification of graph during traversal of output edges: " + node + " Index: " + i);
+                        else if ( stack.contains( dest ) )
+                        {
+                            log.debug( "Cycle detected {}", dest.getId( ) );
+                            status.registerCycle( dest );
+                        }
+                    }
+                    catch ( IndexOutOfBoundsException e )
+                    {
+                        log.warn( "Modification of graph during traversal of output edges: " + node + " Index: " + i );
                     }
                 }
-                if (!flags.isDirected()) {
-                    final List<Edge<V>> inEdges = node.getInEdges();
-                    final int inEdgeMaxIdx = node.getOutEdges().size() - 1;
-                    for (int i = inEdgeMaxIdx; i >= 0; i--) {
-                        try {
-                            Edge<V> v = inEdges.get(i);
-                            V source = v.getSource();
-                            log.debug("Undirected source: " + v.getSource());
-                            if (!visited.contains(source)) {
-                                stack.push(source);
-                            } else if (stack.contains(source)) {
-                                status.registerCycle(source);
+                if ( !flags.isDirected( ) )
+                {
+                    final List<Edge<V>> inEdges = node.getInEdges( );
+                    final int inEdgeMaxIdx = node.getOutEdges( ).size( ) - 1;
+                    for ( int i = inEdgeMaxIdx; i >= 0; i-- )
+                    {
+                        try
+                        {
+                            Edge<V> v = inEdges.get( i );
+                            V source = v.getSource( );
+                            log.debug( "Undirected source: " + v.getSource( ) );
+                            if ( !visited.contains( source ) )
+                            {
+                                stack.push( source );
                             }
-                        } catch (IndexOutOfBoundsException e) {
-                            log.warn("Modification of graph during traversal of input edges: " + node + " Index: " + i);
+                            else if ( stack.contains( source ) )
+                            {
+                                status.registerCycle( source );
+                            }
+                        }
+                        catch ( IndexOutOfBoundsException e )
+                        {
+                            log.warn( "Modification of graph during traversal of input edges: " + node + " Index: " + i );
                         }
                     }
                 }
-            } else {
-                node = stack.pop();
-                if (!afterChildConsumer.apply(node, status)) {
-                    log.debug("Aborting from after child consumer on node {}", node.getId());
+            }
+            else
+            {
+                node = stack.pop( );
+                if ( !afterChildConsumer.apply( node, status ) )
+                {
+                    log.debug( "Aborting from after child consumer on node {}", node.getId( ) );
                     break;
                 }
             }
@@ -124,17 +158,19 @@ public class Traversal {
         return status;
     }
 
-    public static <V extends Node<V>> TraversalStatus<V> depthFirst(final V start, final BiFunction<V, TraversalStatus<V>, Boolean> consumer,
-                                                                    final TraversalFlags flags) {
-        return depthFirst(start, consumer, (v, s) -> true, flags);
+    public static <V extends Node<V>> TraversalStatus<V> depthFirst( final V start, final BiFunction<V, TraversalStatus<V>, Boolean> consumer,
+                                                                     final TraversalFlags flags )
+    {
+        return depthFirst( start, consumer, ( v, s ) -> true, flags );
     }
 
     /**
      * Same as {@link #depthFirst(Node, BiFunction, TraversalFlags)} but sets the <code>continueOnError</code>
      * parameter to <code>true</code> and <code>directed</code> parameter to <code>true</code>.
      */
-    public static <V extends Node<V>> TraversalStatus<V> depthFirst(V start, BiFunction<V, TraversalStatus<V>, Boolean> consumer) {
-        return depthFirst(start, consumer, new TraversalFlags());
+    public static <V extends Node<V>> TraversalStatus<V> depthFirst( V start, BiFunction<V, TraversalStatus<V>, Boolean> consumer )
+    {
+        return depthFirst( start, consumer, new TraversalFlags( ) );
     }
 
     /**
@@ -146,49 +182,62 @@ public class Traversal {
      * to the other, otherwise, incoming edges are used too.
      * This breadth first algorithm is not able to detect cycles, in a directed graph. Only in undirected.
      *
-     * @param start           the start node
-     * @param consumer        The consumer function. The function must return <code>true</code>, if the traversal should
-     *                        continue, otherwise <code>false</code>
-     * @param flags flags that control traversal behaviour
+     * @param start    the start node
+     * @param consumer The consumer function. The function must return <code>true</code>, if the traversal should
+     *                 continue, otherwise <code>false</code>
+     * @param flags    flags that control traversal behaviour
      * @param <V>
      * @return The traversal status
      */
-    @SuppressWarnings("Duplicates")
-    public static <V extends Node<V>> TraversalStatus<V> breadthFirst(final V start,
-                                                                      final BiFunction<V, TraversalStatus<V>, Boolean> consumer,
-                                                                      final TraversalFlags flags) {
-        final TraversalStatus<V> status = new TraversalStatus<>();
-        final Set<V> visited = new LinkedHashSet<>();
-        final Queue<V> queue = new LinkedList<>();
-        queue.add(start);
-        while (!queue.isEmpty()) {
-            V node = queue.poll();
-            if (!visited.contains(node)) {
+    @SuppressWarnings( "Duplicates" )
+    public static <V extends Node<V>> TraversalStatus<V> breadthFirst( final V start,
+                                                                       final BiFunction<V, TraversalStatus<V>, Boolean> consumer,
+                                                                       final TraversalFlags flags )
+    {
+        final TraversalStatus<V> status = new TraversalStatus<>( );
+        final Set<V> visited = new LinkedHashSet<>( );
+        final Queue<V> queue = new LinkedList<>( );
+        queue.add( start );
+        while ( !queue.isEmpty( ) )
+        {
+            V node = queue.poll( );
+            if ( !visited.contains( node ) )
+            {
                 Boolean continueTraversal = Boolean.TRUE;
-                try {
-                    continueTraversal = consumer.apply(node, status);
-                } catch (Throwable e) {
-                    log.debug("Error during visit. Node: {}, Message: {}", node, e.getMessage());
-                    status.addError(node, e);
-                    if (!flags.isContinueOnError()) {
+                try
+                {
+                    continueTraversal = consumer.apply( node, status );
+                }
+                catch ( Throwable e )
+                {
+                    log.debug( "Error during visit. Node: {}, Message: {}", node, e.getMessage( ) );
+                    status.addError( node, e );
+                    if ( !flags.isContinueOnError( ) )
+                    {
                         break;
                     }
                 }
-                visited.add(node);
-                log.debug("Visited: " + node);
-                if (!continueTraversal) {
+                visited.add( node );
+                log.debug( "Visited: " + node );
+                if ( !continueTraversal )
+                {
                     break;
                 }
-                for (Edge<V> v : node.getOutEdges()) {
-                    queue.add(v.getDestination());
+                for ( Edge<V> v : node.getOutEdges( ) )
+                {
+                    queue.add( v.getDestination( ) );
                 }
-                if (!flags.isDirected()) {
-                    for (Edge<V> v : node.getInEdges()) {
-                       queue.add(v.getSource());
+                if ( !flags.isDirected( ) )
+                {
+                    for ( Edge<V> v : node.getInEdges( ) )
+                    {
+                        queue.add( v.getSource( ) );
                     }
                 }
-            } else if (!flags.isDirected()) {
-                status.registerCycle(node);
+            }
+            else if ( !flags.isDirected( ) )
+            {
+                status.registerCycle( node );
             }
         }
         return status;
@@ -198,8 +247,9 @@ public class Traversal {
      * Same as {@link #breadthFirst(Node, BiFunction, TraversalFlags)} but sets <code>continueOnError</code> to <code>true</code>
      * and <code>directed</code> to <code>true</code>.
      */
-    public static <V extends Node<V>> TraversalStatus<V> breadthFirst(final V start, final BiFunction<V, TraversalStatus<V>, Boolean> consumer) {
-        return breadthFirst(start, consumer, new TraversalFlags());
+    public static <V extends Node<V>> TraversalStatus<V> breadthFirst( final V start, final BiFunction<V, TraversalStatus<V>, Boolean> consumer )
+    {
+        return breadthFirst( start, consumer, new TraversalFlags( ) );
     }
 
     /**
@@ -210,23 +260,29 @@ public class Traversal {
      * @param <V>
      * @return <code>true</code>, if a cycle was found, otherwise <code>false</code>
      */
-    public static <V extends Node<V>> boolean hasCycle(final V startNode) {
-        TraversalStatus<V> status = depthFirst(startNode, (n, s) -> !s.hasCycles());
-        return status.hasCycles();
+    public static <V extends Node<V>> boolean hasCycle( final V startNode )
+    {
+        TraversalStatus<V> status = depthFirst( startNode, ( n, s ) -> !s.hasCycles( ) );
+        return status.hasCycles( );
     }
 
     /**
      * Traverses the graph and if a cycle was detected returns the node where the cycle was detected.
      * Otherwise returns <code>null</code>
+     *
      * @param startNode the start node, where the traversal starts
      * @param <V>
      * @return the node, where the cycle was detected, otherwise <code>null</code>
      */
-    public static <V extends Node<V>> V findFirstCycleNode(final V startNode) {
-        TraversalStatus<V> status = depthFirst(startNode, (n, s) -> !s.hasCycles());
-        if (status.hasCycles()) {
-            return status.getCycleNodes().get(0);
-        } else {
+    public static <V extends Node<V>> V findFirstCycleNode( final V startNode )
+    {
+        TraversalStatus<V> status = depthFirst( startNode, ( n, s ) -> !s.hasCycles( ) );
+        if ( status.hasCycles( ) )
+        {
+            return status.getCycleNodes( ).get( 0 );
+        }
+        else
+        {
             return null;
         }
     }
@@ -234,16 +290,21 @@ public class Traversal {
     /**
      * Traverses the graph and if a cycle was detected returns the node where the cycle was detected.
      * Otherwise returns <code>null</code>
+     *
      * @param startNode the start node, where the traversal starts
      * @param <V>
      * @return the node, where the cycle was detected, otherwise <code>null</code>
      */
-    public static <V extends Node<V>> List<V> findAllCycleNodes(final V startNode) {
-        TraversalStatus<V> status = depthFirst(startNode, (n, s) -> true);
-        if (status.hasCycles()) {
-            return status.getCycleNodes();
-        } else {
-            return Collections.emptyList();
+    public static <V extends Node<V>> List<V> findAllCycleNodes( final V startNode )
+    {
+        TraversalStatus<V> status = depthFirst( startNode, ( n, s ) -> true );
+        if ( status.hasCycles( ) )
+        {
+            return status.getCycleNodes( );
+        }
+        else
+        {
+            return Collections.emptyList( );
         }
     }
 
@@ -256,10 +317,14 @@ public class Traversal {
      * @param <V>
      * @return A list of sorted nodes
      */
-    public static <V extends Node<V>> List<V> topologialSort(final V startNode) {
-        List<V> nodeList = new ArrayList<>();
-        TraversalStatus<V> status = depthFirst(startNode, (n, s) -> true,
-                (n,s)->{nodeList.add(n); return true;}, new TraversalFlags());
+    public static <V extends Node<V>> List<V> topologialSort( final V startNode )
+    {
+        List<V> nodeList = new ArrayList<>( );
+        TraversalStatus<V> status = depthFirst( startNode, ( n, s ) -> true,
+            ( n, s ) -> {
+                nodeList.add( n );
+                return true;
+            }, new TraversalFlags( ) );
         return nodeList;
     }
 

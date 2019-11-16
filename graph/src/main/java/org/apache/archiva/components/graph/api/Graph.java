@@ -22,13 +22,13 @@ import java.util.List;
 import java.util.Set;
 
 /**
- *
- * A graph is the container for vertices. The vertices are connected by edges. Each vertex and
+ * A graph is the container for nodes. The nodes are connected by edges. Each node and
  * edge instance is coupled to the graph where it was created.
  *
  * @param <V>
  */
-public interface Graph<V extends Node<V>> {
+public interface Graph<V extends Node<V>>
+{
 
     /**
      * Creates a node with the given label in the graph. The id of the node is generated
@@ -39,19 +39,19 @@ public interface Graph<V extends Node<V>> {
      * @param label the label of the new node
      * @return a new node instance with the given label and a generated id
      */
-    V newNode(String label);
+    V newNode( String label );
 
     /**
      * Adds a new node if the id does not exist yet, otherwise returns the node with the given id
      * and the new label set.
      *
-     * @param id the id of the node
+     * @param id    the id of the node
      * @param label the label of the node
      * @return a new node instance or the existing node with the given id
      */
-    V addNode(String id, String label);
+    V addNode( String id, String label );
 
-    void removeNode(V node);
+    void removeNode( V node );
 
 
     /**
@@ -59,62 +59,62 @@ public interface Graph<V extends Node<V>> {
      * even if a edge with the given label exists already.
      * The type is set to {@link StandardRelationType#DEFAULT}
      *
-     * @param label the edge label
-     * @param sourceNode the source node
+     * @param label           the edge label
+     * @param sourceNode      the source node
      * @param destinationNode the destination node
-     * @throws IllegalArgumentException if source or destination is <code>null</code>
      * @return a new edge instance
+     * @throws IllegalArgumentException if source or destination is <code>null</code>
      */
-    Edge<V> newEdge(String label, V sourceNode, V destinationNode) throws IllegalArgumentException;
+    Edge<V> newEdge( String label, V sourceNode, V destinationNode ) throws IllegalArgumentException;
 
     /**
      * Creates a new edge instance with the given label. The method returns always a new edge instance,
      * even if a edge with the given label exists already.
      *
-     * @param type the edge type
-     * @param label the edge label
-     * @param sourceNode the source node
+     * @param type            the edge type
+     * @param label           the edge label
+     * @param sourceNode      the source node
      * @param destinationNode the destination node
-     * @throws IllegalArgumentException if the source or destination node is <code>null</code>
      * @return a new edge instance
+     * @throws IllegalArgumentException if the source or destination node is <code>null</code>
      */
-    Edge<V> newEdge(RelationType type, String label, V sourceNode, V destinationNode) throws IllegalArgumentException;
+    Edge<V> newEdge( RelationType type, String label, V sourceNode, V destinationNode ) throws IllegalArgumentException;
 
     /**
      * Creates a new edge instance with the given id or returns the edge instance with the given id and
      * type.
      * If a edge with the id exists already but with a different type it will throw a {@link IllegalArgumentException}
      *
-     * @param type the type of the edge
-     * @param id the id
-     * @param label the edge label
-     * @param sourceNode the source node
+     * @param type            the type of the edge
+     * @param id              the id
+     * @param label           the edge label
+     * @param sourceNode      the source node
      * @param destinationNode the destination node
-     * @throws IllegalArgumentException if a edge instance with the given id but a different type exists already. Or if
-     * source or destination node is <code>null</code>
      * @return
+     * @throws IllegalArgumentException if a edge instance with the given id but a different type exists already. Or if
+     *                                  source or destination node is <code>null</code>
      */
-    Edge<V> addEdge(RelationType type, String id, String label, V sourceNode, V destinationNode) throws IllegalArgumentException;
+    Edge<V> addEdge( RelationType type, String id, String label, V sourceNode, V destinationNode ) throws IllegalArgumentException;
 
     /**
      * Creates a new edge instance with the given id or returns the edge instance with the given id.
      * If the edge is newly created it will get the type {@link StandardRelationType#DEFAULT}
      *
-     * @param id the id
-     * @param label the edge label
-     * @param sourceNode the source node
+     * @param id              the id
+     * @param label           the edge label
+     * @param sourceNode      the source node
      * @param destinationNode the destination node
-     * @throws IllegalArgumentException if source or destination is <code>null</code>
      * @return
+     * @throws IllegalArgumentException if source or destination is <code>null</code>
      */
-    Edge<V> addEdge(String id, String label, V sourceNode, V destinationNode) throws IllegalArgumentException;
+    Edge<V> addEdge( String id, String label, V sourceNode, V destinationNode ) throws IllegalArgumentException;
 
     /**
      * Removes the edge from the graph and unregisters it from the source and destination
      *
      * @param edge the edge to remove
      */
-    void removeEdge(Edge<V> edge);
+    void removeEdge( Edge<V> edge );
 
     /**
      * Returns the node with the given id
@@ -122,7 +122,7 @@ public interface Graph<V extends Node<V>> {
      * @param id the node id
      * @return the found node, or <code>null</code>, if it does not exist
      */
-    V getNode(String id);
+    V getNode( String id );
 
     /**
      * Finds nodes using a given query. The query syntax depends on the graph implementation.
@@ -130,7 +130,7 @@ public interface Graph<V extends Node<V>> {
      * @param query the query to find nodes
      * @return the found nodes, or a empty list
      */
-    List<V> findNodes(String query);
+    List<V> findNodes( String query );
 
     /**
      * Returns the edge with the given id.
@@ -138,14 +138,14 @@ public interface Graph<V extends Node<V>> {
      * @param id the edge id
      * @return the found edge instance, or <code>null</code>, if it does not exist
      */
-    Edge<V> getEdge(String id);
+    Edge<V> getEdge( String id );
 
     /**
      * Returns all nodes of the graph
+     *
      * @return
      */
-    Set<V> getNodes();
-
+    Set<V> getNodes( );
 
 
 }

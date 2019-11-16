@@ -23,86 +23,92 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class BaseEdgeTest {
+class BaseEdgeTest
+{
 
 
-    private Graph<SimpleNode> graph = new SimpleGraph();
+    private Graph<SimpleNode> graph = new SimpleGraph( );
 
     @Test
-    void getId() {
-        SimpleNode vtx1 = new SimpleNode(graph, "vtx1");
-        SimpleNode vtx2 = new SimpleNode(graph, "vtx2");
+    void getId( )
+    {
+        SimpleNode vtx1 = new SimpleNode( graph, "vtx1" );
+        SimpleNode vtx2 = new SimpleNode( graph, "vtx2" );
 
-        BaseEdge<SimpleNode> edge = new BaseEdge<>(graph, "edge01", vtx1, vtx2);
+        BaseEdge<SimpleNode> edge = new BaseEdge<>( graph, "edge01", vtx1, vtx2 );
 
-        assertNotNull(edge.getId());
-        assertEquals("edge01", edge.getId());
+        assertNotNull( edge.getId( ) );
+        assertEquals( "edge01", edge.getId( ) );
 
 
     }
 
     @Test
-    void getLabel() {
-        SimpleNode vtx1 = new SimpleNode(graph, "vtx1");
-        SimpleNode vtx2 = new SimpleNode(graph, "vtx2");
+    void getLabel( )
+    {
+        SimpleNode vtx1 = new SimpleNode( graph, "vtx1" );
+        SimpleNode vtx2 = new SimpleNode( graph, "vtx2" );
 
-        BaseEdge<SimpleNode> edge = new BaseEdge<>(graph, "edge01", vtx1, vtx2);
+        BaseEdge<SimpleNode> edge = new BaseEdge<>( graph, "edge01", vtx1, vtx2 );
 
-        assertNull(edge.getLabel());
+        assertNull( edge.getLabel( ) );
 
-        edge.setLabel("edgelabel01");
+        edge.setLabel( "edgelabel01" );
 
-        assertEquals("edgelabel01", edge.getLabel());
+        assertEquals( "edgelabel01", edge.getLabel( ) );
 
-        edge.setLabel("Another label with exotic characters äÄö~§");
-        assertEquals("Another label with exotic characters äÄö~§", edge.getLabel());
-
-    }
-
-    @Test
-    void setWeight() {
-        SimpleNode vtx1 = new SimpleNode(graph, "vtx1");
-        SimpleNode vtx2 = new SimpleNode(graph, "vtx2");
-
-        BaseEdge<SimpleNode> edge = new BaseEdge<>(graph, "edge01", vtx1, vtx2);
-
-        assertEquals(1.0, edge.getWeight());
-
-        edge.setWeight(1.5);
-        assertEquals(1.5, edge.getWeight());
-
-
+        edge.setLabel( "Another label with exotic characters äÄö~§" );
+        assertEquals( "Another label with exotic characters äÄö~§", edge.getLabel( ) );
 
     }
 
     @Test
-    void getGraph() {
-        SimpleNode vtx1 = new SimpleNode(graph, "vtx1");
-        SimpleNode vtx2 = new SimpleNode(graph, "vtx2");
+    void setWeight( )
+    {
+        SimpleNode vtx1 = new SimpleNode( graph, "vtx1" );
+        SimpleNode vtx2 = new SimpleNode( graph, "vtx2" );
 
-        BaseEdge<SimpleNode> edge = new BaseEdge<>(graph, "edge01", vtx1, vtx2);
-        assertNotNull(edge.getGraph());
-        assertTrue(edge.getGraph() == graph);
+        BaseEdge<SimpleNode> edge = new BaseEdge<>( graph, "edge01", vtx1, vtx2 );
+
+        assertEquals( 1.0, edge.getWeight( ) );
+
+        edge.setWeight( 1.5 );
+        assertEquals( 1.5, edge.getWeight( ) );
+
+
     }
 
     @Test
-    void getInVertex() {
-        SimpleNode vtx1 = new SimpleNode(graph, "vtx1");
-        SimpleNode vtx2 = new SimpleNode(graph, "vtx2");
+    void getGraph( )
+    {
+        SimpleNode vtx1 = new SimpleNode( graph, "vtx1" );
+        SimpleNode vtx2 = new SimpleNode( graph, "vtx2" );
 
-        BaseEdge<SimpleNode> edge = new BaseEdge<>(graph, "edge01", vtx1, vtx2);
-
-        assertEquals(vtx1, edge.getSource());
+        BaseEdge<SimpleNode> edge = new BaseEdge<>( graph, "edge01", vtx1, vtx2 );
+        assertNotNull( edge.getGraph( ) );
+        assertTrue( edge.getGraph( ) == graph );
     }
 
     @Test
-    void getOutVertex() {
-        SimpleNode vtx1 = new SimpleNode(graph, "vtx1");
-        SimpleNode vtx2 = new SimpleNode(graph, "vtx2");
+    void getInVertex( )
+    {
+        SimpleNode vtx1 = new SimpleNode( graph, "vtx1" );
+        SimpleNode vtx2 = new SimpleNode( graph, "vtx2" );
 
-        BaseEdge<SimpleNode> edge = new BaseEdge<>(graph, "edge01", vtx1, vtx2);
+        BaseEdge<SimpleNode> edge = new BaseEdge<>( graph, "edge01", vtx1, vtx2 );
 
-        assertEquals(vtx2, edge.getDestination());
+        assertEquals( vtx1, edge.getSource( ) );
+    }
+
+    @Test
+    void getOutVertex( )
+    {
+        SimpleNode vtx1 = new SimpleNode( graph, "vtx1" );
+        SimpleNode vtx2 = new SimpleNode( graph, "vtx2" );
+
+        BaseEdge<SimpleNode> edge = new BaseEdge<>( graph, "edge01", vtx1, vtx2 );
+
+        assertEquals( vtx2, edge.getDestination( ) );
     }
 
 }

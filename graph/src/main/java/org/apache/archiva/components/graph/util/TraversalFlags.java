@@ -21,21 +21,25 @@ package org.apache.archiva.components.graph.util;
 /**
  * Flags that control traversal behaviour
  */
-public class TraversalFlags {
+public class TraversalFlags
+{
     private final boolean directed;
     private final boolean continueOnError;
 
-    public TraversalFlags() {
+    public TraversalFlags( )
+    {
         this.directed = true;
         this.continueOnError = true;
     }
 
-    public TraversalFlags(boolean directed, boolean continueOnError) {
+    public TraversalFlags( boolean directed, boolean continueOnError )
+    {
         this.directed = directed;
         this.continueOnError = continueOnError;
     }
 
-    public TraversalFlags(boolean directed, boolean continueOnError, boolean consumeParentAfterChild) {
+    public TraversalFlags( boolean directed, boolean continueOnError, boolean consumeParentAfterChild )
+    {
         this.directed = directed;
         this.continueOnError = continueOnError;
     }
@@ -48,7 +52,8 @@ public class TraversalFlags {
      *
      * @return true, if the graph is directed otherwise false
      */
-    public boolean isDirected() {
+    public boolean isDirected( )
+    {
         return directed;
     }
 
@@ -59,7 +64,8 @@ public class TraversalFlags {
      *
      * @return <code>true</code>, if traversal should continue on error, otherwise <code>false</code>
      */
-    public boolean isContinueOnError() {
+    public boolean isContinueOnError( )
+    {
         return continueOnError;
     }
 

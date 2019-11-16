@@ -18,21 +18,25 @@ package org.apache.archiva.components.graph.api;
  * under the License.
  */
 
-public class VisitError<V extends Node<V>> {
+public class VisitError<V extends Node<V>>
+{
 
     private final Throwable exception;
     private final V node;
 
-    public VisitError(V node, Throwable exception) {
+    public VisitError( V node, Throwable exception )
+    {
         this.exception = exception;
         this.node = node;
     }
 
-    public Throwable getException() {
+    public Throwable getException( )
+    {
         return exception;
     }
 
-    public V getNode() {
+    public V getNode( )
+    {
         return node;
     }
 }

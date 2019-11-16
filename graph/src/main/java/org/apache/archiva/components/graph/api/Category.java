@@ -21,8 +21,9 @@ package org.apache.archiva.components.graph.api;
 /**
  * The category is used to shape the domain by grouping nodes.
  */
-public interface Category {
+public interface Category
+{
 
-    String name();
+    String name( );
 
 }

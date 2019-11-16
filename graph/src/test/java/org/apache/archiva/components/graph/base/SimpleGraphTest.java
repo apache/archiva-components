@@ -24,120 +24,128 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class SimpleGraphTest {
+class SimpleGraphTest
+{
 
     @Test
-    void createNewNode() {
-        SimpleGraph graph = new SimpleGraph();
-        SimpleNode vtx = graph.createNewNode();
-        assertNotNull(vtx);
-        assertNotNull(vtx.getId());
-        assertNotNull(java.util.UUID.fromString(vtx.getId()));
+    void createNewNode( )
+    {
+        SimpleGraph graph = new SimpleGraph( );
+        SimpleNode vtx = graph.createNewNode( );
+        assertNotNull( vtx );
+        assertNotNull( vtx.getId( ) );
+        assertNotNull( java.util.UUID.fromString( vtx.getId( ) ) );
     }
 
     @Test
-    void createNewEdge() {
-        SimpleGraph graph = new SimpleGraph();
-        SimpleNode vtx1 = graph.createNewNode();
-        SimpleNode vtx2 = graph.createNewNode();
-        Edge<SimpleNode> edge = graph.createNewEdge(StandardRelationType.DEFAULT, vtx1, vtx2);
-        assertNotNull(edge);
-        assertNotNull(edge.getId());
-        assertNotNull(java.util.UUID.fromString(edge.getId()));
-        assertEquals(vtx1, edge.getSource());
-        assertEquals(vtx2, edge.getDestination());
+    void createNewEdge( )
+    {
+        SimpleGraph graph = new SimpleGraph( );
+        SimpleNode vtx1 = graph.createNewNode( );
+        SimpleNode vtx2 = graph.createNewNode( );
+        Edge<SimpleNode> edge = graph.createNewEdge( StandardRelationType.DEFAULT, vtx1, vtx2 );
+        assertNotNull( edge );
+        assertNotNull( edge.getId( ) );
+        assertNotNull( java.util.UUID.fromString( edge.getId( ) ) );
+        assertEquals( vtx1, edge.getSource( ) );
+        assertEquals( vtx2, edge.getDestination( ) );
     }
 
 
     @Test
-    void removeEdge() {
-        SimpleGraph graph = new SimpleGraph();
-        SimpleNode vtx1 = graph.createNewNode();
-        SimpleNode vtx2 = graph.createNewNode();
-        Edge<SimpleNode> edge = graph.createNewEdge(StandardRelationType.DEFAULT, vtx1, vtx2);
+    void removeEdge( )
+    {
+        SimpleGraph graph = new SimpleGraph( );
+        SimpleNode vtx1 = graph.createNewNode( );
+        SimpleNode vtx2 = graph.createNewNode( );
+        Edge<SimpleNode> edge = graph.createNewEdge( StandardRelationType.DEFAULT, vtx1, vtx2 );
 
-        graph.removeEdge(edge);
+        graph.removeEdge( edge );
 
-        assertEquals(0, vtx1.getInEdges().size());
-        assertEquals(0, vtx2.getInEdges().size());
-        assertEquals(0, vtx1.getOutEdges().size());
-        assertEquals(0, vtx2.getOutEdges().size());
+        assertEquals( 0, vtx1.getInEdges( ).size( ) );
+        assertEquals( 0, vtx2.getInEdges( ).size( ) );
+        assertEquals( 0, vtx1.getOutEdges( ).size( ) );
+        assertEquals( 0, vtx2.getOutEdges( ).size( ) );
 
     }
 
     @Test
-    void removeNode() {
+    void removeNode( )
+    {
         String label = "root";
-        SimpleGraph graph = new SimpleGraph();
-        SimpleNode node = graph.newNode(label);
+        SimpleGraph graph = new SimpleGraph( );
+        SimpleNode node = graph.newNode( label );
 
-        assertNotNull(node);
-        assertNotNull(graph.getNode(node.getId()));
+        assertNotNull( node );
+        assertNotNull( graph.getNode( node.getId( ) ) );
 
-        graph.removeNode(node);
-        assertNull(graph.getNode(node.getId()));
+        graph.removeNode( node );
+        assertNull( graph.getNode( node.getId( ) ) );
 
     }
 
     @Test
-    void removeNodeWithEdges() {
+    void removeNodeWithEdges( )
+    {
         String label = "root";
-        SimpleGraph graph = new SimpleGraph();
-        SimpleNode node1 = graph.newNode("1");
-        SimpleNode node2 = graph.newNode("2");
-        Edge<SimpleNode> edge1 = graph.newEdge("1:2", node1, node2);
-        Edge<SimpleNode> edge2 = graph.newEdge("2:1", node2, node1);
+        SimpleGraph graph = new SimpleGraph( );
+        SimpleNode node1 = graph.newNode( "1" );
+        SimpleNode node2 = graph.newNode( "2" );
+        Edge<SimpleNode> edge1 = graph.newEdge( "1:2", node1, node2 );
+        Edge<SimpleNode> edge2 = graph.newEdge( "2:1", node2, node1 );
 
 
+        assertNotNull( node1 );
+        assertNotNull( graph.getNode( node1.getId( ) ) );
 
-        assertNotNull(node1);
-        assertNotNull(graph.getNode(node1.getId()));
+        graph.removeNode( node1 );
 
-        graph.removeNode(node1);
+        assertNull( graph.getNode( node1.getId( ) ) );
 
-        assertNull(graph.getNode(node1.getId()));
-
-        assertEquals(0, node2.getInEdges().size());
-        assertEquals(0, node2.getOutEdges().size());
+        assertEquals( 0, node2.getInEdges( ).size( ) );
+        assertEquals( 0, node2.getOutEdges( ).size( ) );
 
 
     }
 
     @Test
-    void getNode() {
+    void getNode( )
+    {
         String label = "root";
-        SimpleGraph graph = new SimpleGraph();
-        SimpleNode node = graph.newNode(label);
+        SimpleGraph graph = new SimpleGraph( );
+        SimpleNode node = graph.newNode( label );
 
-        assertNotNull(node);
-        SimpleNode foundNode = graph.getNode(node.getId());
-        assertNotNull(foundNode);
-        assertEquals(node, foundNode);
-        assertEquals(label, foundNode.getLabel());
+        assertNotNull( node );
+        SimpleNode foundNode = graph.getNode( node.getId( ) );
+        assertNotNull( foundNode );
+        assertEquals( node, foundNode );
+        assertEquals( label, foundNode.getLabel( ) );
 
     }
 
 
     @Test
-    void newNode() {
+    void newNode( )
+    {
         String label = "root";
-        SimpleGraph graph = new SimpleGraph();
-        SimpleNode node = graph.newNode(label);
+        SimpleGraph graph = new SimpleGraph( );
+        SimpleNode node = graph.newNode( label );
 
-        assertNotNull(node);
-        assertEquals(label, node.getLabel());
+        assertNotNull( node );
+        assertEquals( label, node.getLabel( ) );
 
     }
 
     @Test
-    void addNode() {
+    void addNode( )
+    {
         String id = "root";
-        SimpleGraph graph = new SimpleGraph();
-        SimpleNode node = graph.addNode(id, id);
+        SimpleGraph graph = new SimpleGraph( );
+        SimpleNode node = graph.addNode( id, id );
 
-        assertNotNull(node);
-        assertNotNull(graph.getNode(id));
-        assertEquals(id, graph.getNode(id).getLabel());
+        assertNotNull( node );
+        assertNotNull( graph.getNode( id ) );
+        assertEquals( id, graph.getNode( id ).getLabel( ) );
 
     }
 
