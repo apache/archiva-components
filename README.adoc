@@ -1,4 +1,4 @@
-Archiva Redback Documentation - Component Documentation
+Archiva Documentation - Component Documentation
 =======================================================
 
 == Licensing information
