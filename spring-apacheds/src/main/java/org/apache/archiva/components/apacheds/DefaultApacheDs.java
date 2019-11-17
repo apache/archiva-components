@@ -1,4 +1,4 @@
-package org.apache.archiva.redback.components.apacheds;
+package org.apache.archiva.components.apacheds;
 
 /*
  * Licensed to the Apache Software Foundation (ASF) under one

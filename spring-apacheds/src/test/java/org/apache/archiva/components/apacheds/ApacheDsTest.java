@@ -1,4 +1,4 @@
-package org.apache.archiva.redback.components.apacheds;
+package org.apache.archiva.components.apacheds;
 
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -21,7 +21,7 @@ package org.apache.archiva.redback.components.apacheds;
 
 import junit.framework.TestCase;
 import org.apache.directory.shared.ldap.util.AttributeUtils;
-import org.apache.archiva.redback.components.apacheds.ApacheDs;
+import org.apache.archiva.components.apacheds.ApacheDs;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;

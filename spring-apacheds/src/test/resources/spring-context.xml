@@ -23,7 +23,7 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans
            http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
 
-  <bean name="apacheDS" class="org.apache.archiva.redback.components.apacheds.DefaultApacheDs">
+  <bean name="apacheDS" class="org.apache.archiva.components.apacheds.DefaultApacheDs">
     <property name="basedir" value="./target/apacheds"/>
     <property name="port" value="10390"/>
     <property name="enableNetworking" value="true"/>
