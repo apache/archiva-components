@@ -49,6 +49,7 @@
     <module>spring-apacheds</module>
     <module>graph</module>
     <module>spring-registry</module>
+    <module>spring-cache</module>
   </modules> 
 
   <scm>
