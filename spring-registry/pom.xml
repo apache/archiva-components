@@ -74,6 +74,12 @@
         <artifactId>commons-beanutils</artifactId>
         <version>${commons.beanutils.version}</version>
       </dependency>
+
+      <dependency>
+        <groupId>javax.annotation</groupId>
+        <artifactId>javax.annotation-api</artifactId>
+        <version>${javax.annotation.version}</version>
+      </dependency>
     </dependencies>
   </dependencyManagement>
   <dependencies>

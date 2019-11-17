@@ -22,6 +22,7 @@ package org.apache.archiva.components.registry.commons;
 import org.apache.archiva.components.registry.Registry;
 import org.apache.archiva.components.registry.RegistryException;
 import org.apache.archiva.components.registry.RegistryListener;
+import org.apache.commons.configuration.BaseConfiguration;
 import org.apache.commons.configuration.CombinedConfiguration;
 import org.apache.commons.configuration.Configuration;
 import org.apache.commons.configuration.ConfigurationException;
@@ -87,6 +88,7 @@ public class CommonsConfigurationRegistry
     {
         // default constructor
         logger.debug( "empty constructor" );
+        this.configuration = new CombinedConfiguration( );
     }
 
     public CommonsConfigurationRegistry( Configuration configuration )
@@ -326,6 +328,9 @@ public class CommonsConfigurationRegistry
     public void addConfigurationFromResource( String resource, String prefix )
         throws RegistryException
     {
+        if (!(this.configuration instanceof CombinedConfiguration)) {
+            throw new RegistryException( "This is not a combined configuration so cannot add resource" );
+        }
         CombinedConfiguration configuration = (CombinedConfiguration) this.configuration;
         if ( resource.endsWith( ".properties" ) )
         {
