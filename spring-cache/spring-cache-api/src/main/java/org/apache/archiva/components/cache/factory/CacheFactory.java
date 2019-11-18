@@ -40,6 +40,8 @@ import java.util.Properties;
  */
 public class CacheFactory
 {
+    public static final String PROP_FILE = "META-INF/archiva-cache.properties";
+
     static class CacheFactoryHolder
     {
         static CacheFactory instance = new CacheFactory( );
@@ -64,7 +66,7 @@ public class CacheFactory
                 classLoader = ClassLoader.getSystemClassLoader( );
             }
 
-            Enumeration cachePropResources = classLoader.getResources( "META-INF/plexus-cache.properties" );
+            Enumeration cachePropResources = classLoader.getResources( PROP_FILE );
 
             if ( cachePropResources.hasMoreElements( ) )
             {

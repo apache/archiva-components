@@ -23,9 +23,10 @@ import org.apache.archiva.components.cache.Cache;
 import org.apache.archiva.components.cache.CacheException;
 import org.apache.archiva.components.cache.CacheHints;
 import org.apache.archiva.components.cache.factory.CacheCreator;
-import org.apache.commons.lang3.SystemUtils;
 
-import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
 /**
  * EhcacheCreator - runtime creation of an ehcache.
@@ -36,6 +37,7 @@ public class EhcacheCreator
     implements CacheCreator
 {
 
+    @Override
     public Cache createCache( CacheHints hints )
         throws CacheException
     {
@@ -46,19 +48,25 @@ public class EhcacheCreator
         cache.setDiskPersistent( hints.isOverflowToDisk( ) );
         if ( hints.isOverflowToDisk( ) )
         {
-            File overflowPath = null;
+            Path overflowPath;
 
             if ( hints.getDiskOverflowPath( ) != null )
             {
-                overflowPath = hints.getDiskOverflowPath( );
+                overflowPath = hints.getDiskOverflowPath( ).toPath();
             }
             else
             {
-                File tmpDir = SystemUtils.getJavaIoTmpDir( );
-                overflowPath = new File( tmpDir, "ehcache/" + hints.getName( ) );
+                try
+                {
+                    overflowPath = Files.createTempDirectory( "ehcache-archiva-"+hints.getName());
+                }
+                catch ( IOException e )
+                {
+                    throw new CacheException( e );
+                }
             }
 
-            cache.setDiskStorePath( overflowPath.getAbsolutePath( ) );
+            cache.setDiskStorePath( overflowPath.toAbsolutePath( ).toString() );
         }
 
         cache.setMaxElementsInMemory( hints.getMaxElements( ) );
