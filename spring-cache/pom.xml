@@ -31,7 +31,7 @@
   <version>3.0-SNAPSHOT</version>
   <packaging>pom</packaging>
 
-  <description>Cache API with various implementations : simple HashMap, ehcache, oscache. Based on Spring container.
+  <description>Cache API with various implementations : simple HashMap, ehcache. Based on Spring container.
   </description>
   <url>${webUrl}/spring-cache/</url>
   <properties>

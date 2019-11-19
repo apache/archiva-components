@@ -28,7 +28,6 @@
         <ul>
           <li>simple hashmap</li>
           <li>ehcache</li>
-          <li>oscache</li>
         </ul>
       </p>
       <subsection name="Use Case">
