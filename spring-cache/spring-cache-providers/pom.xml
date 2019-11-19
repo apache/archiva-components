@@ -51,6 +51,5 @@
   <modules>
     <module>spring-cache-hashmap</module>
     <module>spring-cache-ehcache</module>
-    <module>spring-cache-oscache</module>
   </modules>
 </project>
