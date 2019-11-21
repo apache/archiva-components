@@ -62,6 +62,7 @@ public class DefaultTaskQueue
     // Queue operations
     // ----------------------------------------------------------------------
 
+    @Override
     public boolean put( Task task )
         throws TaskQueueException
     {
@@ -105,6 +106,7 @@ public class DefaultTaskQueue
         return true;
     }
 
+    @Override
     public Task take( )
         throws TaskQueueException
     {
@@ -138,6 +140,7 @@ public class DefaultTaskQueue
         }
     }
 
+    @Override
     public Task poll( int timeout, TimeUnit timeUnit )
         throws InterruptedException
     {
@@ -145,12 +148,14 @@ public class DefaultTaskQueue
         return queue.poll( timeout, timeUnit );
     }
 
+    @Override
     public boolean remove( Task task )
         throws ClassCastException, NullPointerException
     {
         return queue.remove( task );
     }
 
+    @Override
     public boolean removeAll( List tasks )
         throws ClassCastException, NullPointerException
     {
@@ -162,6 +167,7 @@ public class DefaultTaskQueue
     // Queue Inspection
     // ----------------------------------------------------------------------
 
+    @Override
     public List<Task> getQueueSnapshot( )
         throws TaskQueueException
     {

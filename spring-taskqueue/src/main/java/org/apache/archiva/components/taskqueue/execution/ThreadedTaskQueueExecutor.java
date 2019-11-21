@@ -81,6 +81,7 @@ public class ThreadedTaskQueueExecutor
 
         private boolean done;
 
+        @Override
         public void run( )
         {
             while ( command != SHUTDOWN )
@@ -110,6 +111,7 @@ public class ThreadedTaskQueueExecutor
 
                 Future future = executorService.submit( new Runnable( )
                 {
+                    @Override
                     public void run( )
                     {
                         try
@@ -328,11 +330,13 @@ public class ThreadedTaskQueueExecutor
         }
     }
 
+    @Override
     public Task getCurrentTask( )
     {
         return currentTask;
     }
 
+    @Override
     public synchronized boolean cancelTask( Task task )
     {
         return executorRunnable.cancelTask( task );
