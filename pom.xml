@@ -51,6 +51,7 @@
     <module>graph</module>
     <module>spring-registry</module>
     <module>spring-cache</module>
+    <module>spring-taskqueue</module>
   </modules>
 
   <scm>
@@ -301,6 +302,7 @@
             <exclude>git-sparse-checkout-pattern</exclude>
             <exclude>**/target/**</exclude>
             <exclude>**/*.iml</exclude>
+            <exclude>.editorconfig</exclude>
           </excludes>
         </configuration>
         <executions>
