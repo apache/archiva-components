@@ -21,7 +21,6 @@ package org.apache.archiva.components.apacheds;
 
 import junit.framework.TestCase;
 import org.apache.directory.shared.ldap.util.AttributeUtils;
-import org.apache.archiva.components.apacheds.ApacheDs;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
@@ -45,11 +44,10 @@ import java.io.File;
 /**
  * @author <a href="mailto:trygvis@inamo.no">Trygve Laugst&oslash;l</a>
  * @author Olivier Lamy
- *
  */
 
 @RunWith( SpringJUnit4ClassRunner.class )
-@ContextConfiguration( locations = { "classpath*:/META-INF/spring-context.xml", "classpath*:/spring-context.xml" } )
+@ContextConfiguration( locations = {"classpath*:/META-INF/spring-context.xml", "classpath*:/spring-context.xml"} )
 public class ApacheDsTest
     extends TestCase
 {
@@ -58,28 +56,27 @@ public class ApacheDsTest
     @Inject
     private ApacheDs apacheDs;
 
-    private Logger logger = LoggerFactory.getLogger( getClass() );
+    private Logger logger = LoggerFactory.getLogger( getClass( ) );
 
-    protected void setUp()
+    protected void setUp( )
         throws Exception
     {
-        super.setUp();
+        super.setUp( );
 
 
-                
     }
 
     @Test
-    public void testBasic()
+    public void testBasic( )
         throws Exception
     {
 
         apacheDs.setBasedir( new File( "./target/plexus-home" ) );
-        
-        apacheDs.addSimplePartition( "test", new String[]{"plexus", "codehaus", "org"} ).getSuffix();
-        apacheDs.startServer();
 
-        InitialDirContext context = apacheDs.getAdminContext();
+        apacheDs.addSimplePartition( "test", new String[]{"plexus", "codehaus", "org"} ).getSuffix( );
+        apacheDs.startServer( );
+
+        InitialDirContext context = apacheDs.getAdminContext( );
 
         String cn = "trygvis";
         createUser( context, cn, createDn( cn ) );
@@ -89,50 +86,49 @@ public class ApacheDsTest
         createUser( context, cn, createDn( cn ) );
         assertExist( context, createDn( cn ), "cn", cn );
 
-        SearchControls ctls = new SearchControls();
+        SearchControls ctls = new SearchControls( );
 
         ctls.setDerefLinkFlag( true );
         ctls.setSearchScope( SearchControls.ONELEVEL_SCOPE );
-        ctls.setReturningAttributes( new String[] { "*" } );
+        ctls.setReturningAttributes( new String[]{"*"} );
 
-        String filter = "(&(objectClass=inetOrgPerson)(cn=trygvis))";        
-        
+        String filter = "(&(objectClass=inetOrgPerson)(cn=trygvis))";
+
         NamingEnumeration<SearchResult> results = context.search( suffix, filter, ctls );
-       
-        assertTrue( "a result should have been returned", results.hasMoreElements() );
-        
-        SearchResult result = results.nextElement();
-        
-        Attributes attrs = result.getAttributes();
-        
-        logger.info("Attributes {}", AttributeUtils.toString( attrs ) );
-        
-        assertFalse( "should only have one result returned", results.hasMoreElements() );
-        
-        apacheDs.stopServer();
 
+        assertTrue( "a result should have been returned", results.hasMoreElements( ) );
+
+        SearchResult result = results.nextElement( );
+
+        Attributes attrs = result.getAttributes( );
+
+        logger.info( "Attributes {}", AttributeUtils.toString( attrs ) );
+
+        assertFalse( "should only have one result returned", results.hasMoreElements( ) );
+
+        apacheDs.stopServer( );
 
 
         // ----------------------------------------------------------------------
         // Start it again
         // ----------------------------------------------------------------------
 
-        apacheDs.startServer();
+        apacheDs.startServer( );
 
-        context = apacheDs.getAdminContext();
-        
+        context = apacheDs.getAdminContext( );
+
         assertExist( context, createDn( "trygvis" ), "cn", "trygvis" );
         context.unbind( createDn( "trygvis" ) );
         assertExist( context, createDn( "bolla" ), "cn", "bolla" );
         context.unbind( createDn( "bolla" ) );
 
-        apacheDs.stopServer();
+        apacheDs.stopServer( );
     }
 
     private void createUser( DirContext context, String cn, String dn )
         throws NamingException
     {
-        Attributes attributes = new BasicAttributes();
+        Attributes attributes = new BasicAttributes( );
         BasicAttribute objectClass = new BasicAttribute( "objectClass" );
         objectClass.add( "top" );
         objectClass.add( "inetOrgPerson" );
@@ -150,23 +146,23 @@ public class ApacheDsTest
     private void assertExist( DirContext context, String dn, String attribute, String value )
         throws NamingException
     {
-    	SearchControls ctls = new SearchControls();
+        SearchControls ctls = new SearchControls( );
 
         ctls.setDerefLinkFlag( true );
         ctls.setSearchScope( SearchControls.ONELEVEL_SCOPE );
-        ctls.setReturningAttributes( new String[] { "*" } );
-    	   	
-    	BasicAttributes matchingAttributes = new BasicAttributes();
-    	matchingAttributes.put( attribute, value );
-    	
-    	NamingEnumeration<SearchResult> results = context.search( suffix, matchingAttributes );
-    	//NamingEnumeration<SearchResult> results = context.search( suffix, "(" + attribute + "=" + value + ")", ctls  );
+        ctls.setReturningAttributes( new String[]{"*"} );
 
-        assertTrue( results.hasMoreElements() );    	
-    	SearchResult result = results.nextElement();    	
-    	Attributes attrs = result.getAttributes();    	
-    	Attribute testAttr = attrs.get( attribute );    	
-    	assertEquals( value, testAttr.get() );
-      
+        BasicAttributes matchingAttributes = new BasicAttributes( );
+        matchingAttributes.put( attribute, value );
+
+        NamingEnumeration<SearchResult> results = context.search( suffix, matchingAttributes );
+        //NamingEnumeration<SearchResult> results = context.search( suffix, "(" + attribute + "=" + value + ")", ctls  );
+
+        assertTrue( results.hasMoreElements( ) );
+        SearchResult result = results.nextElement( );
+        Attributes attrs = result.getAttributes( );
+        Attribute testAttr = attrs.get( attribute );
+        assertEquals( value, testAttr.get( ) );
+
     }
 }

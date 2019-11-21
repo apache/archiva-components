@@ -52,13 +52,13 @@ public class EhcacheCreator
 
             if ( hints.getDiskOverflowPath( ) != null )
             {
-                overflowPath = hints.getDiskOverflowPath( ).toPath();
+                overflowPath = hints.getDiskOverflowPath( ).toPath( );
             }
             else
             {
                 try
                 {
-                    overflowPath = Files.createTempDirectory( "ehcache-archiva-"+hints.getName());
+                    overflowPath = Files.createTempDirectory( "ehcache-archiva-" + hints.getName( ) );
                 }
                 catch ( IOException e )
                 {
@@ -66,7 +66,7 @@ public class EhcacheCreator
                 }
             }
 
-            cache.setDiskStorePath( overflowPath.toAbsolutePath( ).toString() );
+            cache.setDiskStorePath( overflowPath.toAbsolutePath( ).toString( ) );
         }
 
         cache.setMaxElementsInMemory( hints.getMaxElements( ) );

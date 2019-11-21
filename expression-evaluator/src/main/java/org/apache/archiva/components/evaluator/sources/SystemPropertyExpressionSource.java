@@ -22,10 +22,9 @@ package org.apache.archiva.components.evaluator.sources;
 import org.apache.archiva.components.evaluator.ExpressionSource;
 
 /**
- * SystemPropertyExpressionSource 
+ * SystemPropertyExpressionSource
  *
  * @author <a href="mailto:joakim@erdfelt.com">Joakim Erdfelt</a>
- *
  */
 public class SystemPropertyExpressionSource
     implements ExpressionSource

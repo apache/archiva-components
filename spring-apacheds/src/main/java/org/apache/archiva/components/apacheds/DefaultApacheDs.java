@@ -44,13 +44,12 @@ import java.util.Set;
 /**
  * @author <a href="mailto:trygvis@inamo.no">Trygve Laugst&oslash;l</a>
  * @author Olivier Lamy
- *
  */
 public class DefaultApacheDs
     implements ApacheDs
 {
 
-    private Logger logger = LoggerFactory.getLogger( getClass() );
+    private Logger logger = LoggerFactory.getLogger( getClass( ) );
 
     // ----------------------------------------------------------------------
     // Configuration
@@ -72,7 +71,7 @@ public class DefaultApacheDs
 
     private MutableServerStartupConfiguration configuration;
 
-    private Set partitionConfigurations = new HashSet();
+    private Set partitionConfigurations = new HashSet( );
 
     // ----------------------------------------------------------------------
     // ApacheDs Implementation
@@ -88,13 +87,13 @@ public class DefaultApacheDs
         this.enableNetworking = enableNetworking;
     }
 
-    public InitialDirContext getAdminContext()
+    public InitialDirContext getAdminContext( )
         throws NamingException
     {
-        assertIsStarted();
+        assertIsStarted( );
 
-        Hashtable environment = new Hashtable( configuration.toJndiEnvironment() );
-        environment.put( Context.INITIAL_CONTEXT_FACTORY, ServerContextFactory.class.getName() );
+        Hashtable environment = new Hashtable( configuration.toJndiEnvironment( ) );
+        environment.put( Context.INITIAL_CONTEXT_FACTORY, ServerContextFactory.class.getName( ) );
         environment.put( Context.SECURITY_PRINCIPAL, "uid=admin,ou=system" );
         environment.put( Context.SECURITY_CREDENTIALS, password );
         environment.put( Context.SECURITY_AUTHENTICATION, "simple" );
@@ -102,13 +101,13 @@ public class DefaultApacheDs
         return new InitialDirContext( environment );
     }
 
-    public InitialDirContext getSystemContext()
+    public InitialDirContext getSystemContext( )
         throws NamingException
     {
-        assertIsStarted();
+        assertIsStarted( );
 
-        Hashtable environment = new Hashtable( configuration.toJndiEnvironment() );
-        environment.put( Context.INITIAL_CONTEXT_FACTORY, ServerContextFactory.class.getName() );
+        Hashtable environment = new Hashtable( configuration.toJndiEnvironment( ) );
+        environment.put( Context.INITIAL_CONTEXT_FACTORY, ServerContextFactory.class.getName( ) );
         environment.put( Context.SECURITY_PRINCIPAL, "uid=admin,ou=system" );
         environment.put( Context.SECURITY_CREDENTIALS, password );
         environment.put( Context.SECURITY_AUTHENTICATION, "simple" );
@@ -119,7 +118,7 @@ public class DefaultApacheDs
     public void addPartition( String name, String root, Set indexedAttributes, Attributes partitionAttributes )
         throws NamingException
     {
-        MutablePartitionConfiguration configuration = new MutablePartitionConfiguration();
+        MutablePartitionConfiguration configuration = new MutablePartitionConfiguration( );
         configuration.setId( name );
         configuration.setSuffix( root );
         configuration.setIndexedAttributes( indexedAttributes );
@@ -130,12 +129,12 @@ public class DefaultApacheDs
     public void addPartition( Partition partition )
         throws NamingException
     {
-        MutablePartitionConfiguration configuration = new MutablePartitionConfiguration();
+        MutablePartitionConfiguration configuration = new MutablePartitionConfiguration( );
 
-        configuration.setId( partition.getName() );
-        configuration.setSuffix( partition.getSuffix() );
-        configuration.setIndexedAttributes( partition.getIndexedAttributes() );
-        configuration.setContextEntry( partition.getContextAttributes() );
+        configuration.setId( partition.getName( ) );
+        configuration.setSuffix( partition.getSuffix( ) );
+        configuration.setIndexedAttributes( partition.getIndexedAttributes( ) );
+        configuration.setContextEntry( partition.getContextAttributes( ) );
         //configuration.setSynchOnWrite( true );
         configuration.setCacheSize( 1 );
         //configuration.setOptimizerEnabled( false );
@@ -150,7 +149,7 @@ public class DefaultApacheDs
             throw new NamingException( "Illegal argument, there has to be at least one domain component." );
         }
 
-        StringBuilder suffix = new StringBuilder();
+        StringBuilder suffix = new StringBuilder( );
 
         for ( int i = 0; i < domainComponents.length; i++ )
         {
@@ -176,11 +175,11 @@ public class DefaultApacheDs
         objectClass.add( "extensibleObject" );
         attributes.put( objectClass );
 
-        Partition partition = new Partition();
+        Partition partition = new Partition( );
         partition.setName( name );
-        partition.setSuffix( suffix.toString() );
+        partition.setSuffix( suffix.toString( ) );
         partition.setContextAttributes( attributes );
-        HashSet set = new HashSet();
+        HashSet set = new HashSet( );
         set.add( "uid" );
         set.add( "cn" );
         partition.setIndexedAttributes( set );
@@ -190,45 +189,45 @@ public class DefaultApacheDs
         return partition;
     }
 
-    public void startServer()
+    public void startServer( )
         throws Exception
     {
         logger.info( "Starting Apache Directory Server server." );
 
-        logger.info( "ApacheDS basedir: {}", basedir.getAbsolutePath() );
+        logger.info( "ApacheDS basedir: {}", basedir.getAbsolutePath( ) );
 
         File logs = new File( basedir, "logs" );
 
-        if ( !logs.exists() && !logs.mkdirs() )
+        if ( !logs.exists( ) && !logs.mkdirs( ) )
         {
-            throw new Exception( "Could not create logs directory: " + logs.getAbsolutePath() );
+            throw new Exception( "Could not create logs directory: " + logs.getAbsolutePath( ) );
         }
 
-        Properties environment = new Properties();
+        Properties environment = new Properties( );
         environment.setProperty( "java.naming.security.authentication", "simple" );
         environment.setProperty( "java.naming.security.principal", "uid=admin,ou=system" );
         if ( password != null )
         {
             environment.setProperty( "java.naming.security.credentials", password );
         }
-        MutableServerStartupConfiguration configuration = new MutableServerStartupConfiguration();
+        MutableServerStartupConfiguration configuration = new MutableServerStartupConfiguration( );
         configuration.setWorkingDirectory( basedir );
         configuration.setAllowAnonymousAccess( true );
         //configuration.setEnableNtp( false );
         //configuration.setEnableKerberos( false );
         //configuration.setEnableChangePassword( false );
-        LdapConfiguration config = new LdapConfiguration();
+        LdapConfiguration config = new LdapConfiguration( );
         config.setIpPort( port );
         configuration.setLdapConfiguration( config );
         configuration.setEnableNetworking( enableNetworking );
         configuration.setSynchPeriodMillis( 100 );
 
-        if ( configuration.getPartitionConfigurations() == null || ( configuration.getPartitionConfigurations() != null
-            && configuration.getPartitionConfigurations().isEmpty() ) )
+        if ( configuration.getPartitionConfigurations( ) == null || ( configuration.getPartitionConfigurations( ) != null
+            && configuration.getPartitionConfigurations( ).isEmpty( ) ) )
         {
             configuration.setPartitionConfigurations( partitionConfigurations );
         }
-        Properties env = new Properties();
+        Properties env = new Properties( );
         env.setProperty( Context.SECURITY_PRINCIPAL, "uid=admin,ou=system" );
         if ( password != null )
         {
@@ -236,8 +235,8 @@ public class DefaultApacheDs
         }
         env.setProperty( Context.SECURITY_AUTHENTICATION, "simple" );
         env.setProperty( Context.PROVIDER_URL, "ou=system" );
-        env.setProperty( Context.INITIAL_CONTEXT_FACTORY, ServerContextFactory.class.getName() );
-        env.putAll( configuration.toJndiEnvironment() );
+        env.setProperty( Context.INITIAL_CONTEXT_FACTORY, ServerContextFactory.class.getName( ) );
+        env.putAll( configuration.toJndiEnvironment( ) );
         InitialDirContext context = new InitialDirContext( env );
 
         //Attributes inetAttributes = context.getAttributes( "cn=inetorgperson,ou=schema" );
@@ -251,7 +250,7 @@ public class DefaultApacheDs
         stopped = false;
     }
 
-    public void stopServer()
+    public void stopServer( )
         throws Exception
     {
         if ( stopped )
@@ -261,40 +260,40 @@ public class DefaultApacheDs
 
         logger.info( "Stopping Apache Directory Server server." );
 
-        sync();
+        sync( );
 
         stopped = true;
 
-        Hashtable env = new Hashtable();
-        env.putAll( new ShutdownConfiguration().toJndiEnvironment() );
+        Hashtable env = new Hashtable( );
+        env.putAll( new ShutdownConfiguration( ).toJndiEnvironment( ) );
         new InitialDirContext( env );
 
         logger.info( "Apache Directory Server server stopped." );
     }
 
-    public boolean isStopped()
+    public boolean isStopped( )
     {
         return stopped;
     }
 
-    public void sync()
+    public void sync( )
         throws Exception
     {
         logger.info( "Sync'ing Apache Directory Server server." );
 
-        Hashtable env = new Hashtable();
-        env.putAll( new SyncConfiguration().toJndiEnvironment() );
+        Hashtable env = new Hashtable( );
+        env.putAll( new SyncConfiguration( ).toJndiEnvironment( ) );
         new InitialDirContext( env );
     }
 
 
-    public void stop()
+    public void stop( )
     {
         try
         {
             if ( !stopped )
             {
-                stopServer();
+                stopServer( );
             }
         }
         catch ( Exception e )
@@ -307,7 +306,7 @@ public class DefaultApacheDs
     //
     // ----------------------------------------------------------------------
 
-    private void assertIsStarted()
+    private void assertIsStarted( )
         throws NamingException
     {
         if ( configuration == null )
@@ -316,7 +315,7 @@ public class DefaultApacheDs
         }
     }
 
-    public int getPort()
+    public int getPort( )
     {
         return port;
     }
@@ -326,7 +325,7 @@ public class DefaultApacheDs
         this.port = port;
     }
 
-    public String getPassword()
+    public String getPassword( )
     {
         return password;
     }

@@ -20,15 +20,15 @@
 
 <project name="Spring Cache Component">
 
-  <publishDate format="yyyy-MM-dd" position="none"/>
+    <publishDate format="yyyy-MM-dd" position="none"/>
 
-  <body>
-    <menu ref="modules"/>
-    <menu ref="reports"/>
-    <menu ref="ASF"/>
-    <breadcrumbs>
-      <item name="Redback Components" href="../index.html"/>
-      <item name="Spring Cache" href="index.html"/>
-    </breadcrumbs>
-  </body>
+    <body>
+        <menu ref="modules"/>
+        <menu ref="reports"/>
+        <menu ref="ASF"/>
+        <breadcrumbs>
+            <item name="Redback Components" href="../index.html"/>
+            <item name="Spring Cache" href="index.html"/>
+        </breadcrumbs>
+    </body>
 </project>

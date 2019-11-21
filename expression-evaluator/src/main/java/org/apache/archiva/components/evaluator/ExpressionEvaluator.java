@@ -25,7 +25,6 @@ import java.util.List;
  * ExpressionEvaluator
  *
  * @author <a href="mailto:joakim@erdfelt.com">Joakim Erdfelt</a>
- *
  */
 public interface ExpressionEvaluator
 {
@@ -51,7 +50,7 @@ public interface ExpressionEvaluator
      *
      * @return the list of expression sources.
      */
-    List getExpressionSourceList();
+    List getExpressionSourceList( );
 
     /**
      * Remove a specific expression source.

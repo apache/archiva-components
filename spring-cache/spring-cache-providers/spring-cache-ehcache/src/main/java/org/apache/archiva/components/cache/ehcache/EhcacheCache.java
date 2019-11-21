@@ -43,7 +43,7 @@ import java.nio.file.Path;
 /**
  * EhcacheCache
  * configuration document available <a href="http://www.ehcache.org/documentation/configuration/index">EhcacheUserGuide</a>
- *
+ * <p>
  * You can use the system property <code>org.apache.archiva.ehcache.diskStore</code> to set the default disk store path.
  *
  * @author <a href="mailto:joakim@erdfelt.com">Joakim Erdfelt</a>
@@ -129,7 +129,7 @@ public class EhcacheCache<V, T>
     /**
      * Location on disk for the ehcache store.
      */
-    private String diskStorePath = System.getProperties().containsKey( EHCACHE_DISK_STORE_PROPERTY ) ?
+    private String diskStorePath = System.getProperties( ).containsKey( EHCACHE_DISK_STORE_PROPERTY ) ?
         System.getProperty( EHCACHE_DISK_STORE_PROPERTY ) :
         System.getProperty( "java.io.tmpdir" ) + "/ehcache-archiva";
 
@@ -172,7 +172,7 @@ public class EhcacheCache<V, T>
      */
     private int maxElementsOnDisk;
 
-   private boolean statisticsEnabled = true;
+    private boolean statisticsEnabled = true;
 
     private Path configurationFile = null;
 
@@ -217,9 +217,11 @@ public class EhcacheCache<V, T>
         else
         {
             Configuration configuration;
-            if (configurationFile != null && Files.exists( configurationFile) && Files.isReadable( configurationFile )) {
+            if ( configurationFile != null && Files.exists( configurationFile ) && Files.isReadable( configurationFile ) )
+            {
                 configuration = ConfigurationFactory.parseConfiguration( configurationFile.toFile( ) );
-            } else
+            }
+            else
             {
                 configuration = new Configuration( );
             }
@@ -251,11 +253,13 @@ public class EhcacheCache<V, T>
                     getDiskExpiryThreadIntervalSeconds( ) ).overflowToOffHeap(
                     isOverflowToOffHeap( ) ).maxEntriesLocalDisk( getMaxElementsOnDisk( ) );
 
-            cacheConfiguration.addPersistence( new PersistenceConfiguration() );
-            if (isDiskPersistent())
+            cacheConfiguration.addPersistence( new PersistenceConfiguration( ) );
+            if ( isDiskPersistent( ) )
             {
                 cacheConfiguration.getPersistenceConfiguration( ).setStrategy( PersistenceConfiguration.Strategy.LOCALTEMPSWAP.name( ) );
-            } else {
+            }
+            else
+            {
                 cacheConfiguration.getPersistenceConfiguration( ).setStrategy( PersistenceConfiguration.Strategy.NONE.name( ) );
             }
 
@@ -380,8 +384,8 @@ public class EhcacheCache<V, T>
     }
 
     /**
-     * @deprecated This flag is ignored. The persistence strategy is always overflow to disk, if on.
      * @return true, or false
+     * @deprecated This flag is ignored. The persistence strategy is always overflow to disk, if on.
      */
     public boolean isOverflowToDisk( )
     {
@@ -470,8 +474,8 @@ public class EhcacheCache<V, T>
     }
 
     /**
-     * @deprecated This flag is ignored. The persistence strategy is always overflow to disk, if on.
      * @param overflowToDisk true, or false
+     * @deprecated This flag is ignored. The persistence strategy is always overflow to disk, if on.
      */
     public void setOverflowToDisk( boolean overflowToDisk )
     {
@@ -579,6 +583,7 @@ public class EhcacheCache<V, T>
 
     /**
      * Returns the path to the configuration file or <code>null</code>, if not set.
+     *
      * @return the path of the configuration file or <code>null</code>
      */
     public Path getConfigurationFile( )

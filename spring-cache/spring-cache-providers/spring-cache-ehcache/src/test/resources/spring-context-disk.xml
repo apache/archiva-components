@@ -24,19 +24,19 @@
            http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
 
 
-  <bean name="cache#test-cache-int-disk" class="org.apache.archiva.components.cache.ehcache.EhcacheCache">
-    <property name="diskExpiryThreadIntervalSeconds" value="600"/>
-    <property name="diskPersistent" value="true"/>
-    <property name="diskStorePath" value="./target/ehcache-test-store-disk-int"/>
-    <property name="eternal" value="true"/>
-    <!--property name="maxElementsInMemory"  value="1"/-->
-    <property name="memoryEvictionPolicy" value="LRU"/>
-    <property name="name" value="test-cache-int-disk"/>
-    <property name="overflowToDisk" value="true"/>
-    <property name="timeToIdleSeconds" value="6000"/>
-    <property name="timeToLiveSeconds" value="3000"/>
-    <property name="maxElementsOnDisk" value="10000"/>
-    <property name="maxBytesLocalHeap" value="1"/>
-  </bean>
+    <bean name="cache#test-cache-int-disk" class="org.apache.archiva.components.cache.ehcache.EhcacheCache">
+        <property name="diskExpiryThreadIntervalSeconds" value="600"/>
+        <property name="diskPersistent" value="true"/>
+        <property name="diskStorePath" value="./target/ehcache-test-store-disk-int"/>
+        <property name="eternal" value="true"/>
+        <!--property name="maxElementsInMemory"  value="1"/-->
+        <property name="memoryEvictionPolicy" value="LRU"/>
+        <property name="name" value="test-cache-int-disk"/>
+        <property name="overflowToDisk" value="true"/>
+        <property name="timeToIdleSeconds" value="6000"/>
+        <property name="timeToLiveSeconds" value="3000"/>
+        <property name="maxElementsOnDisk" value="10000"/>
+        <property name="maxBytesLocalHeap" value="1"/>
+    </bean>
 
 </beans>

@@ -37,7 +37,7 @@ public interface Registry
      *
      * @return the registry contents
      */
-    String dump();
+    String dump( );
 
     /**
      * Get a string value from the registry. If not found, <code>null</code> is returned.
@@ -69,8 +69,7 @@ public interface Registry
      *
      * @param key the key in the registry
      * @return the value
-     * @throws java.util.NoSuchElementException
-     *          if the key is not found
+     * @throws java.util.NoSuchElementException if the key is not found
      */
     int getInt( String key );
 
@@ -96,8 +95,7 @@ public interface Registry
      *
      * @param key the key in the registry
      * @return the value
-     * @throws java.util.NoSuchElementException
-     *          if the key is not found
+     * @throws java.util.NoSuchElementException if the key is not found
      */
     boolean getBoolean( String key );
 
@@ -161,7 +159,7 @@ public interface Registry
      *
      * @return whether the registry contains any elements
      */
-    boolean isEmpty();
+    boolean isEmpty( );
 
     /**
      * Get a list of strings at the given key in the registry.
@@ -211,7 +209,7 @@ public interface Registry
      * @throws RegistryException             if there was a problem saving the registry
      * @throws UnsupportedOperationException if the registry is not writable
      */
-    void save()
+    void save( )
         throws RegistryException, UnsupportedOperationException;
 
     /**
@@ -235,14 +233,15 @@ public interface Registry
      *
      * @return the set of keys
      */
-    Collection<String> getKeys();
+    Collection<String> getKeys( );
 
     /**
      * Get all the keys in this registry.
-     * @since 2.1
+     *
      * @return the set of keys
+     * @since 2.1
      */
-    Collection<String> getFullKeys();
+    Collection<String> getFullKeys( );
 
     /**
      * Remove a keyed element from the registry.
@@ -258,5 +257,5 @@ public interface Registry
      */
     void removeSubset( String key );
 
-    void initialize() throws RegistryException;
+    void initialize( ) throws RegistryException;
 }

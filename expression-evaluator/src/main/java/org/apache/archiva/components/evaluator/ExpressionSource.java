@@ -23,7 +23,6 @@ package org.apache.archiva.components.evaluator;
  * ExpressionSource
  *
  * @author <a href="mailto:joakim@erdfelt.com">Joakim Erdfelt</a>
- *
  */
 public interface ExpressionSource
 {

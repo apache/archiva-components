@@ -15,9 +15,9 @@
   -->
 
 <registry>
-  <listElements>
-    <listElement>1</listElement>
-    <listElement>2</listElement>
-    <listElement>3</listElement>
-  </listElements>
+    <listElements>
+        <listElement>1</listElement>
+        <listElement>2</listElement>
+        <listElement>3</listElement>
+    </listElements>
 </registry>

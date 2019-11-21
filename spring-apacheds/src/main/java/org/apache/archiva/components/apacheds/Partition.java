@@ -21,12 +21,11 @@ package org.apache.archiva.components.apacheds;
 
 import javax.naming.directory.Attributes;
 import javax.naming.directory.BasicAttributes;
-import java.util.Set;
 import java.util.HashSet;
+import java.util.Set;
 
 /**
  * @author <a href="mailto:trygvis@inamo.no">Trygve Laugst&oslash;l</a>
- *
  */
 public class Partition
 {
@@ -38,7 +37,7 @@ public class Partition
 
     private Attributes contextAttributes;
 
-    public String getName()
+    public String getName( )
     {
         return name;
     }
@@ -48,7 +47,7 @@ public class Partition
         this.name = name;
     }
 
-    public String getSuffix()
+    public String getSuffix( )
     {
         return suffix;
     }
@@ -58,11 +57,11 @@ public class Partition
         this.suffix = suffix;
     }
 
-    public Set getIndexedAttributes()
+    public Set getIndexedAttributes( )
     {
         if ( indexedAttributes == null )
         {
-            indexedAttributes = new HashSet();
+            indexedAttributes = new HashSet( );
         }
 
         return indexedAttributes;
@@ -73,11 +72,11 @@ public class Partition
         this.indexedAttributes = indexedAttributes;
     }
 
-    public Attributes getContextAttributes()
+    public Attributes getContextAttributes( )
     {
         if ( contextAttributes == null )
         {
-            contextAttributes = new BasicAttributes();
+            contextAttributes = new BasicAttributes( );
         }
 
         return contextAttributes;

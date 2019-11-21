@@ -49,30 +49,30 @@ public class ConfigurationListenerDelegate
 
     public void configurationChanged( ConfigurationEvent event )
     {
-        if ( event.getPropertyName() != null )
+        if ( event.getPropertyName( ) != null )
         {
-            if ( event.isBeforeUpdate() )
+            if ( event.isBeforeUpdate( ) )
             {
-                listener.beforeConfigurationChange( registry, event.getPropertyName(), event.getPropertyValue() );
+                listener.beforeConfigurationChange( registry, event.getPropertyName( ), event.getPropertyValue( ) );
             }
             else
             {
-                listener.afterConfigurationChange( registry, event.getPropertyName(), event.getPropertyValue() );
+                listener.afterConfigurationChange( registry, event.getPropertyName( ), event.getPropertyValue( ) );
             }
         }
     }
 
     // needed to be sure elements are properly removed from the listeners list
     @Override
-    public int hashCode()
+    public int hashCode( )
     {
-        return this.listener.hashCode();
+        return this.listener.hashCode( );
     }
 
     @Override
     public boolean equals( Object obj )
     {
-        if ( ConfigurationListenerDelegate.class.isAssignableFrom( obj.getClass() ) )
+        if ( ConfigurationListenerDelegate.class.isAssignableFrom( obj.getClass( ) ) )
         {
             ConfigurationListenerDelegate delegate = ConfigurationListenerDelegate.class.cast( obj );
             return delegate.listener == this.listener;

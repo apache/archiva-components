@@ -26,7 +26,7 @@ public class Nested
 {
     private String foo;
 
-    public String getFoo()
+    public String getFoo( )
     {
         return foo;
     }

@@ -27,7 +27,6 @@ import java.util.Set;
 
 /**
  * @author <a href="mailto:trygvis@inamo.no">Trygve Laugst&oslash;l</a>
- *
  */
 public interface ApacheDs
 {
@@ -40,7 +39,7 @@ public interface ApacheDs
 
     void setPort( int port );
 
-    int getPort();
+    int getPort( );
 
     void setEnableNetworking( boolean enableNetworking );
 
@@ -64,24 +63,24 @@ public interface ApacheDs
     // Server control
     // ----------------------------------------------------------------------
 
-    void startServer()
+    void startServer( )
         throws Exception;
 
-    void stopServer()
+    void stopServer( )
         throws Exception;
 
-    void sync()
+    void sync( )
         throws Exception;
 
-    boolean isStopped();
+    boolean isStopped( );
 
     // ----------------------------------------------------------------------
     //
     // ----------------------------------------------------------------------
 
-    InitialDirContext getAdminContext()
+    InitialDirContext getAdminContext( )
         throws NamingException;
 
-    InitialDirContext getSystemContext()
+    InitialDirContext getSystemContext( )
         throws NamingException;
 }

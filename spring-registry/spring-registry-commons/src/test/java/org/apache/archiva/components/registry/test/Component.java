@@ -28,33 +28,33 @@ import java.util.Properties;
  */
 public interface Component
 {
-    String ROLE = Component.class.getName();
+    String ROLE = Component.class.getName( );
 
-    String getKey();
+    String getKey( );
 
-    Properties getProperties();
+    Properties getProperties( );
 
-    String getConfigKey();
+    String getConfigKey( );
 
-    Properties getConfigProperties();
+    Properties getConfigProperties( );
 
-    Map getMap();
+    Map getMap( );
 
-    List getList();
+    List getList( );
 
-    Map getConfigMap();
+    Map getConfigMap( );
 
-    List getConfigList();
+    List getConfigList( );
 
-    Properties getMergeProperties();
+    Properties getMergeProperties( );
 
-    int getNumber();
+    int getNumber( );
 
-    int getConfigNumber();
+    int getConfigNumber( );
 
-    Nested getNested();
+    Nested getNested( );
 
-    Nested getConfigNested();
+    Nested getConfigNested( );
 
-    List getMergeList();
+    List getMergeList( );
 }

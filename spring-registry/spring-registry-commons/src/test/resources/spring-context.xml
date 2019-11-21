@@ -24,26 +24,26 @@
            http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
 
 
-  <alias name="commons-configuration" alias="default"/>
+    <alias name="commons-configuration" alias="default"/>
 
-  <bean name="builder" class="org.apache.archiva.components.registry.commons.CommonsConfigurationRegistry">
-    <property name="properties">
-      <value>
-        <![CDATA[
+    <bean name="builder" class="org.apache.archiva.components.registry.commons.CommonsConfigurationRegistry">
+        <property name="properties">
+            <value>
+                <![CDATA[
           <configuration>
             <xml fileName="org/codehaus/plexus/registry/test.xml"/>
             <properties fileName="org/codehaus/plexus/registry/test.properties" config-name="properties"/>
 
           </configuration>
         ]]>
-      </value>
-    </property>
-  </bean>
+            </value>
+        </property>
+    </bean>
 
-  <bean name="test-save" class="org.apache.archiva.components.registry.commons.CommonsConfigurationRegistry">
-    <property name="properties">
-      <value>
-        <![CDATA[
+    <bean name="test-save" class="org.apache.archiva.components.registry.commons.CommonsConfigurationRegistry">
+        <property name="properties">
+            <value>
+                <![CDATA[
         <configuration>
           <system/>
           <xml fileName="${basedir}/target/test-classes/test-save.xml"
@@ -71,32 +71,32 @@
 
         </configuration>
         ]]>
-      </value>
-    </property>
-  </bean>
+            </value>
+        </property>
+    </bean>
 
-  <bean name="forceCreate" class="org.apache.archiva.components.registry.commons.CommonsConfigurationRegistry">
-    <property name="properties">
-      <value>
-        <![CDATA[
+    <bean name="forceCreate" class="org.apache.archiva.components.registry.commons.CommonsConfigurationRegistry">
+        <property name="properties">
+            <value>
+                <![CDATA[
         <configuration>
           <xml fileName="${basedir}/target/foo-forced" config-name="foo" config-forceCreate="true" config-optional="true"/>
         </configuration>
         ]]>
-      </value>
-    </property>
-  </bean>
+            </value>
+        </property>
+    </bean>
 
-  <bean name="noForceCreate" class="org.apache.archiva.components.registry.commons.CommonsConfigurationRegistry">
-    <property name="properties">
-      <value>
-        <![CDATA[
+    <bean name="noForceCreate" class="org.apache.archiva.components.registry.commons.CommonsConfigurationRegistry">
+        <property name="properties">
+            <value>
+                <![CDATA[
         <configuration>
           <xml fileName="${basedir}/target/foo" config-name="foo" config-optional="true"/>
         </configuration>
         ]]>
-      </value>
-    </property>
-  </bean>
+            </value>
+        </property>
+    </bean>
 
 </beans>

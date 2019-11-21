@@ -24,11 +24,9 @@ import org.apache.archiva.components.evaluator.ExpressionSource;
 import java.util.Properties;
 
 /**
- * PropertiesExpressionSource 
+ * PropertiesExpressionSource
  *
  * @author <a href="mailto:joakim@erdfelt.com">Joakim Erdfelt</a>
- *
- * 
  */
 public class PropertiesExpressionSource
     implements ExpressionSource
@@ -52,7 +50,7 @@ public class PropertiesExpressionSource
         }
     }
 
-    public Properties getProperties()
+    public Properties getProperties( )
     {
         return properties;
     }

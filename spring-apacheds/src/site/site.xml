@@ -18,17 +18,17 @@
   ~ under the License.
   -->
 
-<project name="Spring Apacheds Component" >
+<project name="Spring Apacheds Component">
 
-  <publishDate format="yyyy-MM-dd" position="none" />
+    <publishDate format="yyyy-MM-dd" position="none"/>
 
-  <body>
-    <menu ref="modules" />
-    <menu ref="reports" />
-    <menu ref="ASF" />
-    <breadcrumbs>
-      <item name="Archiva Components" href="../index.html" />
-      <item name="Spring ApacheDs" href="index.html" />
-    </breadcrumbs>
-  </body>
+    <body>
+        <menu ref="modules"/>
+        <menu ref="reports"/>
+        <menu ref="ASF"/>
+        <breadcrumbs>
+            <item name="Archiva Components" href="../index.html"/>
+            <item name="Spring ApacheDs" href="index.html"/>
+        </breadcrumbs>
+    </body>
 </project>

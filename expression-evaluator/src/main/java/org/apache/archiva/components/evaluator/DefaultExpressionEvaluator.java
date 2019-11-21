@@ -28,19 +28,18 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * DefaultExpressionEvaluator 
+ * DefaultExpressionEvaluator
  *
  * @author <a href="mailto:joakim@erdfelt.com">Joakim Erdfelt</a>
- *
  */
 public class DefaultExpressionEvaluator
     implements ExpressionEvaluator
 {
     private List<ExpressionSource> expressionSources;
 
-    public DefaultExpressionEvaluator()
+    public DefaultExpressionEvaluator( )
     {
-        expressionSources = new ArrayList<>();
+        expressionSources = new ArrayList<>( );
     }
 
     public void addExpressionSource( ExpressionSource source )
@@ -51,7 +50,7 @@ public class DefaultExpressionEvaluator
     public String expand( String str )
         throws EvaluatorException
     {
-        return recursiveExpand( str, new ArrayList<String>() );
+        return recursiveExpand( str, new ArrayList<String>( ) );
     }
 
     private String recursiveExpand( String str, List<String> seenExpressions )
@@ -69,7 +68,7 @@ public class DefaultExpressionEvaluator
             return str;
         }
 
-        if ( this.expressionSources.isEmpty() )
+        if ( this.expressionSources.isEmpty( ) )
         {
             throw new EvaluatorException( "Unable to expand expressions with empty ExpressionSource list." );
         }
@@ -79,7 +78,7 @@ public class DefaultExpressionEvaluator
         int offset = 0;
         String expression;
         String value;
-        StringBuilder expanded = new StringBuilder();
+        StringBuilder expanded = new StringBuilder( );
 
         while ( mat.find( offset ) )
         {
@@ -111,21 +110,21 @@ public class DefaultExpressionEvaluator
         if ( expanded.indexOf( "$$" ) >= 0 )
         {
             // Special case for escaped content.
-            return expanded.toString().replaceAll( "\\$\\$", "\\$" );
+            return expanded.toString( ).replaceAll( "\\$\\$", "\\$" );
         }
         else
         {
             // return expanded
-            return expanded.toString();
+            return expanded.toString( );
         }
     }
 
     private String findValue( String expression )
     {
-        String newExpression = expression.trim();
+        String newExpression = expression.trim( );
         if ( newExpression.startsWith( "${" ) && newExpression.endsWith( "}" ) )
         {
-            newExpression = newExpression.substring( 2, newExpression.length() - 1 );
+            newExpression = newExpression.substring( 2, newExpression.length( ) - 1 );
         }
 
         if ( StringUtils.isEmpty( newExpression ) )
@@ -134,10 +133,10 @@ public class DefaultExpressionEvaluator
         }
 
         String value = null;
-        Iterator it = this.expressionSources.iterator();
-        while ( it.hasNext() )
+        Iterator it = this.expressionSources.iterator( );
+        while ( it.hasNext( ) )
         {
-            ExpressionSource source = (ExpressionSource) it.next();
+            ExpressionSource source = (ExpressionSource) it.next( );
             value = source.getExpressionValue( newExpression );
             if ( value != null )
             {
@@ -147,7 +146,7 @@ public class DefaultExpressionEvaluator
         return null;
     }
 
-    public List getExpressionSourceList()
+    public List getExpressionSourceList( )
     {
         return this.expressionSources;
     }

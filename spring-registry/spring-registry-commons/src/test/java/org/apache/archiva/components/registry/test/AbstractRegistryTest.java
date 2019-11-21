@@ -32,11 +32,10 @@ import java.util.NoSuchElementException;
 
 /**
  * @author Olivier Lamy
- *
  * @since 8 feb. 07
  */
 @RunWith( value = SpringJUnit4ClassRunner.class )
-@ContextConfiguration( locations = { "classpath*:/META-INF/spring-context.xml", "classpath*:/spring-context.xml" } )
+@ContextConfiguration( locations = {"classpath*:/META-INF/spring-context.xml", "classpath*:/spring-context.xml"} )
 public abstract class AbstractRegistryTest
     extends TestCase
 {
@@ -44,35 +43,35 @@ public abstract class AbstractRegistryTest
     @Inject
     protected ApplicationContext applicationContext;
 
-    public abstract String getRoleHint();
+    public abstract String getRoleHint( );
 
-    public Registry getRegistry()
+    public Registry getRegistry( )
         throws Exception
     {
-        return getRegistry( getRoleHint() );
+        return getRegistry( getRoleHint( ) );
     }
 
     public Registry getRegistry( String name )
         throws Exception
     {
         Registry registry = applicationContext.getBean( name, Registry.class );
-        registry.initialize();
+        registry.initialize( );
         return registry;
     }
 
     @Test
-    public void testInt()
+    public void testInt( )
         throws Exception
     {
-        Registry registry = getRegistry();
+        Registry registry = getRegistry( );
         assertEquals( "not 2 ", 2, registry.getInt( "two" ) );
     }
 
     @Test
-    public void testIntUnknown()
+    public void testIntUnknown( )
         throws Exception
     {
-        Registry registry = getRegistry();
+        Registry registry = getRegistry( );
         try
         {
             registry.getInt( "unknown" );
@@ -85,36 +84,36 @@ public abstract class AbstractRegistryTest
     }
 
     @Test
-    public void testString()
+    public void testString( )
         throws Exception
     {
-        Registry registry = getRegistry();
+        Registry registry = getRegistry( );
         assertEquals( "not foo ", "foo", registry.getString( "string" ) );
     }
 
     @Test
-    public void testStringUnknown()
+    public void testStringUnknown( )
         throws Exception
     {
-        Registry registry = getRegistry();
+        Registry registry = getRegistry( );
         String value = registry.getString( "unknown" );
         assertNull( "unknow not null", value );
 
     }
 
     @Test
-    public void testBoolean()
+    public void testBoolean( )
         throws Exception
     {
-        Registry registry = getRegistry();
+        Registry registry = getRegistry( );
         assertEquals( "not true ", true, registry.getBoolean( "boolean" ) );
     }
 
     @Test
-    public void testBooleanUnknown()
+    public void testBooleanUnknown( )
         throws Exception
     {
-        Registry registry = getRegistry();
+        Registry registry = getRegistry( );
         try
         {
             registry.getBoolean( "unknown" );
@@ -127,62 +126,62 @@ public abstract class AbstractRegistryTest
     }
 
     @Test
-    public void testIsNotEmpty()
+    public void testIsNotEmpty( )
         throws Exception
     {
-        assertFalse( getRegistry().isEmpty() );
+        assertFalse( getRegistry( ).isEmpty( ) );
     }
 
     @Test
-    public void testGetSubRegistry()
+    public void testGetSubRegistry( )
         throws Exception
     {
-        assertNotNull( getRegistry().getSubset( "subOne" ) );
+        assertNotNull( getRegistry( ).getSubset( "subOne" ) );
     }
 
     @Test
-    public void testgetSubsetValues()
+    public void testgetSubsetValues( )
         throws Exception
     {
-        Registry sub = getRegistry().getSubset( "subOne" );
+        Registry sub = getRegistry( ).getSubset( "subOne" );
         assertNotNull( sub );
         assertEquals( "entryOne", sub.getString( "firstEntry" ) );
         assertEquals( "entryTwo", sub.getString( "secondEntry" ) );
     }
 
     @Test
-    public void testgetSubsetEmpty()
+    public void testgetSubsetEmpty( )
         throws Exception
     {
-        Registry registry = getRegistry();
+        Registry registry = getRegistry( );
         assertNotNull( registry.getSubset( "none" ) );
-        assertTrue( registry.getSubset( "none" ).isEmpty() );
+        assertTrue( registry.getSubset( "none" ).isEmpty( ) );
 
     }
 
     @Test
-    public void testSetBoolean()
+    public void testSetBoolean( )
         throws Exception
     {
-        Registry registry = getRegistry();
+        Registry registry = getRegistry( );
         registry.setBoolean( "keyTrue", true );
         assertTrue( registry.getBoolean( "keyTrue" ) );
     }
 
     @Test
-    public void testSetInt()
+    public void testSetInt( )
         throws Exception
     {
-        Registry registry = getRegistry();
+        Registry registry = getRegistry( );
         registry.setInt( "keyInt", 3 );
         assertEquals( 3, registry.getInt( "keyInt" ) );
     }
 
     @Test
-    public void testSetString()
+    public void testSetString( )
         throws Exception
     {
-        Registry registry = getRegistry();
+        Registry registry = getRegistry( );
         registry.setString( "what", "zorglub" );
         assertEquals( "zorglub", registry.getString( "what" ) );
     }

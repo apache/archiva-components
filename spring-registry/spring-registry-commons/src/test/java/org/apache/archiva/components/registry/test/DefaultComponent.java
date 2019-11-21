@@ -18,6 +18,7 @@ package org.apache.archiva.components.registry.test;
  * specific language governing permissions and limitations
  * under the License.
  */
+
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -56,72 +57,72 @@ public class DefaultComponent
 
     private List mergeList;
 
-    public List getMergeList()
+    public List getMergeList( )
     {
         return mergeList;
     }
 
-    public Nested getConfigNested()
+    public Nested getConfigNested( )
     {
         return configNested;
     }
 
-    public Nested getNested()
+    public Nested getNested( )
     {
         return nested;
     }
 
-    public int getNumber()
+    public int getNumber( )
     {
         return number;
     }
 
-    public int getConfigNumber()
+    public int getConfigNumber( )
     {
         return configNumber;
     }
 
-    public String getConfigKey()
+    public String getConfigKey( )
     {
         return configKey;
     }
 
-    public Properties getConfigProperties()
+    public Properties getConfigProperties( )
     {
         return configProperties;
     }
 
-    public String getKey()
+    public String getKey( )
     {
         return key;
     }
 
-    public Properties getProperties()
+    public Properties getProperties( )
     {
         return properties;
     }
 
-    public Map getMap()
+    public Map getMap( )
     {
         return map;
     }
 
-    public List getList()
+    public List getList( )
     {
         return list;
     }
 
-    public Map getConfigMap()
+    public Map getConfigMap( )
     {
         return configMap;
     }
 
-    public List getConfigList()
+    public List getConfigList( )
     {
         return configList;
     }
 
-    public Properties getMergeProperties()
+    public Properties getMergeProperties( )
     {
         return mergeProperties;
     }

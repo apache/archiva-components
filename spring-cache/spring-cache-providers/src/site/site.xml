@@ -19,10 +19,10 @@
   -->
 <project name="Spring Cache Component">
 
-  <publishDate format="dd MMM yyyy" position="none"/>
-  <version position="left"/>
-  <body>
-    <menu ref="parent"/>
-    <menu ref="modules"/>
-  </body>
+    <publishDate format="dd MMM yyyy" position="none"/>
+    <version position="left"/>
+    <body>
+        <menu ref="parent"/>
+        <menu ref="modules"/>
+    </body>
 </project>

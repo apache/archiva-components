@@ -20,17 +20,16 @@ package org.apache.archiva.components.evaluator;
  */
 
 /**
- * EvaluatorException 
+ * EvaluatorException
  *
  * @author <a href="mailto:joakim@erdfelt.com">Joakim Erdfelt</a>
- *
  */
 public class EvaluatorException
     extends Exception
 {
-    public EvaluatorException()
+    public EvaluatorException( )
     {
-        super();
+        super( );
     }
 
     public EvaluatorException( String message, Throwable cause )

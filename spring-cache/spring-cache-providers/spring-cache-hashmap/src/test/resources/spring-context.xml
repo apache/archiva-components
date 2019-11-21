@@ -24,34 +24,34 @@
            http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
 
 
-  <bean name="cache#hashmap" class="org.apache.archiva.components.cache.hashmap.HashMapCache">
-    <property name="cacheHitRatio" value="1.0"/>
-    <property name="cacheMaxSize" value="0"/>
-    <property name="refreshTime" value="0"/>
-  </bean>
+    <bean name="cache#hashmap" class="org.apache.archiva.components.cache.hashmap.HashMapCache">
+        <property name="cacheHitRatio" value="1.0"/>
+        <property name="cacheMaxSize" value="0"/>
+        <property name="refreshTime" value="0"/>
+    </bean>
 
-  <bean name="cache#never" class="org.apache.archiva.components.cache.hashmap.HashMapCache">
-    <property name="cacheHitRatio" value="1.0"/>
-    <property name="cacheMaxSize" value="0"/>
-    <property name="refreshTime" value="0"/>
-  </bean>
+    <bean name="cache#never" class="org.apache.archiva.components.cache.hashmap.HashMapCache">
+        <property name="cacheHitRatio" value="1.0"/>
+        <property name="cacheMaxSize" value="0"/>
+        <property name="refreshTime" value="0"/>
+    </bean>
 
-  <bean name="cache#alwaysrefresh" class="org.apache.archiva.components.cache.hashmap.HashMapCache">
-    <property name="cacheHitRatio" value="1.0"/>
-    <property name="cacheMaxSize" value="0"/>
-    <property name="refreshTime" value="-1"/>
-  </bean>
+    <bean name="cache#alwaysrefresh" class="org.apache.archiva.components.cache.hashmap.HashMapCache">
+        <property name="cacheHitRatio" value="1.0"/>
+        <property name="cacheMaxSize" value="0"/>
+        <property name="refreshTime" value="-1"/>
+    </bean>
 
-  <bean name="cache#onesecondrefresh" class="org.apache.archiva.components.cache.hashmap.HashMapCache">
-    <property name="cacheHitRatio" value="1.0"/>
-    <property name="cacheMaxSize" value="0"/>
-    <property name="refreshTime" value="1"/>
-  </bean>
+    <bean name="cache#onesecondrefresh" class="org.apache.archiva.components.cache.hashmap.HashMapCache">
+        <property name="cacheHitRatio" value="1.0"/>
+        <property name="cacheMaxSize" value="0"/>
+        <property name="refreshTime" value="1"/>
+    </bean>
 
-  <bean name="cache#twosecondrefresh" class="org.apache.archiva.components.cache.hashmap.HashMapCache">
-    <property name="cacheHitRatio" value="1.0"/>
-    <property name="cacheMaxSize" value="0"/>
-    <property name="refreshTime" value="2"/>
-  </bean>
+    <bean name="cache#twosecondrefresh" class="org.apache.archiva.components.cache.hashmap.HashMapCache">
+        <property name="cacheHitRatio" value="1.0"/>
+        <property name="cacheMaxSize" value="0"/>
+        <property name="refreshTime" value="2"/>
+    </bean>
 
 </beans>

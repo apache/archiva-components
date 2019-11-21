@@ -18,17 +18,17 @@
   ~ under the License.
   -->
 
-<project name="Expression Evaluator" >
+<project name="Expression Evaluator">
 
-  <publishDate format="yyyy-MM-dd" position="none" />
+    <publishDate format="yyyy-MM-dd" position="none"/>
 
-  <body>
-    <menu ref="modules" />
-    <menu ref="reports" />
-    <menu ref="ASF" />
-    <breadcrumbs>
-      <item name="Archiva Components" href="../index.html" />
-      <item name="Expression Evaluator" href="index.html" />
-    </breadcrumbs>
-  </body>
+    <body>
+        <menu ref="modules"/>
+        <menu ref="reports"/>
+        <menu ref="ASF"/>
+        <breadcrumbs>
+            <item name="Archiva Components" href="../index.html"/>
+            <item name="Expression Evaluator" href="index.html"/>
+        </breadcrumbs>
+    </body>
 </project>

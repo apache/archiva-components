@@ -22,7 +22,6 @@ package org.apache.archiva.components.registry.commons;
 import org.apache.archiva.components.registry.Registry;
 import org.apache.archiva.components.registry.RegistryException;
 import org.apache.archiva.components.registry.RegistryListener;
-import org.apache.commons.configuration.BaseConfiguration;
 import org.apache.commons.configuration.CombinedConfiguration;
 import org.apache.commons.configuration.Configuration;
 import org.apache.commons.configuration.ConfigurationException;
@@ -34,7 +33,6 @@ import org.apache.commons.configuration.XMLConfiguration;
 import org.apache.commons.configuration.event.EventSource;
 import org.apache.commons.configuration.tree.DefaultExpressionEngine;
 import org.apache.commons.lang3.StringUtils;
-
 import org.apache.commons.text.StringSubstitutor;
 import org.apache.commons.text.lookup.StringLookupFactory;
 import org.slf4j.Logger;
@@ -328,7 +326,8 @@ public class CommonsConfigurationRegistry
     public void addConfigurationFromResource( String resource, String prefix )
         throws RegistryException
     {
-        if (!(this.configuration instanceof CombinedConfiguration)) {
+        if ( !( this.configuration instanceof CombinedConfiguration ) )
+        {
             throw new RegistryException( "This is not a combined configuration so cannot add resource" );
         }
         CombinedConfiguration configuration = (CombinedConfiguration) this.configuration;

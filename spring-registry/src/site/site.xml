@@ -18,17 +18,17 @@
   ~ under the License.
   -->
 
-<project name="Spring Registry Component" >
+<project name="Spring Registry Component">
 
-  <publishDate format="yyyy-MM-dd" position="none" />
+    <publishDate format="yyyy-MM-dd" position="none"/>
 
-  <body>
-    <menu ref="modules" />
-    <menu ref="reports" />
-    <menu ref="ASF" />
-    <breadcrumbs>
-      <item name="Redback Components" href="../index.html" />
-      <item name="Spring Registry" href="index.html" />
-    </breadcrumbs>
-  </body>
+    <body>
+        <menu ref="modules"/>
+        <menu ref="reports"/>
+        <menu ref="ASF"/>
+        <breadcrumbs>
+            <item name="Redback Components" href="../index.html"/>
+            <item name="Spring Registry" href="index.html"/>
+        </breadcrumbs>
+    </body>
 </project>

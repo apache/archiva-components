@@ -18,19 +18,19 @@
   ~ under the License.
   -->
 <configuration>
-  <appenders>
-    <Console name="console" target="SYSTEM_OUT">
-      <PatternLayout pattern="[%t] %-5p %c %x - %m%n"/>
-    </Console>
-  </appenders>
-  <loggers>
-    <logger name="org.apache.archiva" level="info"/>
-    <logger name="org.apache.archiva.components.apacheds" level="info" />
+    <appenders>
+        <Console name="console" target="SYSTEM_OUT">
+            <PatternLayout pattern="[%t] %-5p %c %x - %m%n"/>
+        </Console>
+    </appenders>
+    <loggers>
+        <logger name="org.apache.archiva" level="info"/>
+        <logger name="org.apache.archiva.components.apacheds" level="info"/>
 
-    <root level="error" includeLocation="true">
-      <appender-ref ref="console"/>
-    </root>
-  </loggers>
+        <root level="error" includeLocation="true">
+            <appender-ref ref="console"/>
+        </root>
+    </loggers>
 </configuration>
 
 
