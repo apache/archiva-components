@@ -21,7 +21,6 @@ package org.apache.archiva.components.taskqueue.execution;
 
 /**
  * @author <a href="mailto:trygvis@inamo.no">Trygve Laugst&oslash;l</a>
- *
  */
 public class TaskExecutionException
     extends Exception

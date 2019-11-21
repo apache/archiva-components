@@ -23,15 +23,14 @@ import org.springframework.stereotype.Service;
 
 /**
  * @author <a href="mailto:trygvis@inamo.no">Trygve Laugst&oslash;l</a>
- *
  */
-@Service("taskEntryEvaluator#a")
+@Service( "taskEntryEvaluator#a" )
 public class ATaskEntryEvaluator
     implements TaskEntryEvaluator
 {
     public boolean evaluate( Task task )
         throws TaskQueueException
     {
-        return ( (BuildProjectTask) task).isPassAEntryEvaluator();
+        return ( (BuildProjectTask) task ).isPassAEntryEvaluator( );
     }
 }

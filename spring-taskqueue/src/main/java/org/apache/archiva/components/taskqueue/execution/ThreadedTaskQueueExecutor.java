@@ -43,7 +43,7 @@ public class ThreadedTaskQueueExecutor
     implements TaskQueueExecutor
 {
 
-    private Logger logger = LoggerFactory.getLogger( getClass() );
+    private Logger logger = LoggerFactory.getLogger( getClass( ) );
 
     private static final int SHUTDOWN = 1;
 
@@ -81,7 +81,7 @@ public class ThreadedTaskQueueExecutor
 
         private boolean done;
 
-        public void run()
+        public void run( )
         {
             while ( command != SHUTDOWN )
             {
@@ -108,9 +108,9 @@ public class ThreadedTaskQueueExecutor
 
                 currentTask = task;
 
-                Future future = executorService.submit( new Runnable()
+                Future future = executorService.submit( new Runnable( )
                 {
-                    public void run()
+                    public void run( )
                     {
                         try
                         {
@@ -118,7 +118,7 @@ public class ThreadedTaskQueueExecutor
                         }
                         catch ( TaskExecutionException e )
                         {
-                            logger.error( "Error executing task: {}", e.getMessage(), e );
+                            logger.error( "Error executing task: {}", e.getMessage( ), e );
                         }
                     }
                 } );
@@ -129,7 +129,7 @@ public class ThreadedTaskQueueExecutor
                 }
                 catch ( ExecutionException e )
                 {
-                    logger.error( "Error executing task: {}", e.getMessage(), e );
+                    logger.error( "Error executing task: {}", e.getMessage( ), e );
                 }
             }
 
@@ -139,9 +139,9 @@ public class ThreadedTaskQueueExecutor
 
             done = true;
 
-            synchronized ( this )
+            synchronized (this)
             {
-                notifyAll();
+                notifyAll( );
             }
         }
 
@@ -154,23 +154,23 @@ public class ThreadedTaskQueueExecutor
             {
                 try
                 {
-                    if ( task.getMaxExecutionTime() == 0 )
+                    if ( task.getMaxExecutionTime( ) == 0 )
                     {
                         logger.debug( "Waiting indefinitely for task to complete" );
-                        future.get();
+                        future.get( );
                         return;
                     }
                     else
                     {
-                        logger.debug( "Waiting at most {} ms for task completion", task.getMaxExecutionTime() );
-                        future.get( task.getMaxExecutionTime(), TimeUnit.MILLISECONDS );
-                        logger.debug( "Task completed within {} ms", task.getMaxExecutionTime() );
+                        logger.debug( "Waiting at most {} ms for task completion", task.getMaxExecutionTime( ) );
+                        future.get( task.getMaxExecutionTime( ), TimeUnit.MILLISECONDS );
+                        logger.debug( "Task completed within {} ms", task.getMaxExecutionTime( ) );
                         return;
                     }
                 }
                 catch ( InterruptedException e )
                 {
-                    switch ( command )
+                    switch (command)
                     {
                         case SHUTDOWN:
                         {
@@ -211,14 +211,14 @@ public class ThreadedTaskQueueExecutor
         {
             if ( !future.cancel( true ) )
             {
-                if ( !future.isDone() && !future.isCancelled() )
+                if ( !future.isDone( ) && !future.isCancelled( ) )
                 {
                     logger.warn( "Unable to cancel task" );
                 }
                 else
                 {
                     logger.warn(
-                        "Task not cancelled (Flags: done: {} cancelled: {})", future.isDone(), future.isCancelled() );
+                        "Task not cancelled (Flags: done: {} cancelled: {})", future.isDone( ), future.isCancelled( ) );
                 }
             }
             else
@@ -227,13 +227,13 @@ public class ThreadedTaskQueueExecutor
             }
         }
 
-        public synchronized void shutdown()
+        public synchronized void shutdown( )
         {
             logger.debug( "Signalling executor thread to shutdown" );
 
             command = SHUTDOWN;
 
-            interrupt();
+            interrupt( );
         }
 
         public synchronized boolean cancelTask( Task task )
@@ -250,7 +250,7 @@ public class ThreadedTaskQueueExecutor
 
                 command = CANCEL_TASK;
 
-                interrupt();
+                interrupt( );
             }
             else
             {
@@ -260,7 +260,7 @@ public class ThreadedTaskQueueExecutor
             return true;
         }
 
-        public boolean isDone()
+        public boolean isDone( )
         {
             return done;
         }
@@ -271,7 +271,7 @@ public class ThreadedTaskQueueExecutor
     // ----------------------------------------------------------------------
 
     @PostConstruct
-    public void start()
+    public void start( )
     {
 
         if ( StringUtils.isBlank( name ) )
@@ -281,29 +281,29 @@ public class ThreadedTaskQueueExecutor
 
         logger.info( "Starting task executor, thread name '{}'.", name );
 
-        this.executorService = Executors.newSingleThreadExecutor();
+        this.executorService = Executors.newSingleThreadExecutor( );
 
-        executorRunnable = new ExecutorRunnable();
+        executorRunnable = new ExecutorRunnable( );
 
         executorRunnable.setDaemon( true );
 
-        executorRunnable.start();
+        executorRunnable.start( );
     }
 
     @PreDestroy
-    public void stop()
+    public void stop( )
     {
-        executorRunnable.shutdown();
+        executorRunnable.shutdown( );
 
         int maxSleep = 10 * 1000; // 10 seconds
 
         int interval = 1000;
 
-        long endTime = System.currentTimeMillis() + maxSleep;
+        long endTime = System.currentTimeMillis( ) + maxSleep;
 
-        while ( !executorRunnable.isDone() && executorRunnable.isAlive() )
+        while ( !executorRunnable.isDone( ) && executorRunnable.isAlive( ) )
         {
-            if ( System.currentTimeMillis() > endTime )
+            if ( System.currentTimeMillis( ) > endTime )
             {
                 logger.warn( "Timeout waiting for executor thread '{}' to stop, aborting", name );
                 break;
@@ -313,7 +313,7 @@ public class ThreadedTaskQueueExecutor
 
             try
             {
-                synchronized ( executorRunnable )
+                synchronized (executorRunnable)
                 {
                     executorRunnable.wait( interval );
                 }
@@ -324,11 +324,11 @@ public class ThreadedTaskQueueExecutor
             }
 
             // notify again, just in case.
-            executorRunnable.shutdown();
+            executorRunnable.shutdown( );
         }
     }
 
-    public Task getCurrentTask()
+    public Task getCurrentTask( )
     {
         return currentTask;
     }
@@ -338,7 +338,7 @@ public class ThreadedTaskQueueExecutor
         return executorRunnable.cancelTask( task );
     }
 
-    public TaskQueue getQueue()
+    public TaskQueue getQueue( )
     {
         return queue;
     }
@@ -348,7 +348,7 @@ public class ThreadedTaskQueueExecutor
         this.queue = queue;
     }
 
-    public TaskExecutor getExecutor()
+    public TaskExecutor getExecutor( )
     {
         return executor;
     }
@@ -358,7 +358,7 @@ public class ThreadedTaskQueueExecutor
         this.executor = executor;
     }
 
-    public String getName()
+    public String getName( )
     {
         return name;
     }

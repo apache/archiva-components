@@ -28,7 +28,6 @@ import java.util.List;
 
 /**
  * @author <a href="mailto:trygvis@inamo.no">Trygve Laugst&oslash;l</a>
- *
  */
 @Service( "taskViabilityEvaluator#build-project" )
 public class BuildProjectTaskViabilityEvaluator
@@ -39,11 +38,11 @@ public class BuildProjectTaskViabilityEvaluator
     {
         BuildProjectTask okTask = null;
 
-        List<Task> toBeRemoved = new ArrayList<>( tasks.size() );
+        List<Task> toBeRemoved = new ArrayList<>( tasks.size( ) );
 
-        for ( Iterator<BuildProjectTask> it = tasks.iterator(); it.hasNext(); )
+        for ( Iterator<BuildProjectTask> it = tasks.iterator( ); it.hasNext( ); )
         {
-            BuildProjectTask buildProjectTask = it.next();
+            BuildProjectTask buildProjectTask = it.next( );
 
             if ( okTask == null )
             {
@@ -52,7 +51,7 @@ public class BuildProjectTaskViabilityEvaluator
                 continue;
             }
 
-            if ( buildProjectTask.getTimestamp() - okTask.getTimestamp() < 100 )
+            if ( buildProjectTask.getTimestamp( ) - okTask.getTimestamp( ) < 100 )
             {
                 toBeRemoved.add( buildProjectTask );
             }

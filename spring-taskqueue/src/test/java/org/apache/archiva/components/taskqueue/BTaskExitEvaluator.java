@@ -23,15 +23,14 @@ import org.springframework.stereotype.Service;
 
 /**
  * @author <a href="mailto:trygvis@inamo.no">Trygve Laugst&oslash;l</a>
- *
  */
-@Service("taskExitEvaluator#b")
+@Service( "taskExitEvaluator#b" )
 public class BTaskExitEvaluator
     implements TaskExitEvaluator
 {
     public boolean evaluate( Task task )
         throws TaskQueueException
     {
-        return ( (BuildProjectTask) task ).isPassBExitEvaluator();
+        return ( (BuildProjectTask) task ).isPassBExitEvaluator( );
     }
 }

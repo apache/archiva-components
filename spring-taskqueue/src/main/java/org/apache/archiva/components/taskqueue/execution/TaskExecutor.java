@@ -23,7 +23,6 @@ import org.apache.archiva.components.taskqueue.Task;
 
 /**
  * @author <a href="mailto:trygvis@inamo.no">Trygve Laugst&oslash;l</a>
- *
  */
 public interface TaskExecutor<T extends Task>
 {

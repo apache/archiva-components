@@ -20,7 +20,6 @@ package org.apache.archiva.components.taskqueue.execution;
  */
 
 import junit.framework.TestCase;
-import org.apache.archiva.components.taskqueue.execution.TaskQueueExecutor;
 import org.apache.archiva.components.taskqueue.BuildProjectTask;
 import org.apache.archiva.components.taskqueue.TaskQueue;
 import org.apache.archiva.components.taskqueue.TaskQueueException;
@@ -36,7 +35,7 @@ import javax.inject.Named;
  * @author <a href="mailto:kenney@apache.org">Kenney Westerhof</a>
  */
 @RunWith( SpringJUnit4ClassRunner.class )
-@ContextConfiguration( locations = { "classpath*:/META-INF/spring-context.xml", "classpath*:/spring-context.xml" } )
+@ContextConfiguration( locations = {"classpath*:/META-INF/spring-context.xml", "classpath*:/spring-context.xml"} )
 public class TaskQueueExecutorTest
     extends TestCase
 {
@@ -52,18 +51,17 @@ public class TaskQueueExecutorTest
 
     /**
      * We run both tests in one test method, to avoid the shutdown of the executor
-     *
      */
     @Test
-    public void testTimeoutWithInterrupts()
+    public void testTimeoutWithInterrupts( )
         throws TaskQueueException, InterruptedException
     {
         BuildProjectTask task = putTask( 2 * 1000, false );
 
         waitForExpectedTaskEnd( task );
 
-        assertTrue( task.isCancelled() );
-        assertFalse( task.isDone() );
+        assertTrue( task.isCancelled( ) );
+        assertFalse( task.isDone( ) );
 
 
         task = putTask( 2 * 1000, true );
@@ -71,8 +69,8 @@ public class TaskQueueExecutorTest
         waitForExpectedTaskEnd( task );
 
         // the thread is killed so the task is neither done nor cancelled
-        assertFalse( task.isCancelled() );
-        assertFalse( task.isDone() );
+        assertFalse( task.isCancelled( ) );
+        assertFalse( task.isDone( ) );
     }
 
     private BuildProjectTask putTask( int executionTime, boolean ignoreInterrupts )
@@ -94,15 +92,15 @@ public class TaskQueueExecutorTest
         // is actually running before starting to count the timeout.
         for ( int i = 0; i < 500; i++ )
         {
-            if ( task.wasStarted() )
+            if ( task.wasStarted( ) )
             {
                 break;
             }
             Thread.sleep( 10 );
         }
 
-        assertTrue( "Task not started in 5 seconds - heavy load?", task.isStarted() );
+        assertTrue( "Task not started in 5 seconds - heavy load?", task.isStarted( ) );
 
-        Thread.sleep( task.getMaxExecutionTime() );
+        Thread.sleep( task.getMaxExecutionTime( ) );
     }
 }

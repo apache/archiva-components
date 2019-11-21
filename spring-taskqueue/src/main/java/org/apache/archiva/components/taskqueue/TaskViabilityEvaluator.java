@@ -24,7 +24,6 @@ import java.util.Collection;
 /**
  * @author <a href="mailto:jason@maven.org">Jason van Zyl</a>
  * @author <a href="mailto:trygvis@inamo.no">Trygve Laugst&oslash;l</a>
- *
  */
 public interface TaskViabilityEvaluator<T extends Task>
 {

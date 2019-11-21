@@ -35,21 +35,20 @@ import java.util.concurrent.TimeUnit;
 /**
  * @author <a href="mailto:jason@maven.org">Jason van Zyl</a>
  * @author <a href="mailto:trygvis@inamo.no">Trygve Laugst&oslash;l</a>
- *
  */
 public class DefaultTaskQueue
     implements TaskQueue
 {
 
-    private Logger logger = LoggerFactory.getLogger( getClass() );
+    private Logger logger = LoggerFactory.getLogger( getClass( ) );
 
-    private List<TaskEntryEvaluator> taskEntryEvaluators = new ArrayList<>();
+    private List<TaskEntryEvaluator> taskEntryEvaluators = new ArrayList<>( );
 
-    private List<TaskExitEvaluator> taskExitEvaluators = new ArrayList<>();
+    private List<TaskExitEvaluator> taskExitEvaluators = new ArrayList<>( );
 
-    private List<TaskViabilityEvaluator> taskViabilityEvaluators = new ArrayList<>();
+    private List<TaskViabilityEvaluator> taskViabilityEvaluators = new ArrayList<>( );
 
-    private BlockingQueue<Task> queue = new LinkedBlockingQueue<>();
+    private BlockingQueue<Task> queue = new LinkedBlockingQueue<>( );
 
     // ----------------------------------------------------------------------
     // Component Lifecycle
@@ -95,9 +94,9 @@ public class DefaultTaskQueue
             Collection<Task> toBeRemoved =
                 taskViabilityEvaluator.evaluate( Collections.unmodifiableCollection( queue ) );
 
-            for ( Iterator<Task> it = toBeRemoved.iterator(); it.hasNext(); )
+            for ( Iterator<Task> it = toBeRemoved.iterator( ); it.hasNext( ); )
             {
-                Task t = it.next();
+                Task t = it.next( );
 
                 queue.remove( t );
             }
@@ -106,13 +105,13 @@ public class DefaultTaskQueue
         return true;
     }
 
-    public Task take()
+    public Task take( )
         throws TaskQueueException
     {
         logger.debug( "take" );
         while ( true )
         {
-            Task task = dequeue();
+            Task task = dequeue( );
 
             if ( task == null )
             {
@@ -163,7 +162,7 @@ public class DefaultTaskQueue
     // Queue Inspection
     // ----------------------------------------------------------------------
 
-    public List<Task> getQueueSnapshot()
+    public List<Task> getQueueSnapshot( )
         throws TaskQueueException
     {
         return Collections.unmodifiableList( new ArrayList( queue ) );
@@ -179,13 +178,13 @@ public class DefaultTaskQueue
         logger.debug( "enqueue success {}", success );
     }
 
-    private Task dequeue()
+    private Task dequeue( )
     {
         logger.debug( "dequeue" );
-        return queue.poll();
+        return queue.poll( );
     }
 
-    public List<TaskEntryEvaluator> getTaskEntryEvaluators()
+    public List<TaskEntryEvaluator> getTaskEntryEvaluators( )
     {
         return taskEntryEvaluators;
     }
@@ -195,7 +194,7 @@ public class DefaultTaskQueue
         this.taskEntryEvaluators = taskEntryEvaluators;
     }
 
-    public List<TaskExitEvaluator> getTaskExitEvaluators()
+    public List<TaskExitEvaluator> getTaskExitEvaluators( )
     {
         return taskExitEvaluators;
     }
@@ -205,7 +204,7 @@ public class DefaultTaskQueue
         this.taskExitEvaluators = taskExitEvaluators;
     }
 
-    public List<TaskViabilityEvaluator> getTaskViabilityEvaluators()
+    public List<TaskViabilityEvaluator> getTaskViabilityEvaluators( )
     {
         return taskViabilityEvaluators;
     }

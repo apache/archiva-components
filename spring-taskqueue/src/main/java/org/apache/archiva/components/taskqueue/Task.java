@@ -22,12 +22,11 @@ package org.apache.archiva.components.taskqueue;
 /**
  * @author <a href="mailto:jason@maven.org">Jason van Zyl</a>
  * @author <a href="mailto:trygvis@inamo.no">Trygve Laugst&oslash;l</a>
- *
  */
 public interface Task
 {
     /**
      * @return the maximum time in milliseconds this task may run before it's cancelled.
      */
-    long getMaxExecutionTime();
+    long getMaxExecutionTime( );
 }

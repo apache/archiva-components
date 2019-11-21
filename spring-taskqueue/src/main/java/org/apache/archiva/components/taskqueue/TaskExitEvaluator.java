@@ -22,7 +22,6 @@ package org.apache.archiva.components.taskqueue;
 /**
  * @author <a href="mailto:jason@maven.org">Jason van Zyl</a>
  * @author <a href="mailto:trygvis@inamo.no">Trygve Laugst&oslash;l</a>
- *
  */
 public interface TaskExitEvaluator<T extends Task>
 {

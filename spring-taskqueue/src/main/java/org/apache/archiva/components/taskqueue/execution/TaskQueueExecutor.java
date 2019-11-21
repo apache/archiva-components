@@ -24,7 +24,6 @@ import org.apache.archiva.components.taskqueue.Task;
 
 /**
  * @author <a href="mailto:trygvis@inamo.no">Trygve Laugst&oslash;l</a>
- *
  */
 public interface TaskQueueExecutor<T extends Task>
 {
@@ -34,7 +33,7 @@ public interface TaskQueueExecutor<T extends Task>
      *
      * @return the currently executing task.
      */
-    T getCurrentTask();
+    T getCurrentTask( );
 
     /**
      * Cancels execution of this task, if it's currently running.

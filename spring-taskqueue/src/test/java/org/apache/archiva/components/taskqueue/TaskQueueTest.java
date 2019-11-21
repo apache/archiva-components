@@ -34,10 +34,9 @@ import java.util.concurrent.LinkedBlockingQueue;
 
 /**
  * @author <a href="mailto:trygvis@inamo.no">Trygve Laugst&oslash;l</a>
- *
  */
 @RunWith( SpringJUnit4ClassRunner.class )
-@ContextConfiguration( locations = { "classpath*:/META-INF/spring-context.xml", "classpath*:/spring-context.xml" } )
+@ContextConfiguration( locations = {"classpath*:/META-INF/spring-context.xml", "classpath*:/spring-context.xml"} )
 public class TaskQueueTest
     extends TestCase
 {
@@ -49,14 +48,14 @@ public class TaskQueueTest
     // NOTE: If we were using a blocking queue, the sleep/continue in the ThreadedTaskQueueExecutor wouldn't
     // be necessary; the queue would block until an element was available.
     @Test
-    public void testEmptyQueue()
+    public void testEmptyQueue( )
         throws Exception
     {
-        assertNull( taskQueue.take() );
+        assertNull( taskQueue.take( ) );
     }
 
     @Test
-    public void testTaskEntryAndExitEvaluators()
+    public void testTaskEntryAndExitEvaluators( )
         throws Exception
     {
         assertTaskIsAccepted( new BuildProjectTask( true, true, true, true ) );
@@ -71,7 +70,7 @@ public class TaskQueueTest
     }
 
     @Test
-    public void testTaskViabilityEvaluators()
+    public void testTaskViabilityEvaluators( )
         throws Exception
     {
         // The first and last task should be accepted
@@ -100,23 +99,23 @@ public class TaskQueueTest
 
         assertTrue( taskQueue.put( task6 ) );
 
-        Task actualTask1 = taskQueue.take();
+        Task actualTask1 = taskQueue.take( );
 
         assertNotNull( actualTask1 );
 
         assertEquals( task1, actualTask1 );
 
-        Task actualTask6 = taskQueue.take();
+        Task actualTask6 = taskQueue.take( );
 
         assertNotNull( actualTask6 );
 
         assertEquals( task6, actualTask6 );
 
-        assertNull( taskQueue.take() );
+        assertNull( taskQueue.take( ) );
     }
 
     @Test
-    public void testRemoveTask()
+    public void testRemoveTask( )
         throws Exception
     {
         Task task = new BuildProjectTask( 0 );
@@ -125,17 +124,17 @@ public class TaskQueueTest
 
         taskQueue.remove( task );
 
-        assertNull( taskQueue.take() );
+        assertNull( taskQueue.take( ) );
     }
 
     @Test
-    public void testRemoveAll()
+    public void testRemoveAll( )
         throws Exception
     {
 
-        BlockingQueue<String> foo = new LinkedBlockingQueue<String>();
-        foo.offer("1");
-        foo.offer("2");
+        BlockingQueue<String> foo = new LinkedBlockingQueue<String>( );
+        foo.offer( "1" );
+        foo.offer( "2" );
 
         Task firstTask = new BuildProjectTask( 110 );
 
@@ -145,9 +144,9 @@ public class TaskQueueTest
 
         taskQueue.put( secondTask );
 
-        assertEquals( 2, taskQueue.getQueueSnapshot().size() );
+        assertEquals( 2, taskQueue.getQueueSnapshot( ).size( ) );
 
-        List<Task> tasks = new ArrayList<>();
+        List<Task> tasks = new ArrayList<>( );
 
         tasks.add( firstTask );
 
@@ -155,7 +154,7 @@ public class TaskQueueTest
 
         taskQueue.removeAll( tasks );
 
-        assertTrue( taskQueue.getQueueSnapshot().isEmpty() );
+        assertTrue( taskQueue.getQueueSnapshot( ).isEmpty( ) );
     }
 
     // ----------------------------------------------------------------------
@@ -167,7 +166,7 @@ public class TaskQueueTest
     {
         taskQueue.put( expectedTask );
 
-        Task actualTask = taskQueue.take();
+        Task actualTask = taskQueue.take( );
 
         assertEquals( expectedTask, actualTask );
     }
@@ -177,7 +176,7 @@ public class TaskQueueTest
     {
         taskQueue.put( expectedTask );
 
-        Task actualTask = taskQueue.take();
+        Task actualTask = taskQueue.take( );
 
         assertNull( actualTask );
     }

@@ -19,8 +19,6 @@ package org.apache.archiva.components.taskqueue.execution;
  * under the License.
  */
 
-import org.apache.archiva.components.taskqueue.execution.TaskExecutionException;
-import org.apache.archiva.components.taskqueue.execution.TaskExecutor;
 import org.apache.archiva.components.taskqueue.BuildProjectTask;
 import org.apache.archiva.components.taskqueue.Task;
 import org.slf4j.Logger;
@@ -30,46 +28,46 @@ import org.springframework.stereotype.Service;
 /**
  * @author <a href="mailto:kenney@apache.org">Kenney Westerhof</a>
  */
-@Service ( "taskExecutor#build-project" )
+@Service( "taskExecutor#build-project" )
 public class BuildProjectTaskExecutor
     implements TaskExecutor
 {
 
-    private Logger logger = LoggerFactory.getLogger( getClass() );
+    private Logger logger = LoggerFactory.getLogger( getClass( ) );
 
     public void executeTask( Task task0 )
         throws TaskExecutionException
     {
         BuildProjectTask task = (BuildProjectTask) task0;
 
-        task.start();
+        task.start( );
 
-        logger.info( "Task:{} cancelled: {}; done: {}", task, task.isCancelled(), task.isDone() );
+        logger.info( "Task:{} cancelled: {}; done: {}", task, task.isCancelled( ), task.isDone( ) );
 
-        long time = System.currentTimeMillis();
+        long time = System.currentTimeMillis( );
 
-        long endTime = task.getExecutionTime() + time;
+        long endTime = task.getExecutionTime( ) + time;
 
-        for ( long timeToSleep = endTime - time; timeToSleep > 0; timeToSleep = endTime - System.currentTimeMillis() )
+        for ( long timeToSleep = endTime - time; timeToSleep > 0; timeToSleep = endTime - System.currentTimeMillis( ) )
         {
             try
             {
-                logger.info( "Sleeping {} ms (interrupts ignored: {} )", timeToSleep, task.ignoreInterrupts() );
+                logger.info( "Sleeping {} ms (interrupts ignored: {} )", timeToSleep, task.ignoreInterrupts( ) );
                 Thread.sleep( timeToSleep );
 
-                task.done();
+                task.done( );
 
-                logger.info( "Task completed normally: {} cancelled: {}; done: {}", task, task.isCancelled(),
-                             task.isDone() );
+                logger.info( "Task completed normally: {} cancelled: {}; done: {}", task, task.isCancelled( ),
+                    task.isDone( ) );
             }
             catch ( InterruptedException e )
             {
-                if ( !task.ignoreInterrupts() )
+                if ( !task.ignoreInterrupts( ) )
                 {
-                    task.cancel();
+                    task.cancel( );
 
-                    logger.info( "Task cancelled: {} cancelled: {} ; done: {}", task, task.isCancelled(),
-                                 task.isDone() );
+                    logger.info( "Task cancelled: {} cancelled: {} ; done: {}", task, task.isCancelled( ),
+                        task.isDone( ) );
 
                     throw new TaskExecutionException( "Never interrupt sleeping threads! :)", e );
                 }

@@ -24,40 +24,42 @@
            http://www.springframework.org/schema/beans/spring-beans-3.0.xsd"
        default-lazy-init="true">
 
-  <bean name="queueExecutor#default" class="org.apache.archiva.components.taskqueue.execution.ThreadedTaskQueueExecutor">
-    <property name="queue" ref="taskQueue#default"/>
-    <property name="executor" ref="taskExecutor#build-project"/>
-    <property name="name" value="default"/>
-  </bean>
+    <bean name="queueExecutor#default"
+          class="org.apache.archiva.components.taskqueue.execution.ThreadedTaskQueueExecutor">
+        <property name="queue" ref="taskQueue#default"/>
+        <property name="executor" ref="taskExecutor#build-project"/>
+        <property name="name" value="default"/>
+    </bean>
 
-  <bean name="queueExecutor#taskQueueTest" class="org.apache.archiva.components.taskqueue.execution.ThreadedTaskQueueExecutor">
-    <property name="queue" ref="taskQueue#taskQueueTest"/>
-    <property name="executor" ref="taskExecutor#build-project"/>
-    <property name="name" value="taskQueueTest"/>
-  </bean>
+    <bean name="queueExecutor#taskQueueTest"
+          class="org.apache.archiva.components.taskqueue.execution.ThreadedTaskQueueExecutor">
+        <property name="queue" ref="taskQueue#taskQueueTest"/>
+        <property name="executor" ref="taskExecutor#build-project"/>
+        <property name="name" value="taskQueueTest"/>
+    </bean>
 
-  <bean abstract="true" name="abstractQueue" class="org.apache.archiva.components.taskqueue.DefaultTaskQueue">
-    <property name="taskEntryEvaluators">
-      <list>
-        <ref bean="taskEntryEvaluator#a"/>
-        <ref bean="taskEntryEvaluator#b"/>
-      </list>
-    </property>
-    <property name="taskExitEvaluators">
-      <list>
-        <ref bean="taskExitEvaluator#a"/>
-        <ref bean="taskExitEvaluator#b"/>
-      </list>
-    </property>
-    <property name="taskViabilityEvaluators">
-      <list>
-        <ref bean="taskViabilityEvaluator#build-project"/>
-      </list>
-    </property>
-  </bean>
+    <bean abstract="true" name="abstractQueue" class="org.apache.archiva.components.taskqueue.DefaultTaskQueue">
+        <property name="taskEntryEvaluators">
+            <list>
+                <ref bean="taskEntryEvaluator#a"/>
+                <ref bean="taskEntryEvaluator#b"/>
+            </list>
+        </property>
+        <property name="taskExitEvaluators">
+            <list>
+                <ref bean="taskExitEvaluator#a"/>
+                <ref bean="taskExitEvaluator#b"/>
+            </list>
+        </property>
+        <property name="taskViabilityEvaluators">
+            <list>
+                <ref bean="taskViabilityEvaluator#build-project"/>
+            </list>
+        </property>
+    </bean>
 
-  <bean name="taskQueue#default" parent="abstractQueue"/>
+    <bean name="taskQueue#default" parent="abstractQueue"/>
 
-  <bean name="taskQueue#taskQueueTest" parent="abstractQueue"/>
+    <bean name="taskQueue#taskQueueTest" parent="abstractQueue"/>
 
 </beans>

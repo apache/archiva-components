@@ -19,11 +19,8 @@ package org.apache.archiva.components.taskqueue;
  * under the License.
  */
 
-import org.apache.archiva.components.taskqueue.Task;
-
 /**
  * @author <a href="mailto:trygvis@inamo.no">Trygve Laugst&oslash;l</a>
- *
  */
 public class BuildProjectTask
     implements Task
@@ -71,32 +68,32 @@ public class BuildProjectTask
         this.timestamp = timestamp;
     }
 
-    public boolean isPassAEntryEvaluator()
+    public boolean isPassAEntryEvaluator( )
     {
         return passAEntryEvaluator;
     }
 
-    public boolean isPassBEntryEvaluator()
+    public boolean isPassBEntryEvaluator( )
     {
         return passBEntryEvaluator;
     }
 
-    public boolean isPassAExitEvaluator()
+    public boolean isPassAExitEvaluator( )
     {
         return passAExitEvaluator;
     }
 
-    public boolean isPassBExitEvaluator()
+    public boolean isPassBExitEvaluator( )
     {
         return passBExitEvaluator;
     }
 
-    public long getTimestamp()
+    public long getTimestamp( )
     {
         return timestamp;
     }
 
-    public long getMaxExecutionTime()
+    public long getMaxExecutionTime( )
     {
         return maxExecutionTime;
     }
@@ -111,37 +108,37 @@ public class BuildProjectTask
         this.executionTime = l;
     }
 
-    public long getExecutionTime()
+    public long getExecutionTime( )
     {
         return executionTime;
     }
 
-    public boolean isCancelled()
+    public boolean isCancelled( )
     {
         return cancelled;
     }
 
-    public void cancel()
+    public void cancel( )
     {
         cancelled = true;
     }
 
-    public void done()
+    public void done( )
     {
         this.done = true;
     }
 
-    public boolean isDone()
+    public boolean isDone( )
     {
         return done;
     }
 
-    public boolean isStarted()
+    public boolean isStarted( )
     {
         return started;
     }
 
-    public void start()
+    public void start( )
     {
         this.started = true;
         this.wasStarted = true;
@@ -152,12 +149,13 @@ public class BuildProjectTask
         this.ignoreInterrupts = ignore;
     }
 
-    public boolean ignoreInterrupts()
+    public boolean ignoreInterrupts( )
     {
         return ignoreInterrupts;
     }
 
-    public boolean wasStarted() {
+    public boolean wasStarted( )
+    {
         return wasStarted;
     }
 }

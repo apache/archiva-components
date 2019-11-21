@@ -27,7 +27,6 @@ import java.util.concurrent.TimeUnit;
 /**
  * @author <a href="mailto:jason@maven.org">Jason van Zyl</a>
  * @author <a href="mailto:trygvis@inamo.no">Trygve Laugst&oslash;l</a>
- *
  */
 public interface TaskQueue<T extends Task>
 {
@@ -43,7 +42,7 @@ public interface TaskQueue<T extends Task>
     boolean put( T task )
         throws TaskQueueException;
 
-    T take()
+    T take( )
         throws TaskQueueException;
 
     boolean remove( T task )
@@ -56,7 +55,7 @@ public interface TaskQueue<T extends Task>
     // Queue Inspection
     // ----------------------------------------------------------------------
 
-    List<T> getQueueSnapshot()
+    List<T> getQueueSnapshot( )
         throws TaskQueueException;
 
     /**
