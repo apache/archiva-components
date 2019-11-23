@@ -283,7 +283,7 @@
             <dependency>
               <groupId>org.asciidoctor</groupId>
               <artifactId>asciidoctor-maven-plugin</artifactId>
-              <version>1.6.0</version>
+              <version>1.5.8</version>
             </dependency>
           </dependencies>
         </plugin>
@@ -354,21 +354,20 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-site-plugin</artifactId>
-        <version>3.8.2</version>
+        <version>3.7.1</version>
+
         <configuration>
-          <skipDeploy>true</skipDeploy>
-          <stagingDirectory>${site.staging.base}/target/staging/components/</stagingDirectory>
           <asciidoc>
-            <!-- optional site-wide AsciiDoc attributes -->
+            <!-- site-wide AsciiDoc attributes -->
             <attributes>
-              <!--
               <icons>font</icons>
-              -->
               <source-highlighter>coderay</source-highlighter>
               <coderay-css>style</coderay-css>
               <toclevels>2</toclevels>
             </attributes>
           </asciidoc>
+          <skipDeploy>true</skipDeploy>
+          <stagingDirectory>${site.staging.base}/target/staging/components/</stagingDirectory>
         </configuration>
         <executions>
           <execution>
@@ -378,6 +377,13 @@
             </goals>
           </execution>
         </executions>
+        <dependencies>
+          <dependency><!-- add Asciidoctor Doxia Parser Module -->
+            <groupId>org.asciidoctor</groupId>
+            <artifactId>asciidoctor-maven-plugin</artifactId>
+            <version>1.5.8</version>
+          </dependency>
+        </dependencies>
       </plugin>
 
 

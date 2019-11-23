@@ -31,6 +31,7 @@
   <groupId>org.apache.archiva.components.registry</groupId>
   <artifactId>archiva-components-spring-registry-api</artifactId>
   <name>Archiva Components :: Spring Registry Api</name>
+  <description>Spring Registry API interfaces and classes.</description>
 
   <properties>
     <site.staging.base>${project.parent.parent.basedir}</site.staging.base>

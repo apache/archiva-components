@@ -30,6 +30,8 @@
 
   <artifactId>archiva-components-spring-registry-commons</artifactId>
   <name>Archiva Components :: Spring Registry Commons</name>
+  <description>Common components and implementation of the Spring Registry API.</description>
+
   <properties>
     <site.staging.base>${project.parent.parent.basedir}</site.staging.base>
   </properties>

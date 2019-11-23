@@ -20,11 +20,11 @@ http://maven.apache.org/guides/mini/guide-apt-format.html
 ////
 
 = Spring Registry Component
-Brett Porter
-7 February 2007
+Brett Porter; Martin Stockhammer <martin_s@apache.org>
+2019-11-23
 
 
-== Spring Registry
+== About
 
 The Spring registry is a single source of external configuration for Spring components and applications.
 It can be used by components to source configuration, knowing that it can be used from within applications

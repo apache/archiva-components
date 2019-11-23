@@ -58,8 +58,10 @@
 
     <body>
         <head>
-            <![CDATA[<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.11.2/css/fontawesome.min.css">]]>
-            <![CDATA[<link rel="stylesheet" href="../css/site.css">]]>
+            <!-- The font-awesome is used by asciidoc -->
+            <![CDATA[    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.5.0/css/font-awesome.min.css">]]>
+            <!-- this points to the parent site.css --> 
+            <![CDATA[    <link rel="stylesheet" href="../css/site.css">]]>
         </head>
 
         <links>
