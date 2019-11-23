@@ -27,7 +27,7 @@
         <menu ref="reports"/>
         <menu ref="ASF"/>
         <breadcrumbs>
-            <item name="Redback Components" href="../index.html"/>
+            <item name="Archiva Components" href="../index.html"/>
             <item name="Spring Cache" href="index.html"/>
         </breadcrumbs>
     </body>

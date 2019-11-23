@@ -34,7 +34,23 @@
   <packaging>pom</packaging>
   <name>Archiva Components :: Parent</name>
 
+  <scm>
+    <connection>scm:git:https://gitbox.apache.org/repos/asf/archiva-components.git</connection>
+    <developerConnection>scm:git:https://gitbox.apache.org/repos/asf/archiva-components.git</developerConnection>
+    <url>https://github.com/apache/archiva-components</url>
+    <tag>HEAD</tag>
+  </scm>
+
+  <distributionManagement>
+    <site>
+      <id>apache.website</id>
+      <url>${siteRepositoryUrl}</url>
+    </site>
+  </distributionManagement>
+
+
   <properties>
+    <site.staging.base>${project.basedir}</site.staging.base>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <webUrl>https://archiva.apache.org/components</webUrl>
     <scmPubCheckoutDirectory>${basedir}/.site-content</scmPubCheckoutDirectory>
@@ -53,19 +69,6 @@
     <module>spring-cache</module>
     <module>spring-taskqueue</module>
   </modules>
-
-  <scm>
-    <connection>scm:git:https://github.com/apache/archiva-components.git</connection>
-    <developerConnection>scm:git:https://github.com/apache/archiva-components.git</developerConnection>
-    <url>https://github.com/apache/archiva-components</url>
-  </scm>
-
-  <distributionManagement>
-    <site>
-      <id>apache.website</id>
-      <url>${siteRepositoryUrl}</url>
-    </site>
-  </distributionManagement>
 
   <repositories>
     <repository>
@@ -276,6 +279,13 @@
           <configuration>
             <skipDeploy>true</skipDeploy>
           </configuration>
+          <dependencies>
+            <dependency>
+              <groupId>org.asciidoctor</groupId>
+              <artifactId>asciidoctor-maven-plugin</artifactId>
+              <version>1.6.0</version>
+            </dependency>
+          </dependencies>
         </plugin>
 
       </plugins>
@@ -344,9 +354,21 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-site-plugin</artifactId>
+        <version>3.8.2</version>
         <configuration>
           <skipDeploy>true</skipDeploy>
-          <stagingDirectory>${site.staging.base}/target/staging/archiva-components/</stagingDirectory>
+          <stagingDirectory>${site.staging.base}/target/staging/components/</stagingDirectory>
+          <asciidoc>
+            <!-- optional site-wide AsciiDoc attributes -->
+            <attributes>
+              <!--
+              <icons>font</icons>
+              -->
+              <source-highlighter>coderay</source-highlighter>
+              <coderay-css>style</coderay-css>
+              <toclevels>2</toclevels>
+            </attributes>
+          </asciidoc>
         </configuration>
         <executions>
           <execution>
@@ -387,6 +409,19 @@
     <profile>
       <id>release</id>
       <build>
+        <pluginManagement>
+          <plugins>
+            <plugin>
+              <groupId>org.apache.maven.plugins</groupId>
+              <artifactId>maven-site-plugin</artifactId>
+              <inherited>true</inherited>
+              <configuration>
+                <skipDeploy>true</skipDeploy>
+                <stagingDirectory>${site.staging.base}/target/staging/components/</stagingDirectory>
+              </configuration>
+            </plugin>
+          </plugins>
+        </pluginManagement>
         <plugins>
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>

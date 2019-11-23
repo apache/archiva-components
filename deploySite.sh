@@ -28,7 +28,7 @@ THIS_DIR=$(dirname $0)
 THIS_DIR=$(readlink -f ${THIS_DIR})
 CONTENT_DIR=".site-content"
 
-SUB_DIR="redback/components"
+SUB_DIR="components"
 
 if [ -d "${CONTENT_DIR}/.git" ]; then
   git -C "${CONTENT_DIR}" fetch origin

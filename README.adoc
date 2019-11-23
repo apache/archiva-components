@@ -54,7 +54,7 @@ For all the commands you have to change to this site directory:
 
 The result can be checked in
 
-  site/target/staging/components/
+  target/staging/components/
 
 with your browser.
 

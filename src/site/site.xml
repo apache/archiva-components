@@ -20,6 +20,8 @@
 
 <project name="Archiva Components">
 
+
+
     <bannerLeft>
         <name>Apache Archiva</name>
         <src>http://archiva.apache.org/images/archiva.png</src>
@@ -40,12 +42,26 @@
             <googleSearch>
                 <sitesearch>http://archiva.apache.org/components</sitesearch>
             </googleSearch>
-        </fluidoSkin>
+            <ohloh>
+              <projectId>6670</projectId>
+              <widget>thin-badge</widget>
+            </ohloh>
+            <gitHub>
+              <projectId>apache/archiva-components</projectId>
+              <ribbonOrientation>right</ribbonOrientation>
+              <ribbonColor>black</ribbonColor>
+            </gitHub>
+         </fluidoSkin>
     </custom>
 
     <publishDate format="yyyy-MM-dd" position="none"/>
 
     <body>
+        <head>
+            <![CDATA[<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.11.2/css/fontawesome.min.css">]]>
+            <![CDATA[<link rel="stylesheet" href="../css/site.css">]]>
+        </head>
+
         <links>
             <item name="Archiva" href="../index.html"/>
         </links>
@@ -57,4 +73,10 @@
             <item name="Archiva" href="../index.html"/>
         </breadcrumbs>
     </body>
+
+    <skin>
+        <groupId>org.apache.maven.skins</groupId>
+        <artifactId>maven-fluido-skin</artifactId>
+        <version>1.7</version>
+    </skin>
 </project>

@@ -1,0 +1,58 @@
+////
+Licensed to the Apache Software Foundation (ASF) under one
+or more contributor license agreements.  See the NOTICE file
+distributed with this work for additional information
+regarding copyright ownership.  The ASF licenses this file
+to you under the Apache License, Version 2.0 (the
+"License"); you may not use this file except in compliance
+with the License.  You may obtain a copy of the License at
+http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing,
+software distributed under the License is distributed on an
+"AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+KIND, either express or implied.  See the License for the
+specific language governing permissions and limitations
+under the License.
+
+NOTE: For help with the syntax of this file, see:
+http://maven.apache.org/guides/mini/guide-apt-format.html
+////
+
+= Spring Cache
+Olivier Lamy, olamy@apache.org;Martin Stockhammer, martin_s@apache.org
+
+== Overview
+Purpose of this module is to provide a cache api with differents providers. Currently the following
+cache providers are contained in the module:
+
+* simple hashmap
+* ehcache
+
+== Use Case
+Typical use case for this API could be the following : you have an functionnal API which create objects by
+using a requirement on a DAO plexus components. Before asking the DAO layer (webServices, Jdbc access ...),
+you want to ask if the data exists in a cache if yes the cached value is return if not the DAO layer is used
+and the result put in the cache for future use.
+
+== Test Case Sample
+Look at the test case `AbstractTestWineService` in the module spring-cache-test. A service called `WineService`
+explains this. The default implementation has two requirements :
+
+* WineDao (DAO layer)
+* CacheBuilder
+
+CacheBuilder can build a cache for the bean you ask (in the sample it's Wine)
+ cacheBuilder.getCache( Wine.class )
+This will use the following algorithm to provide the Cache implementation :
+
+* search the Spring Cache with roleHint `Wine.class.getName()`
+* if not found : lookup the Spring component Cache with name `cache#default`
+* if not found : return `NoCacheCache` implementation in order to prevent NPE
+
+
+== Submodules
+
+#foreach( $module in $project.modules )
+* $module
+#end

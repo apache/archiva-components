@@ -1,0 +1,14 @@
+Archiva Components
+==================
+
+Archiva Components bundles different independent component modules, that are used by Archiva and Redback, and are free
+to use by other projects.
+
+Currently the component project contains the following components:
+
+- link:archiva-components-expression-evaluator/index.html[expression-evaluatior]
+- link:archiva-components-graph/index.html[graph]
+- link:archiva-components-spring-apacheds/index.html[spring-apacheds]
+- link:archiva-components-spring-cache/index.html[spring-cache]
+- link:archiva-components-spring-registry/index.html[spring-registry]
+- link:archiva-components-spring-taskqueue[spring-taskqueue]
