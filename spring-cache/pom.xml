@@ -54,11 +54,11 @@
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-jxr-plugin</artifactId>
+        <artifactId>maven-javadoc-plugin</artifactId>
+        <inherited>false</inherited>
         <reportSets>
           <reportSet>
             <id>aggregate</id>
-            <inherited>false</inherited>
             <reports>
               <report>aggregate</report>
             </reports>
@@ -67,4 +67,5 @@
       </plugin>
     </plugins>
   </reporting>
+
 </project>

@@ -23,3 +23,5 @@ out/
 #netbeans file
 nbactions.xml
 nb-configuration.xml
+
+velocity.log

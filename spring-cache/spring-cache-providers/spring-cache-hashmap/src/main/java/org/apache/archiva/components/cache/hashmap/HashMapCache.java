@@ -343,7 +343,7 @@ public class HashMapCache<V, T>
     }
 
     /**
-     * @return
+     * @return true, if the cache is available, otherwise false
      */
     protected boolean isCacheAvailable( )
     {

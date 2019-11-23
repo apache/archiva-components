@@ -1,0 +1,49 @@
+////
+Licensed to the Apache Software Foundation (ASF) under one
+or more contributor license agreements.  See the NOTICE file
+distributed with this work for additional information
+regarding copyright ownership.  The ASF licenses this file
+to you under the Apache License, Version 2.0 (the
+"License"); you may not use this file except in compliance
+with the License.  You may obtain a copy of the License at
+http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing,
+software distributed under the License is distributed on an
+"AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+KIND, either express or implied.  See the License for the
+specific language governing permissions and limitations
+under the License.
+
+NOTE: For help with the syntax of this file, see:
+http://maven.apache.org/guides/mini/guide-apt-format.html
+////
+
+= Graph
+
+Simple graph implementation and utility for graph traversal.
+
+The implementation provides some base classes and interfaces for graph modeling.
+
+A graph is build from the following components:
+
+* `Node` which represents a single node in the graph model
+* `Edge` that represents the connection between two nodes. Edges have always a direction.
+* `Graph` which references the nodes manages the connections between nodes. Nodes and Edges are
+  always bound to their graph implementation.
+
+The `Traversal` utility allows to traverse the graph using depth-first or breadth-first algorithms.
+It is also able to find loops in the graph.
+
+Nodes can be flagged by categories to easily build subgraphs of certain nodes.
+
+Edges always have a Label, that describes the purpose of the connection.
+
+The implementations provided here are basic implementations and provide no special functionality like
+search or indexing.
+
+
+
+
+
+

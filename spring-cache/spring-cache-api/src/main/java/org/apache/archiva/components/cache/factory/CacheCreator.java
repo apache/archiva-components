@@ -33,7 +33,7 @@ public interface CacheCreator
     /**
      * Create a Cache, initialize it, and return it.
      *
-     * @param cacheHint the cache hints to use.
+     * @param hints the cache hints to use.
      * @return the created cache.
      * @throws CacheException if there was a cache creation error.
      */

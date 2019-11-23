@@ -28,7 +28,7 @@ public interface RelationType
     /**
      * The type name
      *
-     * @return
+     * @return the name of the relation
      */
     String name( );
 }

@@ -102,7 +102,7 @@ public class TraversalStatus<V extends Node<V>>
     /**
      * Returns the number of detected cycles.
      *
-     * @return
+     * @return the number of cycles
      */
     public int getCycleCount( )
     {

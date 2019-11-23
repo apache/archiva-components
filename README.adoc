@@ -1,16 +1,23 @@
-Archiva Documentation - Component Documentation
-
-=======================================================
+= Archiva Components
 
 == Licensing information
 
 Archiva Compontents is developed under the Apache License Version 2.0
 
-
 :toc:
 
 This is project contains multiple (mostly independent) modules used by different projects related
-to Apache Archiva.
+to Apache Archiva. 
+
+The components are:
+
+* expression-evaluator
+* graph
+* spring-apacheds
+* spring-cache
+* spring-registry
+* spring-taskqueue
+
 
 == Development
 

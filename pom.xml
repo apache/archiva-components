@@ -379,6 +379,8 @@
           </execution>
         </executions>
       </plugin>
+
+
     </plugins>
   </build>
 
@@ -398,8 +400,44 @@
       </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-jxr-plugin</artifactId>
-        <version>${jxrVersion}</version>
+        <artifactId>maven-javadoc-plugin</artifactId>
+        <version>${javadocPluginVersion}</version>
+        <inherited>false</inherited>
+        <configuration>
+          <notimestamp>true</notimestamp>
+          <javadocVersion>${javaFullVersion}</javadocVersion>
+          <source>${compiler.source}</source>
+          <doclint>none</doclint>
+          <links>
+            <link>https://docs.oracle.com/javase/8/docs/api</link>
+            <link>http://commons.apache.org/collections/apidocs-COLLECTIONS_3_0/</link>
+            <link>http://commons.apache.org/dbcp/apidocs/</link>
+            <link>http://commons.apache.org/fileupload/apidocs/</link>
+            <link>http://commons.apache.org/httpclient/apidocs/</link>
+            <link>http://commons.apache.org/logging/apidocs/</link>
+            <link>http://commons.apache.org/pool/apidocs/</link>
+            <link>http://logging.apache.org/log4j/${log4j.version}/apidocs/</link>
+            <link>http://jakarta.apache.org/regexp/apidocs/</link>
+          </links>
+
+          <linksource>true</linksource>
+          <show>private</show>
+          <tags>
+            <tag>
+              <name>todo</name>
+              <placement>a</placement>
+              <head>To Do:</head>
+            </tag>
+          </tags>
+        </configuration>
+        <reportSets>
+          <reportSet>
+            <id>aggregate</id>
+            <reports>
+              <report>aggregate</report>
+            </reports>
+          </reportSet>
+        </reportSets>
       </plugin>
     </plugins>
   </reporting>

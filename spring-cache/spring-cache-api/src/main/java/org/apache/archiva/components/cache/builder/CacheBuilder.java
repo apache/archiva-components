@@ -32,13 +32,13 @@ public interface CacheBuilder<V, T>
 {
     /**
      * @param roleHint
-     * @return
+     * @return the cache instance
      */
     Cache<V, T> getCache( String roleHint );
 
     /**
      * @param clazz
-     * @return
+     * @return the cache instance
      */
     Cache<V, T> getCache( Class clazz );
 

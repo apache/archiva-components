@@ -90,7 +90,7 @@ public interface Graph<V extends Node<V>>
      * @param label           the edge label
      * @param sourceNode      the source node
      * @param destinationNode the destination node
-     * @return
+     * @return the newly created edge instance
      * @throws IllegalArgumentException if a edge instance with the given id but a different type exists already. Or if
      *                                  source or destination node is <code>null</code>
      */
@@ -104,7 +104,7 @@ public interface Graph<V extends Node<V>>
      * @param label           the edge label
      * @param sourceNode      the source node
      * @param destinationNode the destination node
-     * @return
+     * @return the newly created edge instance
      * @throws IllegalArgumentException if source or destination is <code>null</code>
      */
     Edge<V> addEdge( String id, String label, V sourceNode, V destinationNode ) throws IllegalArgumentException;
@@ -143,7 +143,7 @@ public interface Graph<V extends Node<V>>
     /**
      * Returns all nodes of the graph
      *
-     * @return
+     * @return the set of nodes that build the graph
      */
     Set<V> getNodes( );
 
