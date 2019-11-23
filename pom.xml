@@ -70,6 +70,7 @@
     <module>spring-registry</module>
     <module>spring-cache</module>
     <module>spring-taskqueue</module>
+    <module>spring-quartz</module>
   </modules>
 
   <repositories>
