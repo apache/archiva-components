@@ -1,5 +1,4 @@
 = Archiva Components
-
 :toc:
 
 == Licensing information
