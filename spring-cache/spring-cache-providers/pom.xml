@@ -30,7 +30,7 @@
   <packaging>pom</packaging>
   <description>Commons Cache API Providers Parent Pom.</description>
   <properties>
-    <site.staging.base>${project.parent.basedir}</site.staging.base>
+    <site.staging.base>${project.parent.parent.basedir}</site.staging.base>
   </properties>
   <url>${webUrl}/spring-cache/${project.artifactId}</url>
 

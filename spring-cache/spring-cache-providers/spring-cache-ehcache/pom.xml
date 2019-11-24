@@ -33,7 +33,7 @@
 
   <description>Commons Cache API : ehcache implementation.</description>
   <properties>
-    <site.staging.base>${project.parent.parent.basedir}</site.staging.base>
+    <site.staging.base>${project.parent.parent.parent.basedir}</site.staging.base>
   </properties>
 
   <url>${webUrl}/spring-cache/spring-cache-providers/${project.artifactId}</url>

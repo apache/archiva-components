@@ -27,12 +27,13 @@
 THIS_DIR=$(dirname $0)
 THIS_DIR=$(readlink -f ${THIS_DIR})
 CONTENT_DIR=".site-content"
+BRANCH="asf-staging-3.0"
 
 SUB_DIR="components"
 
 if [ -d "${CONTENT_DIR}/.git" ]; then
   git -C "${CONTENT_DIR}" fetch origin
-  git -C "${CONTENT_DIR}" reset --hard origin/master
+  git -C "${CONTENT_DIR}" reset --hard origin/${BRANCH}
 fi
 
 echo ">>>> Creating site and reports <<<<" 
@@ -55,7 +56,7 @@ else
   echo "> Aborting now"
   echo "> Running git reset in .site-content directory" 
   git -C "${CONTENT_DIR}" fetch origin
-  git -C "${CONTENT_DIR}" reset --hard origin/master
+  git -C "${CONTENT_DIR}" reset --hard origin/${BRANCH}
   echo ">>>> Finished <<<<"
 fi
 

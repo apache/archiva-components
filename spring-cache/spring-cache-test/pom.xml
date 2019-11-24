@@ -31,7 +31,7 @@
 
   <description>Commons Test Cache API.</description>
   <properties>
-    <site.staging.base>${project.parent.basedir}</site.staging.base>
+    <site.staging.base>${project.parent.parent.basedir}</site.staging.base>
   </properties>
 
   <url>${webUrl}/spring-cache/${project.artifactId}</url>

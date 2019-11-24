@@ -50,7 +50,7 @@
 
 
   <properties>
-    <site.staging.base>${project.basedir}</site.staging.base>
+    <site.staging.base>${project.basedir}/target/staging/components</site.staging.base>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <webUrl>https://archiva.apache.org/components</webUrl>
     <scmPubCheckoutDirectory>${basedir}/.site-content</scmPubCheckoutDirectory>
@@ -272,18 +272,10 @@
         </plugin>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-scm-publish-plugin</artifactId>
-          <configuration>
-            <checkinComment>${project.name}</checkinComment>
-          </configuration>
-        </plugin>
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-site-plugin</artifactId>
           <configuration>
             <skipDeploy>true</skipDeploy>
           </configuration>
-
           <dependencies>
             <dependency>
               <groupId>org.asciidoctor</groupId>
@@ -291,6 +283,30 @@
               <version>${asciidoctor.maven.plugin.version}</version>
             </dependency>
           </dependencies>
+        </plugin>
+
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-javadoc-plugin</artifactId>
+          <version>${javadocPluginVersion}</version>
+          <configuration>
+            <notimestamp>true</notimestamp>
+            <javadocVersion>${javaFullVersion}</javadocVersion>
+            <source>${compiler.source}</source>
+            <doclint>none</doclint>
+            <detectLinks>true</detectLinks>
+            <detectJavaApiLink>true</detectJavaApiLink>
+            <linksource>true</linksource>
+            <show>protected</show>
+            <quiet>true</quiet>
+            <tags>
+              <tag>
+                <name>todo</name>
+                <placement>a</placement>
+                <head>To Do:</head>
+              </tag>
+            </tags>
+          </configuration>
         </plugin>
 
       </plugins>
@@ -336,10 +352,11 @@
         <artifactId>maven-scm-publish-plugin</artifactId>
         <inherited>false</inherited>
         <configuration>
-          <checkinComment>Apache Archiva versioned module docs for ${project.version}</checkinComment>
+          <checkinComment>Apache Archiva Component docs for ${project.version}</checkinComment>
           <skipDeletedFiles>true</skipDeletedFiles>
           <content>${project.build.directory}/staging</content>
           <tryUpdate>true</tryUpdate>
+          <scmBranch>asf-staging-3.0</scmBranch>
           <!--
                     <ignorePathsToDelete>
                       <path>%regex[^(?!docs/).*$]</path>
@@ -370,6 +387,7 @@
           <inputEncoding>UTF-8</inputEncoding>
           <outputEncoding>UTF-8</outputEncoding>
           <skipDeploy>true</skipDeploy>
+          <stagingDirectory>${site.staging.base}/target/staging/components</stagingDirectory>
           <asciidoc>
             <!-- optional site-wide AsciiDoc attributes -->
             <attributes>
@@ -417,20 +435,11 @@
           <javadocVersion>${javaFullVersion}</javadocVersion>
           <source>${compiler.source}</source>
           <doclint>none</doclint>
-          <links>
-            <link>https://docs.oracle.com/javase/8/docs/api</link>
-            <link>http://commons.apache.org/collections/apidocs-COLLECTIONS_3_0/</link>
-            <link>http://commons.apache.org/dbcp/apidocs/</link>
-            <link>http://commons.apache.org/fileupload/apidocs/</link>
-            <link>http://commons.apache.org/httpclient/apidocs/</link>
-            <link>http://commons.apache.org/logging/apidocs/</link>
-            <link>http://commons.apache.org/pool/apidocs/</link>
-            <link>http://logging.apache.org/log4j/${log4j.version}/apidocs/</link>
-            <link>http://jakarta.apache.org/regexp/apidocs/</link>
-          </links>
-
+          <detectLinks>true</detectLinks>
+          <detectJavaApiLink>true</detectJavaApiLink>
           <linksource>true</linksource>
-          <show>private</show>
+          <show>protected</show>
+          <quiet>true</quiet>
           <tags>
             <tag>
               <name>todo</name>
@@ -456,19 +465,6 @@
     <profile>
       <id>release</id>
       <build>
-        <pluginManagement>
-          <plugins>
-            <plugin>
-              <groupId>org.apache.maven.plugins</groupId>
-              <artifactId>maven-site-plugin</artifactId>
-              <inherited>true</inherited>
-              <configuration>
-                <skipDeploy>true</skipDeploy>
-                <stagingDirectory>${site.staging.base}/target/staging/components/</stagingDirectory>
-              </configuration>
-            </plugin>
-          </plugins>
-        </pluginManagement>
         <plugins>
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
