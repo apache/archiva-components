@@ -1,7 +1,8 @@
 github:
-  description: "Components used Apache Archiva and Redback"
+  description: "Components used by Apache Archiva and Redback"
   homepage: https://archiva.apache.org/components
   labels:
     - apache
+    - archiva
     - spring
     - apacheds
