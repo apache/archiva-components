@@ -318,6 +318,7 @@
             <exclude>**/target/**</exclude>
             <exclude>**/*.iml</exclude>
             <exclude>.editorconfig</exclude>
+            <exclude>.asf.yaml</exclude>
           </excludes>
         </configuration>
         <executions>
