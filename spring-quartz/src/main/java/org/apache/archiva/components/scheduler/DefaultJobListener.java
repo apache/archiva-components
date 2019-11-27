@@ -35,9 +35,7 @@ public class DefaultJobListener
     implements JobListener
 {
     /**
-     * <p>
-     * <p/>
-     * Get the name of the <code>JobListener</code>.</p>
+     * Get the name of the <code>JobListener</code>.
      */
     public String getName()
     {
@@ -45,11 +43,9 @@ public class DefaultJobListener
     }
 
     /**
-     * <p>
-     * <p/>
      * Called by the <code>{@link Scheduler}</code> when a <code>{@link Job}</code>
      * is about to be executed (an associated <code>{@link org.quartz.Trigger}</code> has
-     * occured).</p>
+     * occured).
      */
     public void jobToBeExecuted( JobExecutionContext context )
     {
@@ -68,11 +64,9 @@ public class DefaultJobListener
     }
 
     /**
-     * <p>
-     * <p/>
      * Called by the <code>{@link Scheduler}</code> after a <code>{@link Job}</code>
      * has been executed, and be for the associated <code>Trigger</code>'s
-     * <code>triggered(xx)</code> method has been called.</p>
+     * <code>triggered(xx)</code> method has been called.
      */
     public void jobWasExecuted( JobExecutionContext context, JobExecutionException jobException )
     {

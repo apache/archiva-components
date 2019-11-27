@@ -34,13 +34,17 @@ public interface Scheduler
         throws SchedulerException;
 
     /**
-     * @param listener
+     * Adds the job listener
+     * @param listener listener instance
+     * @throws SchedulerException if the listener could not be registered
      */
     void addGlobalJobListener( JobListener listener )
         throws SchedulerException;
 
     /**
-     * @param listener
+     * Adds a job trigger listener
+     * @param listener the listener instance
+     * @throws SchedulerException if the listener could not be registered
      */
     void addGlobalTriggerListener( TriggerListener listener )
         throws SchedulerException;

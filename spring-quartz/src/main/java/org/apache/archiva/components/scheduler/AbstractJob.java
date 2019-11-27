@@ -70,6 +70,7 @@ public abstract class AbstractJob
 
     /**
      * Set Job Data Map
+     * @param jobDataMap the data map
      */
     public void setJobDataMap( JobDataMap jobDataMap )
     {
@@ -78,6 +79,7 @@ public abstract class AbstractJob
 
     /**
      * Get Job Data Map
+     * @return the data map
      */
     public JobDataMap getJobDataMap()
     {
@@ -86,6 +88,7 @@ public abstract class AbstractJob
 
     /**
      * Get the Logger.
+     * @return the logger set for this job
      */
     public Logger getLogger()
     {
