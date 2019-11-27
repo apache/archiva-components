@@ -29,6 +29,10 @@ THIS_DIR=$(readlink -f ${THIS_DIR})
 CONTENT_DIR=".site-content"
 BRANCH="asf-staging-3.0"
 
+if grep -q '<scmPublishBranch>' pom.xml; then
+  BRANCH=$(sed -n -e 's/.*<scmPublishBranch>\(.*\)<\/scmPublishBranch>.*/\1/p' pom.xml)
+fi
+
 SUB_DIR="components"
 
 if [ -d "${CONTENT_DIR}/.git" ]; then
@@ -49,7 +53,7 @@ echo "> If everything is fine enter yes. After that the publish process will be 
 echo -n "Do you want to publish (yes/no)? "
 read ANSWER
 
-if [ "${ANSWER}" == "yes" -o "${ANSWER}" == "YES" ]; then
+if [ "${ANSWER}" == "yes" -o "${ANSWER}" == "YES" -o "${ANSWER}" == "y" -o "${ANSWER}" == "Y" ]; then
   echo "> Starting publish process"
   mvn scm-publish:publish-scm "$@"
 else

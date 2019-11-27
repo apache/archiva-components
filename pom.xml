@@ -59,6 +59,8 @@
     <site.staging.base>${project.basedir}</site.staging.base>
 
     <asciidoctor.maven.plugin.version>2.0.0-RC.1</asciidoctor.maven.plugin.version>
+
+    <scmPublishBranch>asf-staging</scmPublishBranch>
   </properties>
 
   <description>Parent Pom for various components used in Apache Archiva and Redback.</description>
@@ -299,6 +301,13 @@
             <linksource>true</linksource>
             <show>protected</show>
             <quiet>true</quiet>
+            <isOffline>false</isOffline>
+            <excludePackageNames>org.apache.archiva.components.*.test</excludePackageNames>
+            <links>
+              <link>https://junit.org/junit5/docs/current/api</link>
+              <link>http://www.quartz-scheduler.org/api/2.3.0</link>
+              <link>https://docs.spring.io/autorepo/docs/spring/${spring.version}.RELEASE/javadoc-api</link>
+            </links>
             <tags>
               <tag>
                 <name>todo</name>
@@ -356,7 +365,7 @@
           <skipDeletedFiles>true</skipDeletedFiles>
           <content>${project.build.directory}/staging</content>
           <tryUpdate>true</tryUpdate>
-          <scmBranch>asf-staging-3.0</scmBranch>
+          <scmBranch>${scmPublishBranch}</scmBranch>
           <!--
                     <ignorePathsToDelete>
                       <path>%regex[^(?!docs/).*$]</path>
@@ -440,8 +449,16 @@
           <linksource>true</linksource>
           <show>protected</show>
           <quiet>true</quiet>
+          <doctitle>Archiva Components API</doctitle>
+          <isOffline>false</isOffline>
+          <excludePackageNames>org.apache.archiva.components.*.test</excludePackageNames>
+          <links>
+            <link>https://junit.org/junit5/docs/current/api</link>
+            <link>http://www.quartz-scheduler.org/api/2.3.0</link>
+            <link>https://docs.spring.io/autorepo/docs/spring/${spring.version}.RELEASE/javadoc-api</link>
+          </links>
           <tags>
-            <tag>
+          <tag>
               <name>todo</name>
               <placement>a</placement>
               <head>To Do:</head>
@@ -482,6 +499,52 @@
                     <descriptorRef>${sourceReleaseAssemblyDescriptor}</descriptorRef>
                   </descriptorRefs>
                   <tarLongFileMode>gnu</tarLongFileMode>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+    <!--
+This runs a sparse git checkout for the web site content repository that contains only the doc directory.
+The profile is activated only, if the checkout directory does not exist.
+The executor runs a shell script.
+-->
+    <profile>
+      <id>site-checkout</id>
+      <activation>
+        <file>
+          <missing>${scmPubCheckoutDirectory}</missing>
+        </file>
+        <os>
+          <family>unix</family>
+        </os>
+      </activation>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.codehaus.mojo</groupId>
+            <artifactId>exec-maven-plugin</artifactId>
+            <version>1.6.0</version>
+            <inherited>false</inherited>
+            <executions>
+              <execution>
+                <id>prepare-checkout</id>
+                <phase>pre-site</phase>
+                <goals>
+                  <goal>exec</goal>
+                </goals>
+                <configuration>
+                  <executable>checkoutSite.sh</executable>
+                  <workingDirectory>${project.basedir}</workingDirectory>
+                  <arguments>
+                    <argument>-d</argument>
+                    <argument>${scmPubCheckoutDirectory}</argument>
+                    <argument>-b</argument>
+                    <argument>${scmPublishBranch}</argument>
+                    <argument>${siteRepositoryUrl}</argument>
+                  </arguments>
                 </configuration>
               </execution>
             </executions>
