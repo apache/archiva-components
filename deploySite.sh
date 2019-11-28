@@ -28,16 +28,22 @@ THIS_DIR=$(dirname $0)
 THIS_DIR=$(readlink -f ${THIS_DIR})
 CONTENT_DIR=".site-content"
 BRANCH="asf-staging-3.0"
+SUB_DIR="/components"
 
 if grep -q '<scmPublishBranch>' pom.xml; then
   BRANCH=$(sed -n -e 's/.*<scmPublishBranch>\(.*\)<\/scmPublishBranch>.*/\1/p' pom.xml)
 fi
 
-SUB_DIR="components"
+if grep -q '<scmPubCheckoutDirectory>' pom.xml; then
+  CONTENT_DIR=$(sed -n -e 's/.*<scmPubCheckoutDirectory>\(.*\)<\/scmPubCheckoutDirectory>.*/\1/p' pom.xml)
+fi
+
+
 
 if [ -d "${CONTENT_DIR}/.git" ]; then
   git -C "${CONTENT_DIR}" fetch origin
   git -C "${CONTENT_DIR}" reset --hard origin/${BRANCH}
+  git -C "${CONTENT_DIR}" clean -f -d
 fi
 
 echo ">>>> Creating site and reports <<<<" 
@@ -47,7 +53,7 @@ mvn site:stage "$@"
 echo "*****************************************"
 echo ">>>> Finished the site stage process <<<<"
 echo "> You can check the content in the folder target/staging or by opening the following url"
-echo "> file://${THIS_DIR}/target/staging/${SUB_DIR}/index.html"
+echo "> file://${THIS_DIR}/target/staging${SUB_DIR}/index.html"
 echo "> "
 echo "> If everything is fine enter yes. After that the publish process will be started."
 echo -n "Do you want to publish (yes/no)? "
@@ -61,6 +67,7 @@ else
   echo "> Running git reset in .site-content directory" 
   git -C "${CONTENT_DIR}" fetch origin
   git -C "${CONTENT_DIR}" reset --hard origin/${BRANCH}
+  git -C "${CONTENT_DIR}" clean -f -d
   echo ">>>> Finished <<<<"
 fi
 
