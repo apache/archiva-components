@@ -53,14 +53,15 @@
     <site.staging.base>${project.basedir}/target/staging/components</site.staging.base>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <webUrl>https://archiva.apache.org/components</webUrl>
-    <scmPubCheckoutDirectory>${basedir}/.site-content</scmPubCheckoutDirectory>
+
     <!-- The git repository, where the site content is placed -->
     <siteRepositoryUrl>scm:git:https://gitbox.apache.org/repos/asf/archiva-web-content.git</siteRepositoryUrl>
     <site.staging.base>${project.basedir}</site.staging.base>
 
-    <asciidoctor.maven.plugin.version>2.0.0-RC.1</asciidoctor.maven.plugin.version>
-
+    <scmPubCheckoutDirectory>.site-content</scmPubCheckoutDirectory>
     <scmPublishBranch>asf-staging</scmPublishBranch>
+    <scmPublishPath>/components</scmPublishPath>
+
   </properties>
 
   <description>Parent Pom for various components used in Apache Archiva and Redback.</description>
@@ -396,7 +397,7 @@
           <inputEncoding>UTF-8</inputEncoding>
           <outputEncoding>UTF-8</outputEncoding>
           <skipDeploy>true</skipDeploy>
-          <stagingDirectory>${site.staging.base}/target/staging/components</stagingDirectory>
+          <stagingDirectory>${site.staging.base}/target/staging${scmPublishPath}</stagingDirectory>
           <asciidoc>
             <!-- optional site-wide AsciiDoc attributes -->
             <attributes>
