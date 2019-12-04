@@ -21,14 +21,15 @@ package org.apache.archiva.components.registry.commons;
 
 import org.apache.archiva.components.registry.Registry;
 import org.apache.archiva.components.registry.RegistryListener;
-import org.apache.commons.configuration.event.ConfigurationEvent;
-import org.apache.commons.configuration.event.ConfigurationListener;
+import org.apache.commons.configuration2.event.ConfigurationEvent;
+import org.apache.commons.configuration2.event.Event;
+import org.apache.commons.configuration2.event.EventListener;
 
 /**
  * Commons configuration listener that delegates to the given registry listener.
  */
 public class ConfigurationListenerDelegate
-    implements ConfigurationListener
+    implements EventListener
 {
     /**
      * Delegate listener.
@@ -47,21 +48,6 @@ public class ConfigurationListenerDelegate
         this.registry = registry;
     }
 
-    public void configurationChanged( ConfigurationEvent event )
-    {
-        if ( event.getPropertyName( ) != null )
-        {
-            if ( event.isBeforeUpdate( ) )
-            {
-                listener.beforeConfigurationChange( registry, event.getPropertyName( ), event.getPropertyValue( ) );
-            }
-            else
-            {
-                listener.afterConfigurationChange( registry, event.getPropertyName( ), event.getPropertyValue( ) );
-            }
-        }
-    }
-
     // needed to be sure elements are properly removed from the listeners list
     @Override
     public int hashCode( )
@@ -78,5 +64,22 @@ public class ConfigurationListenerDelegate
             return delegate.listener == this.listener;
         }
         return super.equals( obj );
+    }
+
+    @Override
+    public void onEvent( Event event ) {
+        // Do nothing
+    }
+
+    public void onEvent( ConfigurationEvent event )
+    {
+        if ( event.isBeforeUpdate())
+        {
+            listener.beforeConfigurationChange( registry, event.getPropertyName( ), event.getPropertyValue( ) );
+        }
+        else
+        {
+            listener.afterConfigurationChange( registry, event.getPropertyName( ), event.getPropertyValue( ) );
+        }
     }
 }

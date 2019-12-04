@@ -22,16 +22,18 @@ package org.apache.archiva.components.registry.commons;
 import org.apache.archiva.components.registry.Registry;
 import org.apache.archiva.components.registry.RegistryException;
 import org.apache.archiva.components.registry.RegistryListener;
-import org.apache.commons.configuration.CombinedConfiguration;
-import org.apache.commons.configuration.Configuration;
-import org.apache.commons.configuration.ConfigurationException;
-import org.apache.commons.configuration.DefaultConfigurationBuilder;
-import org.apache.commons.configuration.FileConfiguration;
-import org.apache.commons.configuration.PropertiesConfiguration;
-import org.apache.commons.configuration.SystemConfiguration;
-import org.apache.commons.configuration.XMLConfiguration;
-import org.apache.commons.configuration.event.EventSource;
-import org.apache.commons.configuration.tree.DefaultExpressionEngine;
+import org.apache.commons.configuration2.CombinedConfiguration;
+import org.apache.commons.configuration2.Configuration;
+import org.apache.commons.configuration2.FileBasedConfiguration;
+import org.apache.commons.configuration2.ImmutableConfiguration;
+import org.apache.commons.configuration2.PropertiesConfiguration;
+import org.apache.commons.configuration2.XMLConfiguration;
+import org.apache.commons.configuration2.builder.ConfigurationBuilder;
+import org.apache.commons.configuration2.builder.FileBasedConfigurationBuilder;
+import org.apache.commons.configuration2.event.Event;
+import org.apache.commons.configuration2.event.EventSource;
+import org.apache.commons.configuration2.event.EventType;
+import org.apache.commons.configuration2.ex.ConfigurationException;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.text.StringSubstitutor;
 import org.apache.commons.text.lookup.StringLookupFactory;
@@ -68,6 +70,7 @@ public class CommonsConfigurationRegistry
      * The combined configuration instance that houses the registry.
      */
     private Configuration configuration;
+    private ConfigurationBuilder<? extends Configuration> configurationBuilder;
 
     private Logger logger = LoggerFactory.getLogger( getClass( ) );
 
@@ -89,14 +92,22 @@ public class CommonsConfigurationRegistry
         this.configuration = new CombinedConfiguration( );
     }
 
-    public CommonsConfigurationRegistry( Configuration configuration )
+    public CommonsConfigurationRegistry( ConfigurationBuilder<? extends Configuration> configurationBuilder )
     {
-        if ( configuration == null )
+        if ( configurationBuilder == null )
         {
             throw new NullPointerException( "configuration can not be null" );
         }
 
-        this.configuration = configuration;
+        this.configurationBuilder = configurationBuilder;
+        try
+        {
+            this.configuration = configurationBuilder.getConfiguration( );
+        }
+        catch ( ConfigurationException e )
+        {
+            logger.error( "Could not retrieve configuration" );
+        }
     }
 
     public String dump( )
@@ -176,12 +187,12 @@ public class CommonsConfigurationRegistry
     public void save( )
         throws RegistryException
     {
-        if ( configuration instanceof FileConfiguration )
+        if ( configurationBuilder instanceof FileBasedConfigurationBuilder )
         {
-            FileConfiguration fileConfiguration = (FileConfiguration) configuration;
+            FileBasedConfigurationBuilder fileConfigurationBuilder = (FileBasedConfigurationBuilder) configurationBuilder;
             try
             {
-                fileConfiguration.save( );
+                fileConfigurationBuilder.save( );
             }
             catch ( ConfigurationException e )
             {
@@ -198,7 +209,7 @@ public class CommonsConfigurationRegistry
     {
         EventSource eventSource = EventSource.class.cast( this.configuration );
 
-        eventSource.addConfigurationListener( new ConfigurationListenerDelegate( listener, this ) );
+        eventSource.addEventListener( Event.ANY, new ConfigurationListenerDelegate( listener, this ) );
     }
 
     @Override
@@ -207,16 +218,12 @@ public class CommonsConfigurationRegistry
         EventSource eventSource = EventSource.class.cast( this.configuration );
 
         boolean removed =
-            eventSource.removeConfigurationListener( new ConfigurationListenerDelegate( listener, this ) );
+            eventSource.removeEventListener( Event.ANY, new ConfigurationListenerDelegate( listener, this ) );
 
         return removed;
     }
 
 
-    public int getChangeListenersSize( )
-    {
-        return EventSource.class.cast( this.configuration ).getConfigurationListeners( ).size( );
-    }
 
     public Collection<String> getKeys( )
     {

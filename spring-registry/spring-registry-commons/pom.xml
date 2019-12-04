@@ -44,36 +44,9 @@
       <artifactId>archiva-components-spring-registry-api</artifactId>
     </dependency>
     <dependency>
-      <groupId>commons-configuration</groupId>
-      <artifactId>commons-configuration</artifactId>
+      <groupId>org.apache.commons</groupId>
+      <artifactId>commons-configuration2</artifactId>
       <version>${commons.configuration.version}</version>
-      <exclusions>
-        <exclusion>
-          <groupId>commons-beanutils</groupId>
-          <artifactId>commons-beanutils-core</artifactId>
-        </exclusion>
-        <!-- targeting JDK 1.4, xml parser/apis not needed -->
-        <exclusion>
-          <groupId>xerces</groupId>
-          <artifactId>xerces</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>xerces</groupId>
-          <artifactId>xercesImpl</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>xalan</groupId>
-          <artifactId>xalan</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>xml-apis</groupId>
-          <artifactId>xml-apis</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>servletapi</groupId>
-          <artifactId>servletapi</artifactId>
-        </exclusion>
-      </exclusions>
     </dependency>
 
     <dependency>
