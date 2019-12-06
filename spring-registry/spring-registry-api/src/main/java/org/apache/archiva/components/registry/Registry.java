@@ -19,7 +19,7 @@ package org.apache.archiva.components.registry;
  * under the License.
  */
 
-import java.io.File;
+import java.nio.file.Path;
 import java.util.Collection;
 import java.util.List;
 import java.util.Properties;
@@ -141,7 +141,7 @@ public interface Registry
      * @param file the location to load the configuration from
      * @throws RegistryException if a problem occurred reading the resource to add to the registry
      */
-    void addConfigurationFromFile( File file )
+    void addConfigurationFromFile( Path file )
         throws RegistryException;
 
     /**
@@ -151,7 +151,7 @@ public interface Registry
      * @param prefix the location to add the configuration at in the registry
      * @throws RegistryException if a problem occurred reading the resource to add to the registry
      */
-    void addConfigurationFromFile( File file, String prefix )
+    void addConfigurationFromFile( Path file, String prefix )
         throws RegistryException;
 
     /**

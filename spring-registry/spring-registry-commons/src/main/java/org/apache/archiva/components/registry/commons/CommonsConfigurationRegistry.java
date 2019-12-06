@@ -24,26 +24,32 @@ import org.apache.archiva.components.registry.RegistryException;
 import org.apache.archiva.components.registry.RegistryListener;
 import org.apache.commons.configuration2.CombinedConfiguration;
 import org.apache.commons.configuration2.Configuration;
-import org.apache.commons.configuration2.FileBasedConfiguration;
-import org.apache.commons.configuration2.ImmutableConfiguration;
-import org.apache.commons.configuration2.PropertiesConfiguration;
+import org.apache.commons.configuration2.SystemConfiguration;
 import org.apache.commons.configuration2.XMLConfiguration;
+import org.apache.commons.configuration2.builder.BasicBuilderParameters;
 import org.apache.commons.configuration2.builder.ConfigurationBuilder;
 import org.apache.commons.configuration2.builder.FileBasedConfigurationBuilder;
+import org.apache.commons.configuration2.builder.combined.CombinedConfigurationBuilder;
+import org.apache.commons.configuration2.builder.fluent.Configurations;
+import org.apache.commons.configuration2.builder.fluent.Parameters;
 import org.apache.commons.configuration2.event.Event;
 import org.apache.commons.configuration2.event.EventSource;
-import org.apache.commons.configuration2.event.EventType;
 import org.apache.commons.configuration2.ex.ConfigurationException;
+import org.apache.commons.configuration2.tree.DefaultExpressionEngine;
+import org.apache.commons.configuration2.tree.DefaultExpressionEngineSymbols;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.text.StringSubstitutor;
 import org.apache.commons.text.lookup.StringLookupFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+import org.xml.sax.SAXException;
 
 import javax.annotation.PostConstruct;
-import java.io.File;
+import javax.xml.parsers.ParserConfigurationException;
+import java.io.IOException;
 import java.io.StringReader;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
@@ -51,6 +57,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
 import java.util.Set;
+
 
 /**
  * Implementation of the registry component using
@@ -89,14 +96,22 @@ public class CommonsConfigurationRegistry
     {
         // default constructor
         logger.debug( "empty constructor" );
-        this.configuration = new CombinedConfiguration( );
+        this.configurationBuilder = new CombinedConfigurationBuilder( );
+        try
+        {
+            this.configuration = configurationBuilder.getConfiguration();
+        }
+        catch ( ConfigurationException e )
+        {
+            logger.error( "Could not initialize configuration: {}", e.getMessage( ) );
+        }
     }
 
     public CommonsConfigurationRegistry( ConfigurationBuilder<? extends Configuration> configurationBuilder )
     {
         if ( configurationBuilder == null )
         {
-            throw new NullPointerException( "configuration can not be null" );
+            throw new NullPointerException( "configurationbuilder can not be null" );
         }
 
         this.configurationBuilder = configurationBuilder;
@@ -108,6 +123,21 @@ public class CommonsConfigurationRegistry
         {
             logger.error( "Could not retrieve configuration" );
         }
+    }
+
+    public CommonsConfigurationRegistry( ConfigurationBuilder<? extends Configuration> configurationBuilder,
+                                         Configuration configuration) {
+        if ( configurationBuilder == null )
+        {
+            throw new NullPointerException( "configurationbuilder can not be null" );
+        }
+        if ( configuration == null )
+        {
+            throw new NullPointerException( "configuration can not be null" );
+        }
+        this.configurationBuilder = configurationBuilder;
+        this.configuration = configuration;
+
     }
 
     public String dump( )
@@ -130,7 +160,7 @@ public class CommonsConfigurationRegistry
 
     public Registry getSubset( String key )
     {
-        return new CommonsConfigurationRegistry( configuration.subset( key ) );
+        return new CommonsConfigurationRegistry( configurationBuilder, configuration.subset( key ) );
     }
 
     public List getList( String key )
@@ -343,7 +373,8 @@ public class CommonsConfigurationRegistry
             try
             {
                 logger.debug( "Loading properties configuration from classloader resource: {}", resource );
-                configuration.addConfiguration( new PropertiesConfiguration( resource ), null, prefix );
+                Configurations configurations = new Configurations( );
+                configuration.addConfiguration( configurations.properties( resource ), null, prefix );
             }
             catch ( ConfigurationException e )
             {
@@ -356,7 +387,8 @@ public class CommonsConfigurationRegistry
             try
             {
                 logger.debug( "Loading XML configuration from classloader resource: {}", resource );
-                configuration.addConfiguration( new XMLConfiguration( resource ), null, prefix );
+                Configurations configurations = new Configurations( );
+                configuration.addConfiguration( configurations.xml( resource ), null, prefix );
             }
             catch ( ConfigurationException e )
             {
@@ -371,46 +403,48 @@ public class CommonsConfigurationRegistry
         }
     }
 
-    public void addConfigurationFromFile( File file )
+    public void addConfigurationFromFile( Path file )
         throws RegistryException
     {
         addConfigurationFromFile( file, null );
     }
 
-    public void addConfigurationFromFile( File file, String prefix )
+    public void addConfigurationFromFile( Path file, String prefix )
         throws RegistryException
     {
         CombinedConfiguration configuration = (CombinedConfiguration) this.configuration;
-        if ( file.getName( ).endsWith( ".properties" ) )
+        if ( file.getFileName( ).toString().endsWith( ".properties" ) )
         {
             try
             {
                 logger.debug( "Loading properties configuration from file: {}", file );
-                configuration.addConfiguration( new PropertiesConfiguration( file ), null, prefix );
+                Configurations configurations = new Configurations( );
+                configuration.addConfiguration( configurations.properties( file.toFile() ), null, prefix );
             }
             catch ( ConfigurationException e )
             {
                 throw new RegistryException(
-                    "Unable to add configuration from file '" + file.getName( ) + "': " + e.getMessage( ), e );
+                    "Unable to add configuration from file '" + file.getFileName( ).toString( ) + "': " + e.getMessage( ), e );
             }
         }
-        else if ( file.getName( ).endsWith( ".xml" ) )
+        else if ( file.getFileName( ).toString( ).endsWith( ".xml" ) )
         {
             try
             {
                 logger.debug( "Loading XML configuration from file: {}", file );
-                configuration.addConfiguration( new XMLConfiguration( file ), null, prefix );
+                Configurations configurations = new Configurations( );
+                configuration.addConfiguration( configurations.xml( file.toFile() ), null, prefix );
             }
             catch ( ConfigurationException e )
             {
                 throw new RegistryException(
-                    "Unable to add configuration from file '" + file.getName( ) + "': " + e.getMessage( ), e );
+                    "Unable to add configuration from file '" + file.getFileName( ).toString( ) + "': " + e.getMessage( ), e );
             }
         }
         else
         {
             throw new RegistryException(
-                "Unable to add configuration from file '" + file.getName( ) + "': unrecognised type" );
+                "Unable to add configuration from file '" + file.getFileName( ).toString( ) + "': unrecognised type" );
         }
     }
 
@@ -423,18 +457,23 @@ public class CommonsConfigurationRegistry
             CombinedConfiguration configuration;
             if ( StringUtils.isNotBlank( properties ) )
             {
-                DefaultConfigurationBuilder builder = new DefaultConfigurationBuilder( );
-                DefaultExpressionEngine expressionEngine = new DefaultExpressionEngine( );
-                expressionEngine.setPropertyDelimiter( propertyDelimiter );
-                builder.setExpressionEngine( expressionEngine );
+                CombinedConfigurationBuilder builder = new CombinedConfigurationBuilder( );
+                DefaultExpressionEngine expressionEngine = new DefaultExpressionEngine( DefaultExpressionEngineSymbols.DEFAULT_SYMBOLS );
+                Parameters params = new Parameters();
 
                 StringSubstitutor substitutor = new StringSubstitutor( StringLookupFactory.INSTANCE.systemPropertyStringLookup( ) );
-
                 String interpolatedProps = substitutor.replace( properties );
+                Parameters p = new Parameters( );
+                ReaderBuilderParameters param = new ReaderBuilderParameters( );
+                param.setReader(new StringReader( interpolatedProps ) );
+
+                ReaderConfigurationBuilder<XMLConfiguration> defBuilder = new ReaderConfigurationBuilder<>( XMLConfiguration.class ).configure( param );
+
+
 
                 logger.debug( "Loading configuration into commons-configuration, xml {}", interpolatedProps );
-                builder.load( new StringReader( interpolatedProps ) );
-                configuration = builder.getConfiguration( false );
+                builder.configure( new Parameters( ).combined( ).setDefinitionBuilder( defBuilder ) );
+                configuration = builder.getConfiguration(  );
                 configuration.setExpressionEngine( expressionEngine );
                 //configuration.set
             }
@@ -463,7 +502,7 @@ public class CommonsConfigurationRegistry
     {
         CombinedConfiguration combinedConfiguration = (CombinedConfiguration) configuration;
         Configuration configuration = combinedConfiguration.getConfiguration( name );
-        return configuration == null ? null : new CommonsConfigurationRegistry( configuration );
+        return configuration == null ? null : new CommonsConfigurationRegistry( configurationBuilder, configuration );
     }
 
     public String getPropertyDelimiter( )

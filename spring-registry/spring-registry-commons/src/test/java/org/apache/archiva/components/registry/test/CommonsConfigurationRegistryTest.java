@@ -22,14 +22,15 @@ package org.apache.archiva.components.registry.test;
 import org.apache.archiva.components.registry.Registry;
 import org.apache.archiva.components.registry.RegistryException;
 import org.apache.archiva.components.registry.RegistryListener;
-import org.apache.archiva.components.registry.commons.CommonsConfigurationRegistry;
-import org.apache.commons.configuration.XMLConfiguration;
+import org.apache.commons.configuration2.XMLConfiguration;
+import org.apache.commons.configuration2.builder.fluent.Configurations;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.FileCopyUtils;
 
 import java.io.File;
+import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -143,7 +144,7 @@ public class CommonsConfigurationRegistryTest
     {
         registry = getRegistry( "default" );
 
-        registry.addConfigurationFromFile( new File( "./src/test/resources/org/codehaus/plexus/registry/test.xml" ) );
+        registry.addConfigurationFromFile( Paths.get( "src/test/resources/org/codehaus/plexus/registry/test.xml" ) );
 
         assertEquals( "Check system property default", System.getProperty( "user.dir" ),
             registry.getString( "user.dir" ) );
@@ -157,7 +158,7 @@ public class CommonsConfigurationRegistryTest
         registry = getRegistry( "default" );
 
         registry.addConfigurationFromFile(
-            new File( "./src/test/resources/org/codehaus/plexus/registry/test.properties" ) );
+            Paths.get( "src/test/resources/org/codehaus/plexus/registry/test.properties" ) );
 
         assertEquals( "Check system property default", System.getProperty( "user.dir" ),
             registry.getString( "user.dir" ) );
@@ -211,7 +212,7 @@ public class CommonsConfigurationRegistryTest
         try
         {
             registry.addConfigurationFromFile(
-                new File( "./src/test/resources/org/codehaus/plexus/registry/test.foo" ) );
+                Paths.get( "src/test/resources/org/codehaus/plexus/registry/test.foo" ) );
             fail( );
         }
         catch ( RegistryException e )
@@ -360,7 +361,9 @@ public class CommonsConfigurationRegistryTest
         registry.remove( "listElements.listElement(1)" );
         registry.save( );
 
-        XMLConfiguration configuration = new XMLConfiguration( dest );
+        Configurations configurations = new Configurations( );
+
+        XMLConfiguration configuration = configurations.xml( dest );
         assertEquals( Arrays.asList( new String[]{"1", "3"} ), configuration.getList( "listElements.listElement" ) );
 
         // file in ${basedir}/target/conf/shared.xml
@@ -368,32 +371,12 @@ public class CommonsConfigurationRegistryTest
         section.setString( "foo", "zloug" );
         section.save( );
 
-        configuration = new XMLConfiguration( new File( "target/conf/shared.xml" ) );
+        configuration = configurations.xml( new File( "target/conf/shared.xml" ) );
         assertNotNull( configuration.getString( "foo" ) );
 
     }
 
 
-    @Test
-    public void test_listener( )
-        throws Exception
-    {
-        registry = getRegistry( "default" );
-
-        int listenerSize = CommonsConfigurationRegistry.class.cast( registry ).getChangeListenersSize( );
-
-        MockChangeListener mockChangeListener = new MockChangeListener( );
-
-        registry.addChangeListener( mockChangeListener );
-
-        registry.addChangeListener( new MockChangeListener( ) );
-
-        assertEquals( listenerSize + 2, CommonsConfigurationRegistry.class.cast( registry ).getChangeListenersSize( ) );
-
-        registry.removeChangeListener( mockChangeListener );
-
-        assertEquals( listenerSize + 1, CommonsConfigurationRegistry.class.cast( registry ).getChangeListenersSize( ) );
-    }
 
     private static class MockChangeListener
         implements RegistryListener
