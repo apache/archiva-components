@@ -24,9 +24,9 @@ import org.apache.archiva.components.registry.RegistryException;
 import org.apache.archiva.components.registry.RegistryListener;
 import org.apache.commons.configuration2.CombinedConfiguration;
 import org.apache.commons.configuration2.Configuration;
+import org.apache.commons.configuration2.FileBasedConfiguration;
 import org.apache.commons.configuration2.SystemConfiguration;
 import org.apache.commons.configuration2.XMLConfiguration;
-import org.apache.commons.configuration2.builder.BasicBuilderParameters;
 import org.apache.commons.configuration2.builder.ConfigurationBuilder;
 import org.apache.commons.configuration2.builder.FileBasedConfigurationBuilder;
 import org.apache.commons.configuration2.builder.combined.CombinedConfigurationBuilder;
@@ -43,20 +43,20 @@ import org.apache.commons.text.lookup.StringLookupFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
-import org.xml.sax.SAXException;
 
 import javax.annotation.PostConstruct;
-import javax.xml.parsers.ParserConfigurationException;
-import java.io.IOException;
 import java.io.StringReader;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicInteger;
 
 
 /**
@@ -64,7 +64,7 @@ import java.util.Set;
  * <a href="http://commons.apache.org/commons/configuration">Commons Configuration</a>. The use of Commons Configuration
  * enables a variety of sources to be used, including XML files, properties, JNDI, JDBC, etc.
  * <p/>
- * The component can be configured using the {@link #properties} configuration item, the content of which should take
+ * The component can be configured using the {@link #configurationDefinition} configuration item, the content of which should take
  * the format of an input to the Commons Configuration
  * <a href="http://commons.apache.org/commons/configuration/howto_configurationbuilder.html">configuration
  * builder</a>.
@@ -89,7 +89,14 @@ public class CommonsConfigurationRegistry
      * <a href="http://commons.apache.org/configuration/howto_configurationbuilder.html">configuration
      * builder</a>.
      */
-    private String properties;
+    private String configurationDefinition;
+    private Path configurationDefinitionFile;
+
+    private FileBasedConfiguration saveConfiguration = null;
+    private FileBasedConfigurationBuilder saveConfigurationBuilder = null;
+    private String saveConfigurationName = null;
+
+    private boolean isPersistent = true;
 
 
     public CommonsConfigurationRegistry( )
@@ -140,6 +147,7 @@ public class CommonsConfigurationRegistry
 
     }
 
+    @Override
     public String dump( )
     {
         StringBuilder buffer = new StringBuilder( );
@@ -153,21 +161,25 @@ public class CommonsConfigurationRegistry
         return buffer.toString( );
     }
 
+    @Override
     public boolean isEmpty( )
     {
         return configuration.isEmpty( );
     }
 
+    @Override
     public Registry getSubset( String key )
     {
         return new CommonsConfigurationRegistry( configurationBuilder, configuration.subset( key ) );
     }
 
+    @Override
     public List getList( String key )
     {
         return configuration.getList( key );
     }
 
+    @Override
     public List<Registry> getSubsetList( String key )
     {
         List<Registry> subsets = new ArrayList<>( );
@@ -190,6 +202,7 @@ public class CommonsConfigurationRegistry
         return subsets;
     }
 
+    @Override
     public Properties getProperties( String key )
     {
         Configuration configuration = this.configuration.subset( key );
@@ -214,30 +227,47 @@ public class CommonsConfigurationRegistry
         return properties;
     }
 
+    @Override
     public void save( )
         throws RegistryException
     {
-        if ( configurationBuilder instanceof FileBasedConfigurationBuilder )
+
+        if (isPersistent)
         {
-            FileBasedConfigurationBuilder fileConfigurationBuilder = (FileBasedConfigurationBuilder) configurationBuilder;
-            try
+            if ( configurationBuilder instanceof FileBasedConfigurationBuilder )
             {
-                fileConfigurationBuilder.save( );
+                FileBasedConfigurationBuilder fileConfigurationBuilder = (FileBasedConfigurationBuilder) configurationBuilder;
+                try
+                {
+                    fileConfigurationBuilder.save( );
+                }
+                catch ( ConfigurationException e )
+                {
+                    throw new RegistryException( "Could not save to file based configuration: "+e.getMessage( ), e );
+                }
             }
-            catch ( ConfigurationException e )
+            else if ( configurationBuilder instanceof CombinedConfigurationBuilder && saveConfigurationBuilder != null)
             {
-                throw new RegistryException( e.getMessage( ), e );
+                try
+                {
+                    saveConfigurationBuilder.save();
+                }
+                catch ( ConfigurationException e )
+                {
+                    throw new RegistryException( "Could not save to combined configuration: " + e.getMessage( ), e );
+                }
             }
-        }
-        else
-        {
-            throw new RegistryException( "Can only save file-based configurations" );
+            else
+            {
+                throw new RegistryException( "Can only save file-based configurations" );
+            }
         }
     }
 
+    @Override
     public void addChangeListener( RegistryListener listener )
     {
-        EventSource eventSource = EventSource.class.cast( this.configuration );
+        EventSource eventSource = (EventSource) this.configuration;
 
         eventSource.addEventListener( Event.ANY, new ConfigurationListenerDelegate( listener, this ) );
     }
@@ -245,19 +275,17 @@ public class CommonsConfigurationRegistry
     @Override
     public boolean removeChangeListener( RegistryListener listener )
     {
-        EventSource eventSource = EventSource.class.cast( this.configuration );
+        EventSource eventSource = (EventSource) this.configuration;
 
-        boolean removed =
-            eventSource.removeEventListener( Event.ANY, new ConfigurationListenerDelegate( listener, this ) );
-
-        return removed;
+        return eventSource.removeEventListener( Event.ANY, new ConfigurationListenerDelegate( listener, this ) );
     }
 
 
 
+    @Override
     public Collection<String> getKeys( )
     {
-        Set<String> keys = new HashSet<String>( );
+        Set<String> keys = new HashSet<>( );
 
         for ( Iterator<String> i = configuration.getKeys( ); i.hasNext( ); )
         {
@@ -277,6 +305,7 @@ public class CommonsConfigurationRegistry
         return keys;
     }
 
+    @Override
     public Collection getFullKeys( )
     {
         Set<String> keys = new HashSet<String>( );
@@ -289,11 +318,22 @@ public class CommonsConfigurationRegistry
         return keys;
     }
 
+    @Override
     public void remove( String key )
     {
-        configuration.clearProperty( key );
+        if (configuration instanceof CombinedConfiguration) {
+            CombinedConfiguration config = (CombinedConfiguration) configuration;
+            Set<Configuration> source = config.getSources( key );
+            if (source != null) {
+
+            }
+        } else
+        {
+            configuration.clearProperty( key );
+        }
     }
 
+    @Override
     public void removeSubset( String key )
     {
         // create temporary list since removing a key will modify the iterator from configuration
@@ -309,57 +349,68 @@ public class CommonsConfigurationRegistry
         }
     }
 
+    @Override
     public String getString( String key )
     {
         return configuration.getString( key );
     }
 
+    @Override
     public String getString( String key, String defaultValue )
     {
         return configuration.getString( key, defaultValue );
     }
 
+    @Override
     public void setString( String key, String value )
     {
         configuration.setProperty( key, value );
     }
 
+    @Override
     public int getInt( String key )
     {
         return configuration.getInt( key );
     }
 
+    @Override
     public int getInt( String key, int defaultValue )
     {
         return configuration.getInt( key, defaultValue );
     }
 
+    @Override
     public void setInt( String key, int value )
     {
         configuration.setProperty( key, Integer.valueOf( value ) );
     }
 
+    @Override
     public boolean getBoolean( String key )
     {
         return configuration.getBoolean( key );
     }
 
+    @Override
     public boolean getBoolean( String key, boolean defaultValue )
     {
         return configuration.getBoolean( key, defaultValue );
     }
 
+    @Override
     public void setBoolean( String key, boolean value )
     {
         configuration.setProperty( key, Boolean.valueOf( value ) );
     }
 
+    @Override
     public void addConfigurationFromResource( String resource )
         throws RegistryException
     {
         addConfigurationFromResource( resource, null );
     }
 
+    @Override
     public void addConfigurationFromResource( String resource, String prefix )
         throws RegistryException
     {
@@ -403,12 +454,14 @@ public class CommonsConfigurationRegistry
         }
     }
 
+    @Override
     public void addConfigurationFromFile( Path file )
         throws RegistryException
     {
         addConfigurationFromFile( file, null );
     }
 
+    @Override
     public void addConfigurationFromFile( Path file, String prefix )
         throws RegistryException
     {
@@ -419,7 +472,7 @@ public class CommonsConfigurationRegistry
             {
                 logger.debug( "Loading properties configuration from file: {}", file );
                 Configurations configurations = new Configurations( );
-                configuration.addConfiguration( configurations.properties( file.toFile() ), null, prefix );
+                configuration.addConfiguration( configurations.properties( file.toFile() ), prefix, prefix );
             }
             catch ( ConfigurationException e )
             {
@@ -433,7 +486,7 @@ public class CommonsConfigurationRegistry
             {
                 logger.debug( "Loading XML configuration from file: {}", file );
                 Configurations configurations = new Configurations( );
-                configuration.addConfiguration( configurations.xml( file.toFile() ), null, prefix );
+                configuration.addConfiguration( configurations.xml( file.toFile() ), prefix, prefix );
             }
             catch ( ConfigurationException e )
             {
@@ -448,61 +501,134 @@ public class CommonsConfigurationRegistry
         }
     }
 
+    @Override
     @PostConstruct
     public void initialize( )
         throws RegistryException
     {
-        try
+        synchronized (this)
         {
-            CombinedConfiguration configuration;
-            if ( StringUtils.isNotBlank( properties ) )
+            try
             {
-                CombinedConfigurationBuilder builder = new CombinedConfigurationBuilder( );
-                DefaultExpressionEngine expressionEngine = new DefaultExpressionEngine( DefaultExpressionEngineSymbols.DEFAULT_SYMBOLS );
-                Parameters params = new Parameters();
+                CombinedConfiguration configuration;
+                CombinedConfigurationBuilder builder;
 
-                StringSubstitutor substitutor = new StringSubstitutor( StringLookupFactory.INSTANCE.systemPropertyStringLookup( ) );
-                String interpolatedProps = substitutor.replace( properties );
-                Parameters p = new Parameters( );
-                ReaderBuilderParameters param = new ReaderBuilderParameters( );
-                param.setReader(new StringReader( interpolatedProps ) );
+                if ( configurationDefinitionFile != null && Files.exists( configurationDefinitionFile ) )
+                {
+                    DefaultExpressionEngine expressionEngine = new DefaultExpressionEngine( DefaultExpressionEngineSymbols.DEFAULT_SYMBOLS );
+                    Parameters params = new Parameters( );
+                    builder = new CombinedConfigurationBuilder( )
+                        .configure( params.fileBased( ).setFile( configurationDefinitionFile.toFile( ) ) );
+                    configuration = builder.getConfiguration( );
+                    configuration.setExpressionEngine( expressionEngine );
+                }
+                else if ( StringUtils.isNotBlank( configurationDefinition ) )
+                {
+                    builder = new CombinedConfigurationBuilder( );
+                    DefaultExpressionEngine expressionEngine = new DefaultExpressionEngine( DefaultExpressionEngineSymbols.DEFAULT_SYMBOLS );
+                    StringSubstitutor substitutor = new StringSubstitutor( StringLookupFactory.INSTANCE.systemPropertyStringLookup( ) );
+                    String interpolatedProps = substitutor.replace( configurationDefinition );
+                    Parameters p = new Parameters( );
+                    ReaderBuilderParameters param = new ReaderBuilderParameters( );
+                    param.setReader( new StringReader( interpolatedProps ) );
+                    ReaderConfigurationBuilder<XMLConfiguration> defBuilder = new ReaderConfigurationBuilder<>( XMLConfiguration.class ).configure( param );
+                    logger.debug( "Loading configuration into commons-configuration, xml {}", interpolatedProps );
+                    builder.configure( new Parameters( ).combined( ).setDefinitionBuilder( defBuilder ) );
+                    configuration = builder.getConfiguration( );
+                    configuration.setExpressionEngine( expressionEngine );
+                    //configuration.set
+                    configuration.addConfiguration( new SystemConfiguration( ) );
+                }
+                else
+                {
+                    logger.debug( "Creating a default configuration - no configuration was provided" );
+                    this.isPersistent = false;
+                    Parameters params = new Parameters( );
+                    builder = new CombinedConfigurationBuilder( )
+                        .configure( params.fileBased( ).setURL(
+                            getClass( ).getClassLoader( ).getResource( "org/apache/commons/registry/default-config-definition.xml" )
+                        ) );
+                    configuration = builder.getConfiguration( );
 
-                ReaderConfigurationBuilder<XMLConfiguration> defBuilder = new ReaderConfigurationBuilder<>( XMLConfiguration.class ).configure( param );
+                }
 
 
+                this.configuration = configuration;
+                this.configurationBuilder = builder;
+                if ( isPersistent )
+                {
+                    List<String> nameList;
+                    if (StringUtils.isEmpty(saveConfigurationName)) {
+                        nameList = configuration.getConfigurationNameList( );
+                    } else {
+                        nameList = Arrays.asList( saveConfigurationName );
 
-                logger.debug( "Loading configuration into commons-configuration, xml {}", interpolatedProps );
-                builder.configure( new Parameters( ).combined( ).setDefinitionBuilder( defBuilder ) );
-                configuration = builder.getConfiguration(  );
-                configuration.setExpressionEngine( expressionEngine );
-                //configuration.set
+                    }
+                    logger.debug( "Config: {}", String.join( ",", configuration.getConfigurationNameList( ) ) );
+                    logger.debug( "Builder: {}", String.join( ",", builder.builderNames( ) ) );
+                    for ( String name : nameList )
+                    {
+                        if (name != null)
+                        {
+                            Configuration configInstance = configuration.getConfiguration( name );
+                            ConfigurationBuilder builderInstance = builder.getNamedBuilder( name );
+                            logger.debug( "Config: {}, Builder: {}", configInstance, builderInstance );
+                            if ( configInstance != null && builderInstance != null &&
+                                builderInstance instanceof FileBasedConfigurationBuilder &&
+                                configInstance instanceof FileBasedConfiguration )
+                            {
+                                this.saveConfiguration = (FileBasedConfiguration) configInstance;
+                                this.saveConfigurationBuilder = (FileBasedConfigurationBuilder) builderInstance;
+                                break;
+                            }
+                        }
+                    }
+                    if ( saveConfiguration == null )
+                    {
+                        this.isPersistent = false;
+                        logger.warn( "No writable configuration found. That means configuration cannot be saved." );
+                    }
+                }
             }
-            else
+            catch ( ConfigurationException e )
             {
-                logger.debug( "Creating a default configuration - no configuration was provided" );
-                configuration = new CombinedConfiguration( );
+                throw new RuntimeException( e.getMessage( ), e );
             }
-
-            configuration.addConfiguration( new SystemConfiguration( ) );
-
-            this.configuration = configuration;
-        }
-        catch ( ConfigurationException e )
-        {
-            throw new RuntimeException( e.getMessage( ), e );
         }
     }
 
-    public void setProperties( String properties )
+    @Override
+    public void setInitialConfiguration( String configurationDefinition )
     {
-        this.properties = properties;
+        this.configurationDefinition = configurationDefinition;
     }
 
+    @Override
+    public void setInitialConfigurationFile( Path configurationDefinitionFile )
+    {
+        this.configurationDefinitionFile = configurationDefinitionFile;
+    }
+
+    @Override
     public Registry getSection( String name )
     {
-        CombinedConfiguration combinedConfiguration = (CombinedConfiguration) configuration;
-        Configuration configuration = combinedConfiguration.getConfiguration( name );
-        return configuration == null ? null : new CommonsConfigurationRegistry( configurationBuilder, configuration );
+        if (!StringUtils.isEmpty( name ) && configuration instanceof CombinedConfiguration)
+        {
+            CombinedConfiguration combinedConfiguration = (CombinedConfiguration) configuration;
+            Configuration configuration = combinedConfiguration.getConfiguration( name );
+            try
+            {
+                ConfigurationBuilder<? extends Configuration> builder = ( (CombinedConfigurationBuilder) configurationBuilder ).getNamedBuilder( name );
+                return configuration == null ? null : new CommonsConfigurationRegistry( builder, configuration );
+            }
+            catch ( ConfigurationException e )
+            {
+                logger.error( "Unable to retrieve builder for configuration {}", name );
+                return null;
+            }
+        } else {
+            return null;
+        }
     }
 
     public String getPropertyDelimiter( )
@@ -513,5 +639,36 @@ public class CommonsConfigurationRegistry
     public void setPropertyDelimiter( String propertyDelimiter )
     {
         this.propertyDelimiter = propertyDelimiter;
+    }
+
+    public void setSaveConfigurationName(String name) {
+        synchronized (this)
+        {
+            this.saveConfigurationName = name;
+        }
+    }
+
+    public String getSaveConfigurationName() {
+        return this.saveConfigurationName;
+    }
+
+    public FileBasedConfiguration getSaveConfiguration( )
+    {
+        return saveConfiguration;
+    }
+
+    @Override
+    public boolean isPersistent( )
+    {
+        return isPersistent;
+    }
+
+    @Override
+    public void setPersistent( boolean persistent )
+    {
+        synchronized (this)
+        {
+            isPersistent = persistent;
+        }
     }
 }

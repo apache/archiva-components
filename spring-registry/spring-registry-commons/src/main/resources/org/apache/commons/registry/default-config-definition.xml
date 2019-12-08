@@ -1,0 +1,4 @@
+<configuration>
+    <system />
+    <properties config-name="default-properties" config-optional="true" fileName="commons-registry-configuration.properties" />
+</configuration>

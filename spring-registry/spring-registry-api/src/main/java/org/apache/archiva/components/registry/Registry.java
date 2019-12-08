@@ -195,6 +195,25 @@ public interface Registry
     List getSubsetList( String key );
 
     /**
+     * Sets the configuration for this registry. The format of the configuration string is dependent
+     * on the implementation. The standard implementation uses the xml format of a commons configuration 2
+     * combined configuration definition.
+     *
+     * @param configurationDefinition the string with the configuration definition
+     */
+    void setInitialConfiguration( String configurationDefinition );
+
+    /**
+     * Sets the file that contains the configuration for this registry. The format of the configuration file is dependent
+     * on the implementation. The standard implementation uses the xml format of a commons configuration 2
+     * combined configuration definition.
+     * If this parameter is set and points to a valid file, the configurationDefinition string from {@link #setInitialConfiguration(String)} method is ignored.
+     *
+     * @param configurationDefinitionFile
+     */
+    void setInitialConfigurationFile( Path configurationDefinitionFile );
+
+    /**
      * Get a subsection of the registry, identified by the given name. If it doesn't exist, <code>null</code> will be
      * returned.
      *
@@ -258,5 +277,28 @@ public interface Registry
      */
     void removeSubset( String key );
 
+    /**
+     * Initializes the registry. The registry must be initialized before the registry is used or modified.
+     * There are some parameters that can only be changed before initialization.
+     *
+     * @throws RegistryException if the initialization failed
+     */
     void initialize( ) throws RegistryException;
+
+    /**
+     * Returns true, if this registry should write write changes persistently.
+     * @return true, if changes can be persisted, otherwise false.
+     */
+    boolean isPersistent( );
+
+    /**
+     * If true, changes can be written persistently by the save method, otherwise, changes to the configuration
+     * will be only in memory.
+     *
+     * This method must be called before the {@link #initialize()} method. After calling {@link #initialize()}, it will have no effect.
+     *
+     * @param isPersistent true, if changes can be written by the save method
+     */
+    void setPersistent(boolean isPersistent);
+
 }
