@@ -20,4 +20,5 @@
         <listElement>2</listElement>
         <listElement>3</listElement>
     </listElements>
+    <singleElement>123</singleElement>
 </registry>

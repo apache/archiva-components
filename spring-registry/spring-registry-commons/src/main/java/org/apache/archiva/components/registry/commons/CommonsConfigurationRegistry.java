@@ -25,6 +25,7 @@ import org.apache.archiva.components.registry.RegistryListener;
 import org.apache.commons.configuration2.CombinedConfiguration;
 import org.apache.commons.configuration2.Configuration;
 import org.apache.commons.configuration2.FileBasedConfiguration;
+import org.apache.commons.configuration2.HierarchicalConfiguration;
 import org.apache.commons.configuration2.SystemConfiguration;
 import org.apache.commons.configuration2.XMLConfiguration;
 import org.apache.commons.configuration2.builder.ConfigurationBuilder;
@@ -37,6 +38,7 @@ import org.apache.commons.configuration2.event.EventSource;
 import org.apache.commons.configuration2.ex.ConfigurationException;
 import org.apache.commons.configuration2.tree.DefaultExpressionEngine;
 import org.apache.commons.configuration2.tree.DefaultExpressionEngineSymbols;
+import org.apache.commons.configuration2.tree.ImmutableNode;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.text.StringSubstitutor;
 import org.apache.commons.text.lookup.StringLookupFactory;
@@ -68,6 +70,15 @@ import java.util.concurrent.atomic.AtomicInteger;
  * the format of an input to the Commons Configuration
  * <a href="http://commons.apache.org/commons/configuration/howto_configurationbuilder.html">configuration
  * builder</a>.
+ *
+ * If you initialize a <code>CombinedConfiguration</code>, which is the default, if you do not give a builder in the
+ * constructor or use the {@link #setInitialConfiguration(String)} or {@link #setInitialConfigurationFile(Path)} methods,
+ * then you should be careful with modifications and the {@link #save()} method.
+ * You should always change your configuration with a given section, which represents a concrete configuration source
+ * in the <code>CombinedConfiguration</code>. The section names correspond to the config-name attributes in the
+ * configuration definition.
+ *
+ *
  */
 @Service( "commons-configuration" )
 public class CommonsConfigurationRegistry
@@ -318,19 +329,17 @@ public class CommonsConfigurationRegistry
         return keys;
     }
 
+    /**
+     * Removes a given configuration node from the configuration. For a combined configuration, this
+     * may be only in memory and can not be persisted. The method runs the <code>clearProperty()</code>
+     * on the configuration instance.
+     *
+     * @param key the key to remove
+     */
     @Override
     public void remove( String key )
     {
-        if (configuration instanceof CombinedConfiguration) {
-            CombinedConfiguration config = (CombinedConfiguration) configuration;
-            Set<Configuration> source = config.getSources( key );
-            if (source != null) {
-
-            }
-        } else
-        {
-            configuration.clearProperty( key );
-        }
+        configuration.clearProperty( key );
     }
 
     @Override
@@ -403,6 +412,15 @@ public class CommonsConfigurationRegistry
         configuration.setProperty( key, Boolean.valueOf( value ) );
     }
 
+    /**
+     *
+     * Adds a new configuration source to the combined configuration.
+     *
+     * This is only possible with a combined configuration (which is the default).
+     *
+     * @param resource the location to load the configuration from
+     * @throws RegistryException if the configuration is not a <code>CombinedConfiguration</code>
+     */
     @Override
     public void addConfigurationFromResource( String resource )
         throws RegistryException
@@ -410,6 +428,16 @@ public class CommonsConfigurationRegistry
         addConfigurationFromResource( resource, null );
     }
 
+    /**
+     *
+     * Adds a new configuration source to the combined configuration.
+     *
+     * This is only possible with a combined configuration (which is the default).
+     *
+     * @param resource the location to load the configuration from
+     * @param prefix the prefix where the root of the given configuration is placed
+     * @throws RegistryException if the configuration is not a <code>CombinedConfiguration</code>
+     */
     @Override
     public void addConfigurationFromResource( String resource, String prefix )
         throws RegistryException
@@ -454,6 +482,15 @@ public class CommonsConfigurationRegistry
         }
     }
 
+    /**
+     *
+     * Adds a new configuration source to the combined configuration.
+     *
+     * This is only possible with a combined configuration (which is the default).
+     *
+     * @param file  the path where the configuration can be loaded
+     * @throws RegistryException if the configuration is not a <code>CombinedConfiguration</code>
+     */
     @Override
     public void addConfigurationFromFile( Path file )
         throws RegistryException
@@ -461,6 +498,16 @@ public class CommonsConfigurationRegistry
         addConfigurationFromFile( file, null );
     }
 
+    /**
+     *
+     * Adds a new configuration source to the combined configuration.
+     *
+     * This is only possible with a combined configuration (which is the default).
+     *
+     * @param file the path, where the configuration can be loaded
+     * @param prefix the prefix where the root of the given configuration is placed
+     * @throws RegistryException if the configuration is not a <code>CombinedConfiguration</code>
+     */
     @Override
     public void addConfigurationFromFile( Path file, String prefix )
         throws RegistryException
@@ -501,11 +548,23 @@ public class CommonsConfigurationRegistry
         }
     }
 
+
+    /**
+     * This method tries to read a combined configuration definition either from the string given
+     * by {@link #setInitialConfiguration(String)} or from the file given by {@link #setInitialConfigurationFile(Path)}
+     *
+     * The initialization assumes that override combiner is used and tries to find the first writable configuration
+     * source as save target.
+     *
+     * @throws RegistryException if the configuration initialization failed
+     */
     @Override
     @PostConstruct
     public void initialize( )
         throws RegistryException
     {
+
+
         synchronized (this)
         {
             try
@@ -551,6 +610,14 @@ public class CommonsConfigurationRegistry
                     configuration = builder.getConfiguration( );
 
                 }
+
+                HierarchicalConfiguration<?> defConfig = builder.getDefinitionBuilder( ).getConfiguration( );
+                logger.debug( "Node def children: {}", defConfig.getNodeModel( ).getInMemoryRepresentation( ).getChildren( ) );
+                for ( ImmutableNode child : defConfig.getNodeModel().getInMemoryRepresentation().getChildren()) {
+                    logger.debug( "Child: {}, Attributes: {}" , child.getNodeName( ), child.getAttributes( ));
+
+                }
+
 
 
                 this.configuration = configuration;
