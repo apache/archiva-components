@@ -31,6 +31,7 @@ import org.springframework.util.FileCopyUtils;
 
 import java.io.File;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -370,22 +371,101 @@ public class CommonsConfigurationRegistryTest
 
     }
 
+    @Test
+    public void testChangeListener() throws Exception
+    {
+        registry = getRegistry( "builder" );
+        MockChangeListener listener = new MockChangeListener( );
+        registry.addChangeListener( listener );
 
+        registry.setInt( "test.key", 100 );
+        registry.setBoolean( "test.boolean.first", false );
+        registry.setBoolean( "test.boolean.second", true );
+        registry.setString( "test.string", "test 1020" );
+
+        assertEquals( 4, listener.getBeforeEvents( ).size( ) );
+        assertEquals( 4, listener.getAfterEvents( ).size( ) );
+
+        assertEquals( registry, listener.getBeforeEvents( ).get( 0 ).getRegistry( ) );
+        assertEquals( "test.key", listener.getBeforeEvents( ).get( 0 ).getPropertyName( ) );
+        assertEquals( 100, listener.getBeforeEvents( ).get( 0 ).getPropertyValue( ) );
+        assertEquals( 100, listener.getAfterEvents( ).get( 0 ).getPropertyValue( ) );
+
+        assertEquals( registry, listener.getBeforeEvents( ).get( 1 ).getRegistry( ) );
+        assertEquals( "test.boolean.first", listener.getBeforeEvents( ).get( 1 ).getPropertyName( ) );
+        assertEquals( false, listener.getBeforeEvents( ).get( 1 ).getPropertyValue( ) );
+        assertEquals( false, listener.getAfterEvents( ).get( 1 ).getPropertyValue( ) );
+
+        assertEquals( registry, listener.getBeforeEvents( ).get( 2 ).getRegistry( ) );
+        assertEquals( "test.boolean.second", listener.getBeforeEvents( ).get( 2 ).getPropertyName( ) );
+        assertEquals( true, listener.getBeforeEvents( ).get( 2 ).getPropertyValue( ) );
+        assertEquals( true, listener.getAfterEvents( ).get( 2 ).getPropertyValue( ) );
+
+        assertEquals( registry, listener.getBeforeEvents( ).get( 3 ).getRegistry( ) );
+        assertEquals( "test.string", listener.getBeforeEvents( ).get( 3 ).getPropertyName( ) );
+        assertEquals( "test 1020", listener.getBeforeEvents( ).get( 3 ).getPropertyValue( ) );
+        assertEquals( "test 1020", listener.getAfterEvents( ).get( 3 ).getPropertyValue( ) );
+
+    }
+
+
+    private static class ChangeEvent {
+        private Registry registry;
+        private String propertyName;
+        private Object propertyValue;
+
+        public ChangeEvent( Registry registry, String propertyName, Object propertyValue )
+        {
+            this.registry = registry;
+            this.propertyName = propertyName;
+            this.propertyValue = propertyValue;
+        }
+
+        public Object getPropertyValue( )
+        {
+            return propertyValue;
+        }
+
+        public Registry getRegistry( )
+        {
+            return registry;
+        }
+
+        public String getPropertyName( )
+        {
+            return propertyName;
+        }
+
+
+    }
 
 
     private static class MockChangeListener
         implements RegistryListener
     {
+        List<ChangeEvent> beforeEvents = new ArrayList<>( );
+        List<ChangeEvent> afterEvents = new ArrayList<>( );
+
         @Override
         public void beforeConfigurationChange( Registry registry, String propertyName, Object propertyValue )
         {
-            // no op
+            beforeEvents.add( new ChangeEvent( registry, propertyName, propertyValue ) );
         }
 
         @Override
         public void afterConfigurationChange( Registry registry, String propertyName, Object propertyValue )
         {
-            // no op
+            afterEvents.add( new ChangeEvent( registry, propertyName, propertyValue ) );
+        }
+
+        public List<ChangeEvent> getAfterEvents( )
+        {
+            return afterEvents;
+        }
+
+        public List<ChangeEvent> getBeforeEvents( )
+        {
+            return beforeEvents;
         }
     }
 }

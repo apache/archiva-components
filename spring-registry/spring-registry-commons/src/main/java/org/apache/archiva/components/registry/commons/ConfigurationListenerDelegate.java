@@ -24,6 +24,8 @@ import org.apache.archiva.components.registry.RegistryListener;
 import org.apache.commons.configuration2.event.ConfigurationEvent;
 import org.apache.commons.configuration2.event.Event;
 import org.apache.commons.configuration2.event.EventListener;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Commons configuration listener that delegates to the given registry listener.
@@ -31,6 +33,9 @@ import org.apache.commons.configuration2.event.EventListener;
 public class ConfigurationListenerDelegate
     implements EventListener
 {
+
+    private static final Logger log = LoggerFactory.getLogger( ConfigurationListenerDelegate.class );
+
     /**
      * Delegate listener.
      */
@@ -69,10 +74,15 @@ public class ConfigurationListenerDelegate
     @Override
     public void onEvent( Event event ) {
         // Do nothing
+        log.debug( "Event {}", event );
+        if (event instanceof ConfigurationEvent) {
+            onEvent( (ConfigurationEvent) event );
+        }
     }
 
     public void onEvent( ConfigurationEvent event )
     {
+        log.debug( "Configuration event {}", event );
         if ( event.isBeforeUpdate())
         {
             listener.beforeConfigurationChange( registry, event.getPropertyName( ), event.getPropertyValue( ) );

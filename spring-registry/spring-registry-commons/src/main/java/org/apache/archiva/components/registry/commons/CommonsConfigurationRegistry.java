@@ -509,7 +509,7 @@ public class CommonsConfigurationRegistry
      * @throws RegistryException if the configuration is not a <code>CombinedConfiguration</code>
      */
     @Override
-    public void addConfigurationFromFile( Path file, String prefix )
+    public void addConfigurationFromFile( Path file, String name, String prefix )
         throws RegistryException
     {
         CombinedConfiguration configuration = (CombinedConfiguration) this.configuration;
@@ -518,8 +518,11 @@ public class CommonsConfigurationRegistry
             try
             {
                 logger.debug( "Loading properties configuration from file: {}", file );
+                if (configuration.getConfigurationNames( ).contains( name )) {
+                    configuration.removeConfiguration( prefix );
+                }
                 Configurations configurations = new Configurations( );
-                configuration.addConfiguration( configurations.properties( file.toFile() ), prefix, prefix );
+                configuration.addConfiguration( configurations.properties( file.toFile() ), name, prefix );
             }
             catch ( ConfigurationException e )
             {
@@ -532,8 +535,11 @@ public class CommonsConfigurationRegistry
             try
             {
                 logger.debug( "Loading XML configuration from file: {}", file );
+                if (configuration.getConfigurationNames( ).contains( name )) {
+                    configuration.removeConfiguration( prefix );
+                }
                 Configurations configurations = new Configurations( );
-                configuration.addConfiguration( configurations.xml( file.toFile() ), prefix, prefix );
+                configuration.addConfiguration( configurations.xml( file.toFile() ), name, prefix );
             }
             catch ( ConfigurationException e )
             {
@@ -546,6 +552,12 @@ public class CommonsConfigurationRegistry
             throw new RegistryException(
                 "Unable to add configuration from file '" + file.getFileName( ).toString( ) + "': unrecognised type" );
         }
+    }
+
+    @Override
+    public void addConfigurationFromFile( Path file, String prefix ) throws RegistryException
+    {
+        addConfigurationFromFile( file, prefix, prefix );
     }
 
 

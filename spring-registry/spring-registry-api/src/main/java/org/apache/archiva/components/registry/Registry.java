@@ -25,9 +25,24 @@ import java.util.List;
 import java.util.Properties;
 
 /**
- * The Plexus registry is a single source of external configuration for Plexus components and applications.
+ * The Registry is a single source of external configuration.
  * It can be used by components to source configuration, knowing that it can be used from within applications
  * without the information being hard coded into the component.
+ *
+ * The configuration is stored hierarchically and each entry can be identified by a key.
+ * The standard notation for keys should be a dot separated string, where each dot represents a connection
+ * from parent to child node.
+ *
+ * The configuration can be combined from different sources. The sources are either defined during initialization
+ * of the concrete implementation or can be added by the <code>addConfigurationXXX()</code> methods.
+ *
+ * If you combine the configuration from different sources, you should modify the configuration from the
+ * sub configuration, which can be get by the {@link #getSection(String)} method. Because depending on the
+ * implementation the changes may not be persisted, if you change the combined tree.
+ *
+ * The standard implementation uses apache commons configuration 2 for storing the configuration.
+ * For implementation details see notes in <code>CommonsConfigurationRegistry</code>
+ *
  */
 public interface Registry
 {
@@ -117,7 +132,8 @@ public interface Registry
     void setBoolean( String key, boolean value );
 
     /**
-     * Load configuration from the given classloader resource.
+     * Add a configuration source to the combined configuration. Load the file from the
+     * given resource string.
      *
      * @param resource the location to load the configuration from
      * @throws RegistryException if a problem occurred reading the resource to add to the registry
@@ -126,17 +142,18 @@ public interface Registry
         throws RegistryException;
 
     /**
-     * Load configuration from the given classloader resource.
+     * Add a configuration source to the combined configuration and load configuration from the given classloader resource.
+     * The configuration source is added at the given prefix in the tree.
      *
      * @param resource the location to load the configuration from
-     * @param prefix   the location to add the configuration at in the registry
+     * @param prefix   the key prefix where the root node of the configuration is placed
      * @throws RegistryException if a problem occurred reading the resource to add to the registry
      */
     void addConfigurationFromResource( String resource, String prefix )
         throws RegistryException;
 
     /**
-     * Load configuration from the given file.
+     * Add a configuration source to the combined configuration and load it from the given file.
      *
      * @param file the location to load the configuration from
      * @throws RegistryException if a problem occurred reading the resource to add to the registry
@@ -145,14 +162,26 @@ public interface Registry
         throws RegistryException;
 
     /**
-     * Load configuration from the given file.
+     * Add the configuration source to the combined configuration and load from the given file.
      *
      * @param file   the location to load the configuration from
-     * @param prefix the location to add the configuration at in the registry
+     * @param prefix   the key prefix where the root node of the configuration is placed
      * @throws RegistryException if a problem occurred reading the resource to add to the registry
      */
     void addConfigurationFromFile( Path file, String prefix )
         throws RegistryException;
+
+
+    /**
+     * Add the configuration source to the combined configuration and load from the given file.
+     * Use the given name for referencing the configuration.
+     *
+     * @param file   the location to load the configuration from
+     * @param prefix   the key prefix where the root node of the configuration is placed
+     * @param name the name of the configuration
+     * @throws RegistryException if a problem occurred reading the resource to add to the registry
+     */
+    void addConfigurationFromFile( Path file, String name, String prefix ) throws RegistryException;
 
     /**
      * Determine if the registry contains any elements.
@@ -216,6 +245,8 @@ public interface Registry
     /**
      * Get a subsection of the registry, identified by the given name. If it doesn't exist, <code>null</code> will be
      * returned.
+     * Subsections should be used to modify configurations. The name of the subsection depends on the implementation
+     * and the concrete initalization.
      *
      * @param name registry section name
      * @return the registry
@@ -224,6 +255,9 @@ public interface Registry
 
     /**
      * Save any changes to the registry since it was loaded.
+     * Be careful with the save method for combined configurations. It may be that changes are not written to
+     * disk or to a different file as expected. How and if changes from a combined configuration are written
+     * to disk depends on the implementation.
      *
      * @throws RegistryException             if there was a problem saving the registry
      * @throws UnsupportedOperationException if the registry is not writable
@@ -235,21 +269,21 @@ public interface Registry
      * Add a change listener. Note that settings this on the base registry will only detect 'invalidation' events, not
      * individual changes. You should retrieve the named sub-registry to listen for changes.
      *
-     * TODO: this isn't ideal, so maybe fix combined configuration to re-fire it's events to it's own listeners in the c-c implementation
-     *
      * @param listener the listener
      */
     void addChangeListener( RegistryListener listener );
 
     /**
-     * @param listener
-     * @return <code>true</code> if has been removed
+     * Remove the change listener, if it was registered before.
+     *
+     * @param listener the registered listener, that should be removed
+     * @return <code>true</code> if has been removed, otherwise <code>false</code>
      * @since 2.3
      */
     boolean removeChangeListener( RegistryListener listener );
 
     /**
-     * Get all the keys in this registry. Keys are only retrieved at a depth of 1.
+     * Get the first level keys in this registry.
      *
      * @return the set of keys
      */
