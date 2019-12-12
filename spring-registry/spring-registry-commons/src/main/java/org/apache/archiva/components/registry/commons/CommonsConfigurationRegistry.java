@@ -121,7 +121,7 @@ public class CommonsConfigurationRegistry
         }
         catch ( ConfigurationException e )
         {
-            logger.error( "Could not initialize configuration: {}", e.getMessage( ) );
+            logger.debug( "Could not initialize configuration: {}", e.getMessage( ) );
         }
     }
 
