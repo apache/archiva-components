@@ -32,8 +32,6 @@
   <name>Archiva Components :: Spring Apache DS LDAP Tools</name>
 
   <properties>
-    <apacheds.version>1.5.1</apacheds.version>
-    <apacheds.shared.version>0.9.7</apacheds.shared.version>
     <site.staging.base>${project.parent.basedir}</site.staging.base>
   </properties>
 
