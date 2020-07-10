@@ -185,8 +185,14 @@ public class EhcacheCache<V, T>
     @Override
     public void clear( )
     {
-        ehcache.removeAll( );
-        stats.clear( );
+        if (ehcache!=null)
+        {
+            ehcache.removeAll( );
+        }
+        if (stats!=null)
+        {
+            stats.clear( );
+        }
     }
 
     @PostConstruct

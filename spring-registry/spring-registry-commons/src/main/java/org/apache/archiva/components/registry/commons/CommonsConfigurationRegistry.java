@@ -39,6 +39,7 @@ import org.apache.commons.configuration2.ex.ConfigurationException;
 import org.apache.commons.configuration2.tree.DefaultExpressionEngine;
 import org.apache.commons.configuration2.tree.DefaultExpressionEngineSymbols;
 import org.apache.commons.configuration2.tree.ImmutableNode;
+import org.apache.commons.configuration2.tree.OverrideCombiner;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.text.StringSubstitutor;
 import org.apache.commons.text.lookup.StringLookupFactory;
@@ -114,7 +115,7 @@ public class CommonsConfigurationRegistry
     {
         // default constructor
         logger.debug( "empty constructor" );
-        this.configurationBuilder = new CombinedConfigurationBuilder( );
+        this.configurationBuilder = new CombinedConfigurationBuilder(  );
         try
         {
             this.configuration = configurationBuilder.getConfiguration();
@@ -480,6 +481,14 @@ public class CommonsConfigurationRegistry
             throw new RegistryException(
                 "Unable to add configuration from resource '" + resource + "': unrecognised type" );
         }
+    }
+
+    public void addConfiguration(Configuration newConfiguration, String name, String prefix) {
+        CombinedConfiguration configuration = (CombinedConfiguration) this.configuration;
+        if (configuration.getConfigurationNames( ).contains( name )) {
+            configuration.removeConfiguration( name );
+        }
+        configuration.addConfiguration( newConfiguration, name, prefix );
     }
 
     /**
