@@ -67,7 +67,7 @@ public class DefaultApacheDs
     //
     // ----------------------------------------------------------------------
 
-    private boolean stopped;
+    private boolean stopped = true;
 
     private MutableServerStartupConfiguration configuration;
 
