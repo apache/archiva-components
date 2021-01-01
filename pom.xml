@@ -74,6 +74,7 @@
     <module>spring-cache</module>
     <module>spring-taskqueue</module>
     <module>spring-quartz</module>
+    <module>rest-util</module>
   </modules>
 
   <repositories>
@@ -188,6 +189,12 @@
         <version>${jakarta.annotation.version}</version>
         <scope>provided</scope>
       </dependency>
+      <dependency>
+        <groupId>jakarta.ws.rs</groupId>
+        <artifactId>jakarta.ws.rs-api</artifactId>
+        <version>${jakarta.ws.rs.version}</version>
+        <scope>provided</scope>
+      </dependency>
 
       <dependency>
         <groupId>org.apache.commons</groupId>
@@ -226,6 +233,17 @@
         <artifactId>junit-vintage-engine</artifactId>
         <version>${junit.jupiter.version}</version>
         <scope>test</scope>
+      </dependency>
+
+      <dependency>
+        <groupId>io.swagger.core.v3</groupId>
+        <artifactId>swagger-core</artifactId>
+        <version>${io.swagger.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>io.swagger.core.v3</groupId>
+        <artifactId>swagger-annotations</artifactId>
+        <version>${io.swagger.version}</version>
       </dependency>
 
     </dependencies>
