@@ -92,7 +92,7 @@ public class QueryHelper<T>
      * @param attributeName the name of the attribute.
      * @return
      */
-    Comparator<T> getAttributeComparator( String attributeName )
+    public Comparator<T> getAttributeComparator( String attributeName )
     {
         return ORDER_MAP.get( attributeName );
     }
@@ -104,7 +104,7 @@ public class QueryHelper<T>
      * @param ascending
      * @return
      */
-    Comparator<T> getComparator( List<String> orderBy, boolean ascending )
+    public Comparator<T> getComparator( List<String> orderBy, boolean ascending )
     {
         if ( ascending )
         {
@@ -127,7 +127,7 @@ public class QueryHelper<T>
      * @param queryToken the search token.
      * @return The predicate used to filter the token
      */
-    Predicate<T> getAttributeQueryFilter( final String attribute, final String queryToken )
+    public Predicate<T> getAttributeQueryFilter( final String attribute, final String queryToken )
     {
         if ( FILTER_MAP.containsKey( attribute ) )
         {
@@ -146,7 +146,7 @@ public class QueryHelper<T>
      * @param queryTerms the query string
      * @return the combined query filter
      */
-    Predicate<T> getQueryFilter( String queryTerms )
+    public Predicate<T> getQueryFilter( String queryTerms )
     {
         return Arrays.stream( queryTerms.split( "\\s+" ) )
             .map( s -> {
