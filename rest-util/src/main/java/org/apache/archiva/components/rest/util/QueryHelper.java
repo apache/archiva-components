@@ -52,11 +52,21 @@ import java.util.function.Predicate;
 public class QueryHelper<T>
 {
 
-    private final Map<String, BiPredicate<String, T>> FILTER_MAP;
-    private final Map<String, Comparator<T>> ORDER_MAP;
-    private final String[] DEFAULT_SEARCH_FIELDS;
+    private final Map<String, BiPredicate<String, T>> filterMap;
+    private final Map<String, Comparator<T>> orderMap;
+    private final String[] defaultSearchAttributes;
     private final Predicate<T> DEFAULT_FILTER = ( T att ) -> false;
 
+
+    /**
+     * Initializes a helper with the given default search attributes.
+     * @param defaultSearchAttributes the attribute names to use for searching
+     */
+    public QueryHelper(String[] defaultSearchAttributes) {
+        this.filterMap = new HashMap<>( );
+        this.orderMap = new HashMap<>( );
+        this.defaultSearchAttributes = defaultSearchAttributes;
+    }
 
     /**
      * Creates a new query helper with the given filters and comparators.
@@ -70,39 +80,57 @@ public class QueryHelper<T>
     public QueryHelper(Map<String, BiPredicate<String, T>> filterMap, Map<String, Comparator<T>> orderMap,
                        String[] defaultSearchFields)
     {
-        this.FILTER_MAP = filterMap;
-        this.DEFAULT_SEARCH_FIELDS = defaultSearchFields;
-        this.ORDER_MAP = new HashMap<>( orderMap );
+        this.filterMap = filterMap;
+        this.defaultSearchAttributes = defaultSearchFields;
+        this.orderMap = new HashMap<>( orderMap );
     }
 
-    public <U extends Comparable<? super U>> void addNullsafeFieldComparator( String fieldName, Function<? super T, U> keyExtractor) {
-        ORDER_MAP.put( fieldName, Comparator.comparing( keyExtractor, Comparator.nullsLast( Comparator.naturalOrder( ) ) ) );
+    /**
+     * This adds a null safe comparator, that compares the field values in natural order. Null values are sorted after
+     * any other values.
+     * @param attributeName the name of the attribute
+     * @param keyExtractor the extractor to use for getting the attribute value
+     * @param <U>
+     */
+    public <U extends Comparable<? super U>> void addNullsafeFieldComparator( String attributeName, Function<? super T, U> keyExtractor) {
+        orderMap.put( attributeName, Comparator.comparing( keyExtractor, Comparator.nullsLast( Comparator.naturalOrder( ) ) ) );
     }
 
-    public void addStringFilter(String attribute, Function<? super T, String> keyExtractor) {
-        this.FILTER_MAP.put( attribute, ( String q, T r ) -> StringUtils.containsIgnoreCase( keyExtractor.apply( r ), q ) );
+    /**
+     * Adds a filter for a string attribute.
+     * @param attributeName the name of the attribute, this is the name used in the query parameters
+     * @param keyExtractor the extractor to use for getting the attribute value, e.g. PropertyEntry::getKey
+     */
+    public void addStringFilter(String attributeName, Function<? super T, String> keyExtractor) {
+        this.filterMap.put( attributeName, ( String q, T r ) -> StringUtils.containsIgnoreCase( keyExtractor.apply( r ), q ) );
     }
 
-    public void addBooleanFilter(String attribute, Function<? super T, Boolean> keyExtractor) {
-        this.FILTER_MAP.put( attribute, ( String q, T r ) -> Boolean.valueOf( q ) == keyExtractor.apply( r ) );
+    /**
+     * Adds a filter for a boolean attribute. The boolean is extracted by Boolean.valueOf()
+     * @param attributeName the attribute name
+     * @param keyExtractor the extractor to use for getting the attribute value
+     */
+    public void addBooleanFilter(String attributeName, Function<? super T, Boolean> keyExtractor) {
+        this.filterMap.put( attributeName, ( String q, T r ) -> Boolean.valueOf( q ) == keyExtractor.apply( r ) );
     }
 
     /**
      * Get the comparator for a specific attribute.
      * @param attributeName the name of the attribute.
-     * @return
+     * @return the comparator for the attribute, if defined, or otherwise <code>null</code>
      */
     public Comparator<T> getAttributeComparator( String attributeName )
     {
-        return ORDER_MAP.get( attributeName );
+        return orderMap.get( attributeName );
     }
 
     /**
      * Get the combined order for the given attributes in the given order.
      *
      * @param orderBy the attributes to compare. The first attribute in the list will be used first for comparing.
-     * @param ascending
-     * @return
+     * @param ascending <code>true</code>, if the ordering should be ascending, otherwise <code>false</code>
+     * @return the comparator for the given order definition.
+     * @throws IllegalArgumentException if there is no comparator defined for one of the given orderBy values
      */
     public Comparator<T> getComparator( List<String> orderBy, boolean ascending )
     {
@@ -123,15 +151,16 @@ public class QueryHelper<T>
 
     /**
      * Returns a query filter for a specific attribute and query token.
-     * @param attribute the attribute name to filter for.
+     * @param attributeName the attribute name to filter for.
      * @param queryToken the search token.
-     * @return The predicate used to filter the token
+     * @return The predicate used to filter the token. If there exists no filter definition for the attribute, it will use a filter,
+     * that always returns <code>false</code>
      */
-    public Predicate<T> getAttributeQueryFilter( final String attribute, final String queryToken )
+    public Predicate<T> getAttributeQueryFilter( final String attributeName, final String queryToken )
     {
-        if ( FILTER_MAP.containsKey( attribute ) )
+        if ( filterMap.containsKey( attributeName ) )
         {
-            return ( T u ) -> FILTER_MAP.get( attribute ).test( queryToken, u );
+            return ( T u ) -> filterMap.get( attributeName ).test( queryToken, u );
         }
         else
         {
@@ -158,11 +187,19 @@ public class QueryHelper<T>
                     }
                     else
                     {
-                        return Arrays.stream( DEFAULT_SEARCH_FIELDS )
+                        return Arrays.stream( defaultSearchAttributes )
                             .map( att -> getAttributeQueryFilter( att, s ) ).reduce( Predicate::or ).get( );
                     }
                 }
             ).reduce( Predicate::or ).get( );
     }
 
+    /**
+     * Returns <code>false</code>, if the given order string equals to "desc", otherwise <code>true</code>
+     * @param order the string for ordering (asc, desc)
+     * @return <code>false</code>, if the string equals to 'desc', otherwise <code>true</code>
+     */
+    public boolean isAscending(String order) {
+        return !"desc".equals( order );
+    }
 }

@@ -33,6 +33,15 @@ public class PropertyEntry implements Serializable
     private String key;
     private String value;
 
+    public PropertyEntry() {
+
+    }
+
+    public PropertyEntry(String key, String value) {
+        this.key = key;
+        this.value = value;
+    }
+
     public String getKey( )
     {
         return key;
