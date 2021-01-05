@@ -26,7 +26,7 @@ import java.util.Objects;
  * @author Martin Stockhammer <martin_s@apache.org>
  */
 @XmlRootElement(name="propertyEntry")
-@Schema(name="PropertyEntry", description = "Key/Value-Pair")
+@Schema(name="PropertyEntry", description = "Key-Value-Pair")
 public class PropertyEntry implements Serializable
 {
     private static final long serialVersionUID = -4486042628710420898L;

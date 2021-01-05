@@ -47,7 +47,7 @@ public class PaginationInfo
         this.limit = limit;
     }
 
-    @Schema(description = "The total number of data available.")
+    @Schema(name="total_count", description = "The total number of data available.")
     public long getTotalCount( )
     {
         return totalCount;
