@@ -711,7 +711,7 @@ public class CommonsConfigurationRegistry
             }
             catch ( ConfigurationException e )
             {
-                logger.error( "Unable to retrieve builder for configuration {}", name );
+                logger.debug( "Unable to retrieve builder for configuration {}", name );
                 return null;
             }
         } else {
