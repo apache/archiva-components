@@ -20,6 +20,7 @@ package org.apache.archiva.components.taskqueue.execution;
  */
 
 import org.apache.archiva.components.taskqueue.Task;
+import org.apache.archiva.components.taskqueue.TaskQueue;
 
 
 /**
@@ -43,4 +44,12 @@ public interface TaskQueueExecutor<T extends Task>
      * @return true if the task was cancelled, false if the task was not executing.
      */
     boolean cancelTask( T task );
+
+    TaskQueue<T> getQueue( );
+
+    TaskExecutor<T> getExecutor( );
+
+    String getName( );
+
+    boolean hasRunningTask();
 }
