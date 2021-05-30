@@ -90,7 +90,7 @@ public class QueryHelper<T>
      * any other values.
      * @param attributeName the name of the attribute
      * @param keyExtractor the extractor to use for getting the attribute value
-     * @param <U>
+     * @param <U> the type that is to be compared by the comparator
      */
     public <U extends Comparable<? super U>> void addNullsafeFieldComparator( String attributeName, Function<? super T, U> keyExtractor) {
         orderMap.put( attributeName, Comparator.comparing( keyExtractor, Comparator.nullsLast( Comparator.naturalOrder( ) ) ) );
@@ -136,7 +136,7 @@ public class QueryHelper<T>
     {
         if ( ascending )
         {
-            return orderBy.stream( ).map( ( String name ) -> getAttributeComparator( name ) ).filter( Objects::nonNull )
+            return orderBy.stream( ).map( this::getAttributeComparator ).filter( Objects::nonNull )
                 .reduce( Comparator::thenComparing )
                 .orElseThrow( () -> new IllegalArgumentException( "No attribute ordering found" ) );
         }
@@ -147,6 +147,17 @@ public class QueryHelper<T>
                 .reversed( ) ).filter( Objects::nonNull ).reduce( Comparator::thenComparing )
                 .orElseThrow( () -> new IllegalArgumentException( "No attribute ordering found" ) );
         }
+    }
+
+    /**
+     * Returns the ordering for the given attributes and the given order string.
+     * The order is considered as ascending if the string is not equal to 'desc'
+     * @param orderBy the list of attributes to order by
+     * @param order the order string, either 'asc' for ascending or 'desc' for descending
+     * @return the combined comparator
+     */
+    public Comparator<T> getComparator(List<String> orderBy, String order) {
+        return getComparator( orderBy, this.isAscending( order ) );
     }
 
     /**
@@ -188,10 +199,10 @@ public class QueryHelper<T>
                     else
                     {
                         return Arrays.stream( defaultSearchAttributes )
-                            .map( att -> getAttributeQueryFilter( att, s ) ).reduce( Predicate::or ).get( );
+                            .map( att -> getAttributeQueryFilter( att, s ) ).reduce( Predicate::or ).orElseThrow(  () -> new RuntimeException( "Fatal error. No filter predicate found." ));
                     }
                 }
-            ).reduce( Predicate::or ).get( );
+            ).reduce( Predicate::or ).orElseThrow( () -> new RuntimeException( "Fatal error. No filter predicate found." ) );
     }
 
     /**
