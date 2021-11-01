@@ -37,8 +37,10 @@ import org.slf4j.LoggerFactory;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 
 /**
  * EhcacheCache
@@ -231,6 +233,18 @@ public class EhcacheCache<V, T>
             {
                 configuration = new Configuration( );
             }
+            Path diskStore = Paths.get( getDiskStorePath( ) );
+            if (!Files.exists( diskStore ))
+            {
+                try
+                {
+                    Files.createDirectories( diskStore );
+                }
+                catch ( IOException e )
+                {
+                    log.error( "Could not create cache path " + e.getMessage( ) );
+                }
+            }
             this.cacheManager = new CacheManager( configuration.name( getName( ) ).diskStore(
                 new DiskStoreConfiguration( ).path( getDiskStorePath( ) ) ) );
         }
@@ -297,8 +311,13 @@ public class EhcacheCache<V, T>
             log.info( "Disposing cache: {}", ehcache );
             if ( this.ehcache != null )
             {
-                this.cacheManager.removeCache( this.ehcache.getName( ) );
-                this.ehcache = null;
+                try
+                {
+                    this.cacheManager.removeCache( this.ehcache.getName( ) );
+                    this.ehcache = null;
+                } catch (Throwable e) {
+                    log.error( "Cache removal failed: {}", e.getMessage( ), e );
+                }
             }
         }
         else
