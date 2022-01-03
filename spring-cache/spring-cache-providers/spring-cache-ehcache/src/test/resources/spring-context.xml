@@ -25,6 +25,8 @@
 
 
     <bean name="cache#ehcache" class="org.apache.archiva.components.cache.ehcache.EhcacheCache">
+        <constructor-arg index="0" value="java.lang.String"/>
+        <constructor-arg index="1" value="java.lang.Integer"/>
         <property name="diskExpiryThreadIntervalSeconds" value="600"/>
         <property name="diskPersistent" value="false"/>
         <property name="diskStorePath" value="./target/ehcache-test-store"/>
@@ -38,6 +40,8 @@
     </bean>
 
     <bean name="cache#alwaysrefresh" class="org.apache.archiva.components.cache.ehcache.EhcacheCache">
+        <constructor-arg index="0" value="java.lang.String"/>
+        <constructor-arg index="1" value="org.apache.archiva.components.cache.test.examples.wine.Wine"/>
         <property name="diskExpiryThreadIntervalSeconds" value="600"/>
         <property name="diskPersistent" value="false"/>
         <property name="diskStorePath" value="./target/ehcache-test-store"/>
@@ -51,6 +55,8 @@
     </bean>
 
     <bean name="cache#neverrefresh" class="org.apache.archiva.components.cache.ehcache.EhcacheCache">
+        <constructor-arg index="0" value="java.lang.String"/>
+        <constructor-arg index="1" value="org.apache.archiva.components.cache.test.examples.wine.Wine"/>
         <property name="diskExpiryThreadIntervalSeconds" value="600"/>
         <property name="diskPersistent" value="false"/>
         <property name="diskStorePath" value="./target/ehcache-test-store"/>
@@ -64,6 +70,8 @@
     </bean>
 
     <bean name="cache#onesecondrefresh" class="org.apache.archiva.components.cache.ehcache.EhcacheCache">
+        <constructor-arg index="0" value="java.lang.String"/>
+        <constructor-arg index="1" value="org.apache.archiva.components.cache.test.examples.wine.Wine"/>
         <property name="diskExpiryThreadIntervalSeconds" value="600"/>
         <property name="diskPersistent" value="false"/>
         <property name="diskStorePath" value="./target/ehcache-test-store"/>
@@ -77,6 +85,8 @@
     </bean>
 
     <bean name="cache#twosecondrefresh" class="org.apache.archiva.components.cache.ehcache.EhcacheCache">
+        <constructor-arg index="0" value="java.lang.String"/>
+        <constructor-arg index="1" value="org.apache.archiva.components.cache.test.examples.wine.Wine"/>
         <property name="diskExpiryThreadIntervalSeconds" value="600"/>
         <property name="diskPersistent" value="false"/>
         <property name="diskStorePath" value="./target/ehcache-test-store"/>

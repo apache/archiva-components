@@ -114,7 +114,7 @@ public class CacheFactory
         CacheFactory.creator = creator;
     }
 
-    public Cache getCache( String id, CacheHints hints )
+    public <K,V> Cache<K,V> getCache( String id, Class<K> keyType, Class<V> valueType, CacheHints hints )
         throws CacheException
     {
         if ( creator == null )
@@ -124,7 +124,7 @@ public class CacheFactory
 
         if ( caches.containsKey( id ) )
         {
-            return (Cache) caches.get( id );
+            return (Cache<K,V>) caches.get( id );
         }
 
         if ( hints == null )
@@ -134,9 +134,9 @@ public class CacheFactory
             hints.setName( id );
         }
 
-        Cache cache = CacheFactory.creator.createCache( hints );
+        Cache<K,V> cache = CacheFactory.creator.createCache( hints, keyType, valueType );
 
         caches.put( id, cache );
-        return (Cache) cache;
+        return cache;
     }
 }

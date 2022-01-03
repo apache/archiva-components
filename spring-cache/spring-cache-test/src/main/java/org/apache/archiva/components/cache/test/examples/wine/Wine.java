@@ -67,4 +67,24 @@ public class Wine
         sb.append( '}' );
         return sb.toString( );
     }
+
+    @Override
+    public boolean equals( Object o )
+    {
+        if ( this == o ) return true;
+        if ( o == null || getClass( ) != o.getClass( ) ) return false;
+
+        Wine wine = (Wine) o;
+
+        if ( name != null ? !name.equals( wine.name ) : wine.name != null ) return false;
+        return localisation != null ? localisation.equals( wine.localisation ) : wine.localisation == null;
+    }
+
+    @Override
+    public int hashCode( )
+    {
+        int result = name != null ? name.hashCode( ) : 0;
+        result = 31 * result + ( localisation != null ? localisation.hashCode( ) : 0 );
+        return result;
+    }
 }

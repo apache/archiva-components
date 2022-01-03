@@ -28,15 +28,14 @@ import org.apache.archiva.components.cache.test.examples.wine.Wine;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.logging.ConsoleHandler;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * AbstractCacheTestCase
@@ -48,14 +47,16 @@ import java.util.logging.Logger;
 public abstract class AbstractCacheTestCase
     extends TestCase
 {
-    static
-    {
-        Logger logger = Logger.getLogger( "org.codehaus.plexus.cache" );
-        logger.setLevel( Level.ALL );
-        ConsoleHandler handler = new ConsoleHandler( );
-        handler.setLevel( Level.ALL );
-        logger.addHandler( handler );
-    }
+//    static
+//    {
+//        Logger logger = Logger.getLogger( "org.codehaus.plexus.cache" );
+//        logger.setLevel( Level.ALL );
+//        ConsoleHandler handler = new ConsoleHandler( );
+//        handler.setLevel( Level.ALL );
+//        logger.addHandler( handler );
+//    }
+
+    private static final Logger log = LoggerFactory.getLogger( AbstractCacheTestCase.class );
 
     protected Cache<String, Integer> cache;
 
@@ -85,6 +86,7 @@ public abstract class AbstractCacheTestCase
     @Test
     public void testLargePutGet( )
     {
+        log.info( "Starting test testLargePutGet" );
         EnglishNumberFormat fmt = new EnglishNumberFormat( );
 
         for ( int i = 4500; i <= 5000; i++ )
@@ -229,7 +231,7 @@ public abstract class AbstractCacheTestCase
     @Test
     public void testCacheFactory( ) throws CacheException
     {
-        Cache<String, Integer> cache = CacheFactory.getInstance( ).getCache( "foo-factory-test", null );
+        Cache<String, Integer> cache = CacheFactory.getInstance( ).getCache( "foo-factory-test", String.class, Integer.class,null );
 
         // This test is only here to ensure that the provider implements a Creator class.
         assertNotNull( "Cache should not be null", cache );

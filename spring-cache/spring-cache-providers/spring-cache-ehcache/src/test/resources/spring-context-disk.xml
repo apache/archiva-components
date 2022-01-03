@@ -25,6 +25,9 @@
 
 
     <bean name="cache#test-cache-int-disk" class="org.apache.archiva.components.cache.ehcache.EhcacheCache">
+        <constructor-arg index="0" value="java.lang.String"/>
+        <constructor-arg index="1" value="java.lang.Integer"/>
+
         <property name="diskExpiryThreadIntervalSeconds" value="600"/>
         <property name="diskPersistent" value="true"/>
         <property name="diskStorePath" value="./target/ehcache-test-store-disk-int"/>

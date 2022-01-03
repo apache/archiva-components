@@ -29,15 +29,15 @@ import org.apache.archiva.components.cache.factory.CacheCreator;
  *
  * @author <a href="mailto:joakim@erdfelt.com">Joakim Erdfelt</a>
  */
-public class HashMapCacheCreator
-    implements CacheCreator
+public class HashMapCacheCreator<K,V>
+    implements CacheCreator<K,V>
 {
-    public Cache createCache( CacheHints cacheHint )
+    public Cache createCache( CacheHints cacheHint, Class<K> keyType, Class<V> valueType )
         throws CacheException
     {
         // Supports NO CacheHints.
 
-        HashMapCache cache = new HashMapCache( );
+        HashMapCache<K,V> cache = new HashMapCache<>( );
 
         cache.initialize( );
 

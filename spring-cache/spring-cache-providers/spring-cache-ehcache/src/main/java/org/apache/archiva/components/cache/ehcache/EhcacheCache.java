@@ -19,19 +19,18 @@ package org.apache.archiva.components.cache.ehcache;
  * under the License.
  */
 
-import net.sf.ehcache.Cache;
-import net.sf.ehcache.CacheManager;
-import net.sf.ehcache.Element;
-import net.sf.ehcache.Status;
-import net.sf.ehcache.config.CacheConfiguration;
-import net.sf.ehcache.config.Configuration;
-import net.sf.ehcache.config.ConfigurationFactory;
-import net.sf.ehcache.config.DiskStoreConfiguration;
-import net.sf.ehcache.config.MemoryUnit;
-import net.sf.ehcache.config.PersistenceConfiguration;
-import net.sf.ehcache.statistics.StatisticsGateway;
-import net.sf.ehcache.store.MemoryStoreEvictionPolicy;
 import org.apache.archiva.components.cache.CacheStatistics;
+import org.ehcache.Cache;
+import org.ehcache.PersistentCacheManager;
+import org.ehcache.StateTransitionException;
+import org.ehcache.Status;
+import org.ehcache.config.builders.CacheConfigurationBuilder;
+import org.ehcache.config.builders.CacheManagerBuilder;
+import org.ehcache.config.builders.ExpiryPolicyBuilder;
+import org.ehcache.config.builders.ResourcePoolsBuilder;
+import org.ehcache.config.units.MemoryUnit;
+import org.ehcache.core.spi.service.StatisticsService;
+import org.ehcache.expiry.ExpiryPolicy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -41,6 +40,11 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.time.Duration;
+import java.time.temporal.ChronoUnit;
+import java.util.HashSet;
+import java.util.Random;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * EhcacheCache
@@ -56,9 +60,18 @@ public class EhcacheCache<V, T>
 
     private static final String EHCACHE_DISK_STORE_PROPERTY = "org.apache.archiva.ehcache.diskStore";
 
-    private Logger log = LoggerFactory.getLogger( EhcacheCache.class );
+    private static final Logger log = LoggerFactory.getLogger( EhcacheCache.class );
 
-    class Stats
+    private final Class<V> keyType;
+    private final Class<T> valueType;
+
+    public EhcacheCache( Class<V> keyType, Class<T> valueType )
+    {
+        this.keyType = keyType;
+        this.valueType = valueType;
+    }
+
+    static class Stats
         implements CacheStatistics
     {
         private boolean useBaseLine = false;
@@ -66,17 +79,25 @@ public class EhcacheCache<V, T>
         private long missCountBL = 0;
         private long sizeBL = 0;
         private long localHeapSizeInBytesBL = 0;
+        private final String cacheName;
+        private final StatisticsRetrieval svc;
+
+        public Stats( StatisticsRetrieval svc, String cacheName )
+        {
+            this.cacheName = cacheName;
+            this.svc = svc;
+        }
 
         // No API for cache clear since 2.10. We use a baseline, if the cache is cleared.
         @Override
         public void clear( )
         {
             useBaseLine = true;
-            final StatisticsGateway cStats = ehcache.getStatistics( );
-            hitCountBL = cStats.cacheHitCount( );
-            missCountBL = cStats.cacheMissCount( );
-            sizeBL = cStats.getSize( );
-            localHeapSizeInBytesBL = cStats.getLocalHeapSizeInBytes( );
+            org.ehcache.core.statistics.CacheStatistics cStats = getStats( );
+            hitCountBL = cStats.getCacheHits( );
+            missCountBL = cStats.getCacheMisses( );
+            sizeBL = cStats.getTierStatistics( ).size( );
+            localHeapSizeInBytesBL = cStats.getTierStatistics( ).get( "OnHeap" ).getAllocatedByteSize( );
         }
 
         @Override
@@ -93,29 +114,57 @@ public class EhcacheCache<V, T>
             return hits / ( hits + miss );
         }
 
+        private org.ehcache.core.statistics.CacheStatistics getStats( )
+        {
+            return svc.getStatisticsService( ).getCacheStatistics( this.cacheName );
+        }
+
         @Override
         public long getCacheHits( )
         {
-            return useBaseLine ? ehcache.getStatistics( ).cacheHitCount( ) - hitCountBL : ehcache.getStatistics( ).cacheHitCount( );
+            long hits = getStats( ).getCacheHits( );
+            return useBaseLine ? hits - hitCountBL : hits;
         }
 
         @Override
         public long getCacheMiss( )
         {
-            return useBaseLine ? ehcache.getStatistics( ).cacheMissCount( ) - missCountBL : ehcache.getStatistics( ).cacheMissCount( );
+            long misses = getStats( ).getCacheMisses( );
+            return useBaseLine ? misses - missCountBL : misses;
         }
 
         @Override
         public long getSize( )
         {
-            return useBaseLine ? ehcache.getStatistics( ).getSize( ) - sizeBL : ehcache.getStatistics( ).getSize( );
+            long size = getStats( ).getTierStatistics( ).size( );
+            return useBaseLine ? size - sizeBL : size;
         }
 
         @Override
         public long getInMemorySize( )
         {
-            return useBaseLine ? ehcache.getStatistics( ).getLocalHeapSizeInBytes( ) - localHeapSizeInBytesBL : ehcache.getStatistics( ).getLocalHeapSizeInBytes( );
+            long memSize = getStats( ).getTierStatistics( ).get( "OnHeap" ).getAllocatedByteSize( );
+            return useBaseLine ? memSize - localHeapSizeInBytesBL : memSize;
         }
+
+        public StatisticsService getService( )
+        {
+            return svc.getStatisticsService( );
+        }
+    }
+
+    private static class ManagerData
+    {
+        final PersistentCacheManager cacheManager;
+        final StatisticsRetrieval statisticsRetrieval;
+        final HashSet<String> cacheNames = new HashSet<>( );
+
+        ManagerData( PersistentCacheManager cacheManager, StatisticsRetrieval statisticsRetrieval )
+        {
+            this.cacheManager = cacheManager;
+            this.statisticsRetrieval = statisticsRetrieval;
+        }
+
     }
 
     /**
@@ -131,9 +180,9 @@ public class EhcacheCache<V, T>
     /**
      * Location on disk for the ehcache store.
      */
-    private String diskStorePath = System.getProperties( ).containsKey( EHCACHE_DISK_STORE_PROPERTY ) ?
+    private Path diskStorePath = Paths.get( System.getProperties( ).containsKey( EHCACHE_DISK_STORE_PROPERTY ) ?
         System.getProperty( EHCACHE_DISK_STORE_PROPERTY ) :
-        System.getProperty( "java.io.tmpdir" ) + "/ehcache-archiva";
+        System.getProperty( "java.io.tmpdir" ) + "/ehcache-archiva" ).toAbsolutePath( );
 
     private boolean eternal = false;
 
@@ -142,6 +191,9 @@ public class EhcacheCache<V, T>
     private String memoryEvictionPolicy = "LRU";
 
     private String name = "cache";
+
+    private String registeredName;
+    private Path registeredPath;
 
     /**
      * Flag indicating when to use the disk store.
@@ -178,20 +230,21 @@ public class EhcacheCache<V, T>
 
     private Path configurationFile = null;
 
-    private CacheManager cacheManager = null;//CacheManager.getInstance();
-
-    private net.sf.ehcache.Cache ehcache;
+    private Cache<V, T> ehcache;
 
     private Stats stats;
+
+    private static final ConcurrentHashMap<Path, ManagerData> cacheManagerRefs = new ConcurrentHashMap<>( );
+
 
     @Override
     public void clear( )
     {
-        if (ehcache!=null)
+        if ( ehcache != null )
         {
-            ehcache.removeAll( );
+            ehcache.clear( );
         }
-        if (stats!=null)
+        if ( stats != null )
         {
             stats.clear( );
         }
@@ -205,118 +258,160 @@ public class EhcacheCache<V, T>
         {
             System.setProperty( "net.sf.ehcache.skipUpdateCheck", "true" );
         }
+        this.registeredName = getName( );
+        Path storePath = getDiskStorePath( );
+        this.registeredPath = storePath;
+        ManagerData md = cacheManagerRefs.computeIfAbsent( this.registeredPath, ( key ) -> {
+            StatisticsRetrieval retrieval = new StatisticsRetrieval( );
+            return new ManagerData( initCacheManager( retrieval, this.registeredPath ), retrieval );
+        } );
 
-        stats = new Stats( );
+        this.stats = new Stats( md.statisticsRetrieval, this.registeredName );
 
-        boolean cacheManagerExists = CacheManager.getCacheManager( getName( ) ) != null;
+        final PersistentCacheManager cacheManager = md.cacheManager;
 
-        if ( cacheManagerExists )
+        Cache<V, T> cCache = cacheManager.getCache( registeredName, keyType, valueType );
+
+        if ( cCache != null )
         {
             if ( failOnDuplicateCache )
             {
-                throw new RuntimeException( "A previous cacheManager with name [" + getName( ) + "] exists." );
+                throw new RuntimeException( "A previous cache with name [" + registeredName + "] exists." );
             }
             else
             {
-                log.warn( "skip duplicate cache {}", getName( ) );
-                cacheManager = CacheManager.getCacheManager( getName( ) );
+                log.warn( "skip duplicate cache {}", registeredName );
+                this.ehcache = cCache;
             }
         }
         else
         {
-            Configuration configuration;
-            if ( configurationFile != null && Files.exists( configurationFile ) && Files.isReadable( configurationFile ) )
+            int diskSize = getMaxElementsOnDisk( ) > 0 ? getMaxElementsOnDisk( ) : 100;
+            int memElements = getMaxElementsInMemory( ) > 0 ? getMaxElementsInMemory( ) : 1;
+            ResourcePoolsBuilder rpBuilder = ResourcePoolsBuilder
+                .heap( memElements ).disk( diskSize, MemoryUnit.MB, isDiskPersistent( ) );
+            if ( isOverflowToOffHeap( ) )
             {
-                configuration = ConfigurationFactory.parseConfiguration( configurationFile.toFile( ) );
+                rpBuilder.offheap( getMaxBytesLocalOffHeap( ), MemoryUnit.B );
             }
-            else
+            log.info( "Creating cache {}", registeredName );
+            this.ehcache = cacheManager.createCache( this.registeredName, CacheConfigurationBuilder.newCacheConfigurationBuilder( keyType, valueType, rpBuilder )
+                .withExpiry( getExpiry( ) )
+                .build( ) );
+
+            md.cacheNames.add( this.registeredName );
+        }
+    }
+
+    ExpiryPolicy getExpiry( )
+    {
+        int ttl = getTimeToLiveSeconds( );
+        int tti = getTimeToIdleSeconds( );
+        if ( ttl <= 0 && tti <= 0 )
+        {
+            return ExpiryPolicy.NO_EXPIRY;
+        }
+        if ( ttl <= 0 && tti > 0 )
+        {
+            return ExpiryPolicyBuilder.timeToIdleExpiration( Duration.ofSeconds( tti ) );
+        }
+        if ( ttl > 0 && tti <= 0 )
+        {
+            return ExpiryPolicyBuilder.timeToLiveExpiration( Duration.ofSeconds( ttl ) );
+        }
+        return ExpiryPolicyBuilder.expiry( ).create( Duration.ofSeconds( ttl ) ).access( Duration.ofSeconds( tti ) ).update( Duration.ofSeconds( tti ) ).build( );
+    }
+
+    private Duration getDurationFromSeconds( int seconds )
+    {
+        return seconds <= 0 ? ChronoUnit.FOREVER.getDuration( ) : Duration.ofSeconds( seconds );
+    }
+
+    private synchronized PersistentCacheManager initCacheManager( StatisticsRetrieval svc, Path diskStorePath )
+    {
+        log.info( "Initializing Cache Manager {}, {}", isStatisticsEnabled( ), diskStorePath );
+        if ( !Files.exists( diskStorePath ) )
+        {
+            try
             {
-                configuration = new Configuration( );
+                Files.createDirectories( diskStorePath );
             }
-            Path diskStore = Paths.get( getDiskStorePath( ) );
-            if (!Files.exists( diskStore ))
+            catch ( IOException e )
             {
-                try
-                {
-                    Files.createDirectories( diskStore );
-                }
-                catch ( IOException e )
-                {
-                    log.error( "Could not create cache path " + e.getMessage( ) );
-                }
+                log.error( "Could not create cache path: {}", e.getMessage( ) );
             }
-            this.cacheManager = new CacheManager( configuration.name( getName( ) ).diskStore(
-                new DiskStoreConfiguration( ).path( getDiskStorePath( ) ) ) );
         }
 
-        boolean cacheExists = cacheManager.cacheExists( getName( ) );
-
-        if ( cacheExists )
+        try
         {
-            if ( failOnDuplicateCache )
+            CacheManagerBuilder<PersistentCacheManager> builder = CacheManagerBuilder.newCacheManagerBuilder( )
+                .with( CacheManagerBuilder.persistence( diskStorePath.toFile( ) ) );
+            if ( isStatisticsEnabled( ) )
             {
-                throw new RuntimeException( "A previous cache with name [" + getName( ) + "] exists." );
+                builder = builder.using( svc );
             }
-            else
+            return builder.build( true );
+        } catch ( StateTransitionException ex ) {
+            // One try to use fallback path, if the cache exists already
+            Path fallBackPath = diskStorePath.getParent( ).resolve( diskStorePath.getFileName( ).toString( ) + "-" + ( new Random( ).nextLong( ) % 1000 ) );
+            try
             {
-                log.warn( "skip duplicate cache {}", getName( ) );
-                ehcache = cacheManager.getCache( getName( ) );
+                Files.createDirectories( fallBackPath );
             }
-        }
-        else
-        {
-            CacheConfiguration cacheConfiguration =
-                new CacheConfiguration( ).name( getName( ) ).memoryStoreEvictionPolicy(
-                    getMemoryStoreEvictionPolicy( ) ).eternal( isEternal( ) ).timeToLiveSeconds(
-                    getTimeToLiveSeconds( ) ).timeToIdleSeconds(
-                    getTimeToIdleSeconds( ) ).diskExpiryThreadIntervalSeconds(
-                    getDiskExpiryThreadIntervalSeconds( ) ).overflowToOffHeap(
-                    isOverflowToOffHeap( ) ).maxEntriesLocalDisk( getMaxElementsOnDisk( ) );
-
-            cacheConfiguration.addPersistence( new PersistenceConfiguration( ) );
-            if ( isDiskPersistent( ) )
+            catch ( IOException e )
             {
-                cacheConfiguration.getPersistenceConfiguration( ).setStrategy( PersistenceConfiguration.Strategy.LOCALTEMPSWAP.name( ) );
+                log.error( "Could not create fallback cache path: {} ", e.getMessage( ) );
             }
-            else
+            CacheManagerBuilder<PersistentCacheManager> builder = CacheManagerBuilder.newCacheManagerBuilder( )
+                .with( CacheManagerBuilder.persistence( fallBackPath.toFile( ) ) );
+            if ( isStatisticsEnabled( ) )
             {
-                cacheConfiguration.getPersistenceConfiguration( ).setStrategy( PersistenceConfiguration.Strategy.NONE.name( ) );
+                builder = builder.using( svc );
             }
-
-            if ( getMaxElementsInMemory( ) > 0 )
-            {
-                cacheConfiguration = cacheConfiguration.maxEntriesLocalHeap( getMaxElementsInMemory( ) );
-            }
-
-            if ( getMaxBytesLocalHeap( ) > 0 )
-            {
-                cacheConfiguration = cacheConfiguration.maxBytesLocalHeap( getMaxBytesLocalHeap( ), MemoryUnit.BYTES );
-            }
-            if ( getMaxBytesLocalOffHeap( ) > 0 )
-            {
-                cacheConfiguration =
-                    cacheConfiguration.maxBytesLocalOffHeap( getMaxBytesLocalOffHeap( ), MemoryUnit.BYTES );
-            }
-
-            ehcache = new Cache( cacheConfiguration );
-            cacheManager.addCache( ehcache );
+            return builder.build( true );
         }
     }
 
     @PreDestroy
     public void dispose( )
     {
-        if ( this.cacheManager.getStatus( ).equals( Status.STATUS_ALIVE ) )
+        ManagerData data = cacheManagerRefs.get( registeredPath );
+        PersistentCacheManager cacheManager = data.cacheManager;
+        HashSet names = data.cacheNames;
+        if ( cacheManager != null && cacheManager.getStatus( ).equals( Status.AVAILABLE ) )
         {
-            log.info( "Disposing cache: {}", ehcache );
+            log.info( "Disposing cache: {}, {}", ehcache, registeredName );
             if ( this.ehcache != null )
             {
                 try
                 {
-                    this.cacheManager.removeCache( this.ehcache.getName( ) );
-                    this.ehcache = null;
-                } catch (Throwable e) {
+                    cacheManager.destroyCache( this.registeredName );
+
+                }
+                catch ( Throwable e )
+                {
                     log.error( "Cache removal failed: {}", e.getMessage( ), e );
+                }
+                finally
+                {
+                    names.remove( this.registeredName );
+                    this.ehcache = null;
+                }
+            }
+            if ( names.size( ) == 0 )
+            {
+                try
+                {
+                    cacheManager.close( );
+                    cacheManager.destroy( );
+                }
+                catch ( Throwable e )
+                {
+                    log.error( "Cache manager removal failed: {}", e.getMessage( ), e );
+                }
+                finally
+                {
+                    cacheManagerRefs.remove( registeredPath );
                 }
             }
         }
@@ -326,7 +421,6 @@ public class EhcacheCache<V, T>
         }
     }
 
-    @SuppressWarnings( "unchecked" )
     @Override
     public T get( V key )
     {
@@ -335,12 +429,7 @@ public class EhcacheCache<V, T>
             return null;
         }
 
-        Element elem = ehcache.get( key );
-        if ( elem == null )
-        {
-            return null;
-        }
-        return (T) elem.getObjectValue( );
+        return ehcache.get( key );
     }
 
     public long getDiskExpiryThreadIntervalSeconds( )
@@ -348,9 +437,14 @@ public class EhcacheCache<V, T>
         return diskExpiryThreadIntervalSeconds;
     }
 
-    public String getDiskStorePath( )
+    public Path getDiskStorePath( )
     {
         return diskStorePath;
+    }
+
+    public void setDiskStorePath( Path path )
+    {
+        this.diskStorePath = path.toAbsolutePath( );
     }
 
     @Override
@@ -364,10 +458,6 @@ public class EhcacheCache<V, T>
         return memoryEvictionPolicy;
     }
 
-    public MemoryStoreEvictionPolicy getMemoryStoreEvictionPolicy( )
-    {
-        return MemoryStoreEvictionPolicy.fromString( memoryEvictionPolicy );
-    }
 
     public String getName( )
     {
@@ -395,7 +485,7 @@ public class EhcacheCache<V, T>
     @Override
     public boolean hasKey( V key )
     {
-        return ehcache.isKeyInCache( key );
+        return ehcache.containsKey( key );
     }
 
     public boolean isDiskPersistent( )
@@ -420,40 +510,25 @@ public class EhcacheCache<V, T>
     @Override
     public void register( V key, T value )
     {
-        ehcache.put( new Element( key, value ) );
+        ehcache.put( key, value );
     }
 
     @Override
-    @SuppressWarnings( "unchecked" )
     public T put( V key, T value )
     {
         // Multiple steps done to satisfy Cache API requirement for Previous object return.
-        Element elem;
-        Object previous = null;
-        elem = ehcache.get( key );
-        if ( elem != null )
-        {
-            previous = elem.getObjectValue( );
-        }
-        elem = new Element( key, value );
-        ehcache.put( elem );
-        return (T) previous;
+        T previous;
+        previous = ehcache.get( key );
+        ehcache.put( key, value );
+        return previous;
     }
 
     @Override
-    @SuppressWarnings( "unchecked" )
     public T remove( V key )
     {
-        Element elem;
-        Object previous = null;
-        elem = ehcache.get( key );
-        if ( elem != null )
-        {
-            previous = elem.getObjectValue( );
-            ehcache.remove( key );
-        }
-
-        return (T) previous;
+        T previous = ehcache.get( key );
+        ehcache.remove( key );
+        return previous;
     }
 
     public void setDiskExpiryThreadIntervalSeconds( long diskExpiryThreadIntervalSeconds )
@@ -466,11 +541,6 @@ public class EhcacheCache<V, T>
         this.diskPersistent = diskPersistent;
     }
 
-    public void setDiskStorePath( String diskStorePath )
-    {
-        this.diskStorePath = diskStorePath;
-    }
-
     public void setEternal( boolean eternal )
     {
         this.eternal = eternal;
@@ -481,11 +551,6 @@ public class EhcacheCache<V, T>
     public void setMaxElementsInMemory( int maxElementsInMemory )
     {
         this.maxElementsInMemory = maxElementsInMemory;
-        if ( this.ehcache != null )
-        {
-            this.ehcache.getCacheConfiguration( ).setMaxEntriesLocalHeap( this.maxElementsInMemory );
-
-        }
     }
 
     public void setMemoryEvictionPolicy( String memoryEvictionPolicy )
@@ -510,20 +575,12 @@ public class EhcacheCache<V, T>
     @Override
     public void setTimeToIdleSeconds( int timeToIdleSeconds )
     {
-        if ( this.ehcache != null )
-        {
-            this.ehcache.getCacheConfiguration( ).setTimeToIdleSeconds( timeToIdleSeconds );
-        }
         this.timeToIdleSeconds = timeToIdleSeconds;
     }
 
     @Override
     public void setTimeToLiveSeconds( int timeToLiveSeconds )
     {
-        if ( this.ehcache != null )
-        {
-            this.ehcache.getCacheConfiguration( ).setTimeToLiveSeconds( timeToIdleSeconds );
-        }
         this.timeToLiveSeconds = timeToLiveSeconds;
     }
 
@@ -534,7 +591,7 @@ public class EhcacheCache<V, T>
 
     public void setStatisticsEnabled( boolean statisticsEnabled )
     {
-        this.statisticsEnabled = statisticsEnabled;
+        // ignored for ehache
     }
 
     public boolean isFailOnDuplicateCache( )
@@ -587,11 +644,6 @@ public class EhcacheCache<V, T>
     public void setMaxElementsOnDisk( int maxElementsOnDisk )
     {
         this.maxElementsOnDisk = maxElementsOnDisk;
-        if ( this.ehcache != null )
-        {
-            this.ehcache.getCacheConfiguration( ).setMaxEntriesInCache( this.maxElementsOnDisk );
-            this.ehcache.getCacheConfiguration( ).maxEntriesLocalDisk( this.maxElementsOnDisk );
-        }
     }
 
     /**

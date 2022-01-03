@@ -32,16 +32,17 @@ import java.nio.file.Path;
  * EhcacheCreator - runtime creation of an ehcache.
  *
  * @author <a href="mailto:joakim@erdfelt.com">Joakim Erdfelt</a>
+ * @author Martin Schreier <martin_s@apache.org>
  */
-public class EhcacheCreator
-    implements CacheCreator
+public class EhcacheCreator<K,V>
+    implements CacheCreator<K,V>
 {
 
     @Override
-    public Cache createCache( CacheHints hints )
+    public Cache<K,V> createCache( CacheHints hints, Class<K> keyType, Class<V> valueType )
         throws CacheException
     {
-        EhcacheCache cache = new EhcacheCache( );
+        EhcacheCache<K,V> cache = new EhcacheCache( keyType, valueType );
 
         cache.setName( hints.getName( ) );
 
@@ -66,7 +67,7 @@ public class EhcacheCreator
                 }
             }
 
-            cache.setDiskStorePath( overflowPath.toAbsolutePath( ).toString( ) );
+            cache.setDiskStorePath( overflowPath );
         }
 
         cache.setMaxElementsInMemory( hints.getMaxElements( ) );

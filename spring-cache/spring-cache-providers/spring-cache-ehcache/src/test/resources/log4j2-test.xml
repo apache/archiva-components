@@ -25,7 +25,7 @@
     </appenders>
     <loggers>
         <logger name="org.apache.archiva" level="warn"/>
-        <logger name="org.apache.archiva.components.cache" level="info"/>
+        <logger name="org.apache.archiva.components.cache" level="debug"/>
 
         <root level="error" includeLocation="true">
             <appender-ref ref="console"/>

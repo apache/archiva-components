@@ -27,8 +27,9 @@ import org.apache.archiva.components.cache.CacheHints;
  * CacheCreator - an interface for CacheCreators
  *
  * @author <a href="mailto:joakim@erdfelt.com">Joakim Erdfelt</a>
+ * @author Martin Schreier <martin_s@apache.org>
  */
-public interface CacheCreator
+public interface CacheCreator<K,V>
 {
     /**
      * Create a Cache, initialize it, and return it.
@@ -37,5 +38,5 @@ public interface CacheCreator
      * @return the created cache.
      * @throws CacheException if there was a cache creation error.
      */
-    public Cache createCache( CacheHints hints ) throws CacheException;
+    public Cache<K,V> createCache( CacheHints hints, Class<K> keyType, Class<V> valueType ) throws CacheException;
 }
