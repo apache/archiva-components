@@ -42,7 +42,7 @@
     <dependency>
       <groupId>org.ehcache</groupId>
       <artifactId>ehcache</artifactId>
-      <version>3.9.9</version>
+      <version>${ehcache.version}</version>
       <exclusions>
         <exclusion>
           <groupId>commons-logging</groupId>
