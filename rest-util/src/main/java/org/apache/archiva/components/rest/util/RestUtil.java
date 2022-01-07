@@ -18,8 +18,8 @@ package org.apache.archiva.components.rest.util;/*
 
 import org.apache.commons.lang3.StringUtils;
 
-import javax.ws.rs.core.MultivaluedMap;
-import javax.ws.rs.core.UriInfo;
+import jakarta.ws.rs.core.MultivaluedMap;
+import jakarta.ws.rs.core.UriInfo;
 
 /**
  * Central utility class that may be used by service implementations.
