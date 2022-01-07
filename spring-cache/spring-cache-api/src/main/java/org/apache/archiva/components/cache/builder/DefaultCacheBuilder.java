@@ -19,6 +19,7 @@ package org.apache.archiva.components.cache.builder;
  * under the License.
  */
 
+import jakarta.inject.Inject;
 import org.apache.archiva.components.cache.Cache;
 import org.apache.archiva.components.cache.impl.NoCacheCache;
 import org.slf4j.Logger;
@@ -28,7 +29,6 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
-import javax.inject.Inject;
 
 /**
  * Ability to obtain cache

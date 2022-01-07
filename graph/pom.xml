@@ -26,7 +26,7 @@
   <parent>
     <artifactId>archiva-components</artifactId>
     <groupId>org.apache.archiva.components</groupId>
-    <version>3.0-SNAPSHOT</version>
+    <version>3.1-SNAPSHOT</version>
   </parent>
 
   <artifactId>archiva-components-graph</artifactId>

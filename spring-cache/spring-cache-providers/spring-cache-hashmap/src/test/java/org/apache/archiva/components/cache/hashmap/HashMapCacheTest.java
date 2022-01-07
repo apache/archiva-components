@@ -20,8 +20,8 @@ import org.apache.archiva.components.cache.Cache;
 import org.apache.archiva.components.cache.test.AbstractCacheTestCase;
 import org.apache.archiva.components.cache.test.examples.wine.Wine;
 
-import javax.inject.Inject;
-import javax.inject.Named;
+import jakarta.inject.Inject;
+import jakarta.inject.Named;
 
 /**
  * HashMapCacheTest

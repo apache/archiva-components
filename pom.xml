@@ -25,12 +25,12 @@
   <parent>
     <groupId>org.apache.archiva</groupId>
     <artifactId>archiva-parent</artifactId>
-    <version>19-SNAPSHOT</version>
+    <version>19.1-SNAPSHOT</version>
   </parent>
 
   <groupId>org.apache.archiva.components</groupId>
   <artifactId>archiva-components</artifactId>
-  <version>3.0-SNAPSHOT</version>
+  <version>3.1-SNAPSHOT</version>
   <packaging>pom</packaging>
   <name>Archiva Components :: Parent</name>
 
@@ -99,6 +99,17 @@
         <enabled>true</enabled>
       </snapshots>
     </repository>
+    <repository>
+      <id>spring.milestone</id>
+      <name>Repository for SPRING milestone releases</name>
+      <url>https://repo.spring.io/milestone</url>
+      <releases>
+        <enabled>true</enabled>
+      </releases>
+      <snapshots>
+        <enabled>true</enabled>
+      </snapshots>
+     </repository>
   </repositories>
   <pluginRepositories>
     <pluginRepository>

@@ -22,7 +22,7 @@ package org.apache.archiva.components.cache.test.examples.wine;
 import org.apache.archiva.components.cache.builder.CacheBuilder;
 import org.springframework.stereotype.Service;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 /**
  * @author Olivier Lamy

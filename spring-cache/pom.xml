@@ -23,12 +23,12 @@
   <parent>
     <groupId>org.apache.archiva.components</groupId>
     <artifactId>archiva-components</artifactId>
-    <version>3.0-SNAPSHOT</version>
+    <version>3.1-SNAPSHOT</version>
   </parent>
   <groupId>org.apache.archiva.components.cache</groupId>
   <artifactId>archiva-components-spring-cache</artifactId>
   <name>Archiva Components :: Spring Cache</name>
-  <version>3.0-SNAPSHOT</version>
+  <version>3.1-SNAPSHOT</version>
   <packaging>pom</packaging>
 
   <description>Cache API with various implementations : simple HashMap, ehcache. Based on Spring container.

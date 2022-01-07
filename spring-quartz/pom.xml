@@ -24,10 +24,10 @@
   <parent>
     <groupId>org.apache.archiva.components</groupId>
     <artifactId>archiva-components</artifactId>
-    <version>3.0-SNAPSHOT</version>
+    <version>3.1-SNAPSHOT</version>
   </parent>
 
-  <version>3.0-SNAPSHOT</version>
+  <version>3.1-SNAPSHOT</version>
   <artifactId>archiva-components-spring-quartz</artifactId>
 
   <name>Archiva Components :: Spring Quartz</name>

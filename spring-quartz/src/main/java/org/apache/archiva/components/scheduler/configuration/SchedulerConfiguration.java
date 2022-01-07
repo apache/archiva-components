@@ -23,7 +23,7 @@ import org.apache.archiva.components.scheduler.Scheduler;
 import org.quartz.impl.StdSchedulerFactory;
 import org.springframework.stereotype.Service;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 /**
  * Class to represent the configuration file for the proxy
