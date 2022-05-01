@@ -17,4 +17,4 @@
  * under the License.
  */
 
-multiJdkBuild(upstreamTriggers:'Archiva/Archiva-TLP-Gitbox/archiva-parent/master')
+multiJdkBuild(upstreamTriggers:'Archiva/archiva-projects/archiva-parent/master')
