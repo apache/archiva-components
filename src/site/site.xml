@@ -42,10 +42,6 @@
             <googleSearch>
                 <sitesearch>http://archiva.apache.org/components</sitesearch>
             </googleSearch>
-            <ohloh>
-              <projectId>6670</projectId>
-              <widget>thin-badge</widget>
-            </ohloh>
             <gitHub>
               <projectId>apache/archiva-components</projectId>
               <ribbonOrientation>right</ribbonOrientation>
