@@ -48,6 +48,7 @@
           <groupId>commons-logging</groupId>
           <artifactId>commons-logging</artifactId>
         </exclusion>
+
       </exclusions>
     </dependency>
     <dependency>
