@@ -82,7 +82,7 @@
     <commons.collections.3.version>3.2.2</commons.collections.3.version>
 
     <apacheds.version>1.5.1</apacheds.version>
-    <apacheds.shared.version>0.9.7</apacheds.shared.version>
+    <apacheds.shared.version>0.9.19</apacheds.shared.version>
 
     <!-- junit -->
     <junit.platform.version>1.5.2</junit.platform.version>
