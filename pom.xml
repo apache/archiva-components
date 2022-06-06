@@ -85,7 +85,7 @@
     <apacheds.shared.version>0.9.7</apacheds.shared.version>
 
     <!-- junit -->
-    <junit.platform.version>1.5.2</junit.platform.version>
+    <junit.platform.version>1.8.2</junit.platform.version>
     <junit.jupiter.version>5.5.2</junit.jupiter.version>
 
   </properties>
