@@ -71,7 +71,7 @@
 
     <jakarta.inject.version>1.0</jakarta.inject.version>
     <jakarta.annotation.version>1.3.5</jakarta.annotation.version>
-    <jakarta.ws.rs.version>2.1.6</jakarta.ws.rs.version>
+    <jakarta.ws.rs.version>3.1.0</jakarta.ws.rs.version>
 
     <!-- apache commons -->
     <commons.lang3.version>3.12.0</commons.lang3.version>
@@ -436,7 +436,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-site-plugin</artifactId>
-        <version>3.9.1</version>
+        <version>3.12.0</version>
         <configuration>
           <!-- disable generateReports if you don't want to include the built-in reports -->
           <generateReports>true</generateReports>
