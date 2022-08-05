@@ -343,8 +343,8 @@
           <version>${javadocPluginVersion}</version>
           <configuration>
             <notimestamp>true</notimestamp>
-            <javadocVersion>${javaFullVersion}</javadocVersion>
-            <source>${compiler.source}</source>
+            <javadocVersion>${maven.compiler.release}</javadocVersion>
+            <source>${maven.compiler.release}</source>
             <doclint>none</doclint>
             <detectLinks>true</detectLinks>
             <detectJavaApiLink>true</detectJavaApiLink>
@@ -491,8 +491,8 @@
         <inherited>false</inherited>
         <configuration>
           <notimestamp>true</notimestamp>
-          <javadocVersion>${javaFullVersion}</javadocVersion>
-          <source>${compiler.source}</source>
+          <javadocVersion>${maven.compiler.release}</javadocVersion>
+          <source>${maven.compiler.release}</source>
           <doclint>none</doclint>
           <detectLinks>true</detectLinks>
           <detectJavaApiLink>true</detectJavaApiLink>
