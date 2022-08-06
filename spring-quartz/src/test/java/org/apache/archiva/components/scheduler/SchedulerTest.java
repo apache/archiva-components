@@ -20,6 +20,7 @@ package org.apache.archiva.components.scheduler;
  */
 
 import junit.framework.TestCase;
+import org.awaitility.Awaitility;
 import org.junit.After;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -37,6 +38,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import javax.inject.Inject;
+import java.util.concurrent.TimeUnit;
 
 @RunWith ( SpringJUnit4ClassRunner.class )
 @ContextConfiguration ( locations = { "classpath*:/META-INF/spring-context.xml", "classpath:/spring-context.xml" } )
@@ -81,10 +83,8 @@ public class SchedulerTest
 
         scheduler.scheduleJob( jobDetail, trigger );
 
-        while ( !triggerFired )
-        {
-            Thread.sleep( 10 );
-        }
+        Awaitility.await().atLeast( 100, TimeUnit.MILLISECONDS ).until( () -> triggerFired );
+
         logger.info( "ok triggerFired" );
     }
 

@@ -47,14 +47,6 @@ import java.util.List;
 public abstract class AbstractCacheTestCase
     extends TestCase
 {
-//    static
-//    {
-//        Logger logger = Logger.getLogger( "org.codehaus.plexus.cache" );
-//        logger.setLevel( Level.ALL );
-//        ConsoleHandler handler = new ConsoleHandler( );
-//        handler.setLevel( Level.ALL );
-//        logger.addHandler( handler );
-//    }
 
     private static final Logger log = LoggerFactory.getLogger( AbstractCacheTestCase.class );
 

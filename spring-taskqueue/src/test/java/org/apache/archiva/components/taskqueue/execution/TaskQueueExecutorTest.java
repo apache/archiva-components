@@ -23,6 +23,7 @@ import junit.framework.TestCase;
 import org.apache.archiva.components.taskqueue.BuildProjectTask;
 import org.apache.archiva.components.taskqueue.TaskQueue;
 import org.apache.archiva.components.taskqueue.TaskQueueException;
+import org.awaitility.Awaitility;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.test.context.ContextConfiguration;
@@ -30,6 +31,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import javax.inject.Inject;
 import javax.inject.Named;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @author <a href="mailto:kenney@apache.org">Kenney Westerhof</a>
@@ -90,16 +92,7 @@ public class TaskQueueExecutorTest
     {
         // thread scheduling may take some time, so we want to wait until the task
         // is actually running before starting to count the timeout.
-        for ( int i = 0; i < 500; i++ )
-        {
-            if ( task.wasStarted( ) )
-            {
-                break;
-            }
-            Thread.sleep( 10 );
-        }
-
-        assertTrue( "Task not started in 5 seconds - heavy load?", task.isStarted( ) );
+        Awaitility.await().atMost( 5, TimeUnit.SECONDS ).until( () -> task.isStarted() );
 
         Thread.sleep( task.getMaxExecutionTime( ) );
     }
