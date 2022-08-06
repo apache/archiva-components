@@ -576,7 +576,7 @@ The executor runs a shell script.
           <plugin>
             <groupId>org.codehaus.mojo</groupId>
             <artifactId>exec-maven-plugin</artifactId>
-            <version>3.0.0</version>
+            <version>3.1.0</version>
             <inherited>false</inherited>
             <executions>
               <execution>
